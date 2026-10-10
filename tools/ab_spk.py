@@ -37,7 +37,8 @@ def build(template, out):
             "Dieser ILS-Auftrag baut auf dem ILS-Auftrag **„Transurethraler Dauerkatheter (DK)“** auf. Legen Sie das Arbeitsblatt dazu bereit.",
             "Sie brauchen: dieses Arbeitsblatt, einen Stift und ein Smartphone oder Tablet mit Internet.",
             "Lesen Sie die Abschnitte der Reihe nach. **Fachwörter** erklärt das Glossar am Ende.",
-            "Nach jedem Abschnitt scannen Sie den **QR-Code** und machen die Übung. Sind **alle Aufgaben richtig**, bekommen Sie einen **Baustein** ✍️.",
+            "Nach jedem Abschnitt scannen Sie den **QR-Code** und machen die Übung. Geben Sie dort zuerst Ihren **Vornamen** und den **1. Buchstaben Ihres Nachnamens** ein.",
+            "Sind **alle Aufgaben richtig**, bekommen Sie einen **persönlichen Baustein** mit 3 Ziffern (z. B. „HAUS-482“). Er gilt **nur für Ihren Namen** ✍️.",
             "Am Ende geben Sie alle 5 Bausteine ein, machen das Abschlussquiz und bekommen Ihre **persönliche ID**.",
             f"Sie schicken die ID per E-Mail an **{MAIL}**.",
         ], "decimal")

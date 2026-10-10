@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Abschluss: Quiz und persönliche ID</title>
-<link rel="stylesheet" href="../../assets/ils.css?v=6515a1ac">
+<link rel="stylesheet" href="../../assets/ils.css?v=fcecb70b">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">ILS Suprapubischer Katheter · Abschluss</div><h1>Abschluss: Quiz und persönliche ID</h1></div></header>
@@ -52,9 +52,12 @@ const MAIL = 'Sven.Klawitter@Karoline-Breitinger-Schule.de';
 document.addEventListener('DOMContentLoaded', () => {
   const $ = (s) => document.querySelector(s);
   const bs = $('#bs');
-  bs.append(ILS.el('div', { class: 'q-text' }, 'Ihre Bausteine aus den Übungen 1–5'));
+  bs.append(ILS.el('div', { class: 'q-text' }, 'Ihre persönlichen Bausteine aus den Übungen 1–5'),
+    ILS.el('p', { class: 'small' }, 'Mit den 3 Ziffern, z. B. „HAUS-482“. Die Bausteine gelten nur für den Namen, den Sie in den Übungen eingegeben haben.'));
+  const saved = ILS.nameStore.get();
+  $('#vn').value = saved.vn; $('#nn').value = saved.nn;
   const inputs = CHECKS.map((_, i) => {
-    const inp = ILS.el('input', { id: 'b' + (i + 1), autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false' });
+    const inp = ILS.el('input', { id: 'b' + (i + 1), autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false', placeholder: 'WORT-123' });
     inp.value = ILS.store.get('ils-spk-b' + (i + 1)) || '';
     bs.append(ILS.el('div', { class: 'field' }, ILS.el('label', { for: 'b' + (i + 1) }, `Baustein aus Übung ${i + 1}`), inp));
     return inp;
@@ -63,19 +66,27 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#go1').addEventListener('click', async () => {
     const msg = $('#msg1');
     vn = $('#vn').value.trim(); nn = $('#nn').value.trim();
-    if (ILS.normName(vn).length < 2 || ILS.normName(nn).length !== 1) {
+    if (!ILS.nameOk(vn, nn)) {
       msg.className = 'fb show bad'; msg.textContent = 'Bitte Vorname und den 1. Buchstaben des Nachnamens eingeben.'; return;
     }
+    ILS.nameStore.set(vn, nn);
     words = inputs.map((x) => ILS.normWord(x.value));
-    const bad = [];
+    const falsch = [], ziffern = [], fremd = [];
     for (let i = 0; i < words.length; i++) {
-      const ok = (await ILS.sha256hex(`SPK|${i + 1}|${words[i]}`)) === CHECKS[i];
+      const digits = inputs[i].value.replace(/\D/g, '');
+      let ok = (await ILS.sha256hex(`SPK|${i + 1}|${words[i]}`)) === CHECKS[i];
+      if (!ok) falsch.push(i + 1);
+      else if (digits.length !== 3) { ok = false; ziffern.push(i + 1); }
+      else if (digits !== await ILS.personalDigits('SPK', i + 1, words[i], vn, nn)) { ok = false; fremd.push(i + 1); }
       inputs[i].className = ok ? 'ok' : 'bad';
-      if (!ok) bad.push(i + 1);
     }
-    if (bad.length) {
+    const meldung = [];
+    if (falsch.length) meldung.push(`Falscher Baustein bei Übung ${falsch.join(', ')}: Prüfen Sie die Schreibweise oder machen Sie die Übung noch einmal.`);
+    if (ziffern.length) meldung.push(`Bei Übung ${ziffern.join(', ')} fehlen die 3 Ziffern hinter dem Wort (z. B. „HAUS-482“).`);
+    if (fremd.length) meldung.push(`Der Baustein von Übung ${fremd.join(', ')} gehört zu einem anderen Namen. Geben Sie oben genau den Namen ein, den Sie in der Übung benutzt haben – oder machen Sie die Übung mit Ihrem eigenen Namen.`);
+    if (meldung.length) {
       msg.className = 'fb show bad';
-      msg.textContent = `Diese Bausteine stimmen nicht: Übung ${bad.join(', ')}. Prüfen Sie die Schreibweise oder machen Sie die Übung noch einmal.`;
+      msg.textContent = meldung.join(' ');
       return;
     }
     msg.className = 'fb';
@@ -117,6 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag „Suprapubischer Katheter“ · 3BFP2<br>Diese Seite speichert keine Daten auf einem Server.</footer>
 </main>
-<script src="../../assets/ils.js?v=6515a1ac"></script>
+<script src="../../assets/ils.js?v=fcecb70b"></script>
 </body>
 </html>

@@ -35,7 +35,9 @@ def build(template, out):
             "Sie brauchen: dieses Arbeitsblatt, einen Stift und ein Smartphone oder Tablet mit Internet.",
             "Lesen Sie die Abschnitte der Reihe nach. **Fachwörter** erklärt das Glossar am Ende.",
             "Nach jedem Abschnitt scannen Sie den **QR-Code** und machen die Übung.",
-            "Sind **alle Aufgaben** einer Übung **richtig**, bekommen Sie ein **Lösungswort (Baustein)**. Schreiben Sie es in das Kästchen ✍️.",
+            "Geben Sie in jeder Übung zuerst Ihren **Vornamen** und den **1. Buchstaben Ihres Nachnamens** ein – immer gleich geschrieben.",
+            "Sind **alle Aufgaben** einer Übung **richtig**, bekommen Sie einen **persönlichen Baustein**: ein Wort mit 3 Ziffern (z. B. „HAUS-482“). "
+            "Er gilt **nur für Ihren Namen**. Schreiben Sie ihn in das Kästchen ✍️.",
             "Am Ende geben Sie alle 5 Bausteine ein, machen ein kurzes Abschlussquiz und bekommen Ihre **persönliche ID**.",
             f"Sie schicken die ID per E-Mail an **{MAIL}**. So sehe ich, dass Sie den Auftrag bearbeitet haben.",
         ], "decimal")

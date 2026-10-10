@@ -28,7 +28,12 @@ def build(template, out):
         f"Lehrkraft-Link öffnen (als Lesezeichen speichern): **{BASE}lehrkraft/#k={KEY}**",
         "Betreffzeilen der E-Mails einfügen (eine pro Zeile), optional die Klassenliste, dann „Prüfen“.",
     ])
-    d.table(None, [["Schlüssel", KEY]] + [[f"Baustein Übung {i + 1}", w] for i, w in enumerate(BAUSTEINE)], [3000, 6060], first_col_bold=True)
+    d.table(None, [["Schlüssel", KEY]] + [[f"Baustein Übung {i + 1}", f"{w}-___ (3 Ziffern je nach Name)"] for i, w in enumerate(BAUSTEINE)], [3000, 6060], first_col_bold=True)
+
+    d.p("**Persönliche Bausteine:** In jeder Übung geben die SuS zuerst Vorname und Anfangsbuchstaben ein. Der Baustein besteht aus "
+        "dem Wort und 3 Ziffern, die aus dem Namen berechnet werden (z. B. „Lena M.“ → WORT-207, „Tom K.“ → WORT-437). Die "
+        "Abschlussseite prüft, ob die Ziffern zum eingegebenen Namen passen. Abgeschriebene oder per WhatsApp verschickte Bausteine "
+        "sind für andere Namen ungültig. Für die Prüfseite brauchen Sie nur den Schlüssel (die Wörter ohne Ziffern).", size=10, before=60)
 
     d.h2("2 | Links")
     d.table(["Seite", "Adresse"], [

@@ -57,6 +57,17 @@ const ILS = (() => {
     return `${prefix}-${h.slice(0, 4)}-${h.slice(4, 8)}`.toUpperCase();
   };
 
+  // Persönlicher Baustein: WORT-123. Die 3 Ziffern hängen vom Namen ab – ein Baustein gilt nur für diese Person.
+  const personalDigits = async (prefix, nr, word, vorname, initial) => {
+    const h = await sha256hex(`SFX|${prefix}|${nr}|${normWord(word)}|${normName(vorname)}|${normName(initial).slice(0, 1)}`);
+    return String(parseInt(h.slice(0, 8), 16) % 1000).padStart(3, '0');
+  };
+  const nameStore = {
+    get: () => ({ vn: store.get('ils-vorname') || '', nn: store.get('ils-initial') || '' }),
+    set: (vn, nn) => { store.set('ils-vorname', vn); store.set('ils-initial', nn); },
+  };
+  const nameOk = (vn, nn) => normName(vn).length >= 2 && normName(nn).length === 1;
+
   // Längste aufsteigende Teilfolge: Wie viele Schritte stehen in der richtigen Reihenfolge?
   // Liefert die Positionen dieser Schritte – alle anderen müssen noch verschoben werden.
   const lisPositions = (seq) => {
@@ -216,11 +227,26 @@ const ILS = (() => {
 
   /* ---------- Übung ----------
      cfg: { mount, title, kicker, intro, questions, pass (0..1), baustein (verschlüsselt), storeKey,
-            hint (Text bei "nicht bestanden"), onPass(box), onFail(box) } */
+            hint (Text bei "nicht bestanden"), onPass(box), onFail(box),
+            personal: { prefix, nr } (persönlicher Baustein, fragt nach dem Namen) } */
   const quiz = (cfg) => {
     const root = typeof cfg.mount === 'string' ? document.querySelector(cfg.mount) : cfg.mount;
     root.innerHTML = '';
     if (cfg.intro) root.append(el('div', { class: 'card intro', html: cfg.intro }));
+    let nameCard = null, vnIn = null, nnIn = null;
+    if (cfg.personal) {
+      const saved = nameStore.get();
+      vnIn = el('input', { id: 'ils-vn', autocomplete: 'given-name', placeholder: 'z. B. Lena', value: saved.vn });
+      nnIn = el('input', { id: 'ils-nn', maxlength: '1', autocomplete: 'off', placeholder: 'z. B. M', value: saved.nn });
+      nameCard = el('div', { class: 'card' },
+        el('div', { class: 'q-text' }, 'Ihr Name'),
+        el('p', { class: 'small' }, 'Ihr Baustein wird für diesen Namen erstellt und gilt nur für Sie. Benutzen Sie in allen Übungen und auf der Abschlussseite denselben Namen.'),
+        el('div', { class: 'grid2' },
+          el('div', { class: 'field' }, el('label', { for: 'ils-vn' }, 'Vorname'), vnIn),
+          el('div', { class: 'field' }, el('label', { for: 'ils-nn' }, '1. Buchstabe Nachname'), nnIn)),
+        el('div', { class: 'fb' }));
+      root.append(nameCard);
+    }
     const qs = cfg.questions.map((q, i) => renderQuestion(q, i));
     let lastHeading = null;
     qs.forEach((r) => {
@@ -231,7 +257,18 @@ const ILS = (() => {
     const btn = el('button', { type: 'button', class: 'btn block' }, 'Auswerten');
     root.append(btn, result);
 
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
+      if (nameCard) {
+        const nfb = nameCard.querySelector('.fb');
+        if (!nameOk(vnIn.value, nnIn.value)) {
+          nfb.className = 'fb show hint';
+          nfb.textContent = 'Bitte geben Sie zuerst Ihren Vornamen und den 1. Buchstaben Ihres Nachnamens ein.';
+          nameCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+        nfb.className = 'fb';
+        nameStore.set(vnIn.value.trim(), nnIn.value.trim());
+      }
       const missing = qs.filter((r) => !r.answered());
       if (missing.length) {
         missing.forEach((r) => { r.fb.className = 'fb show hint'; r.fb.textContent = 'Bitte beantworten Sie diese Aufgabe noch.'; });
@@ -267,12 +304,19 @@ const ILS = (() => {
         btn.disabled = true;
         btn.textContent = 'Geschafft ✓';
         if (cfg.baustein) {
-          const word = decode(cfg.baustein);
-          if (cfg.storeKey) store.set(cfg.storeKey, word);
+          let code = decode(cfg.baustein);
+          let fuer = '';
+          if (cfg.personal) {
+            const vn = vnIn.value.trim(), nn = nnIn.value.trim();
+            code = `${code}-${await personalDigits(cfg.personal.prefix, cfg.personal.nr, code, vn, nn)}`;
+            fuer = ` für ${vn} ${nn.toUpperCase()}.`;
+            vnIn.disabled = true; nnIn.disabled = true;
+          }
+          if (cfg.storeKey) store.set(cfg.storeKey, code);
           result.append(
-            el('p', {}, 'Sehr gut! Ihr Lösungswort (Baustein) für diese Übung:'),
-            el('div', { class: 'baustein' }, word),
-            el('p', { class: 'small' }, '✍️ Schreiben Sie den Baustein jetzt in das Kästchen auf Ihrem Arbeitsblatt. Lesen Sie oben die Erklärungen zu allen Aufgaben.'));
+            el('p', {}, `Sehr gut! Ihr persönlicher Baustein${fuer}:`),
+            el('div', { class: 'baustein' }, code),
+            el('p', { class: 'small' }, '✍️ Schreiben Sie den Baustein mit den Ziffern jetzt in das Kästchen auf Ihrem Arbeitsblatt. Er gilt nur für Ihren Namen. Lesen Sie oben die Erklärungen zu allen Aufgaben.'));
         }
         if (cfg.onPass) cfg.onPass(result);
       } else {
@@ -289,5 +333,5 @@ const ILS = (() => {
     });
   };
 
-  return { el, shuffle, decode, store, sha256hex, normName, normWord, makeId, quiz };
+  return { el, shuffle, decode, store, nameStore, nameOk, personalDigits, sha256hex, normName, normWord, makeId, quiz };
 })();

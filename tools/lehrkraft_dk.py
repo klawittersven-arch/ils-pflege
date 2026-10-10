@@ -30,13 +30,19 @@ def build(template, out):
         "Optional die Klassenliste („Vorname N.“, eine Person pro Zeile) einfügen. Dann zeigt die Seite, wer noch fehlt.",
         "„Prüfen“ tippen: ✓ gültig = Name und ID passen zusammen.",
     ])
-    d.table(None, [["Schlüssel", KEY]] + [[f"Baustein Übung {i + 1}", w] for i, w in enumerate(BAUSTEINE)], [3000, 6060], first_col_bold=True)
+    d.table(None, [["Schlüssel", KEY]] + [[f"Baustein Übung {i + 1}", f"{w}-___ (3 Ziffern je nach Name)"] for i, w in enumerate(BAUSTEINE)], [3000, 6060], first_col_bold=True)
     d.p("**Wie sicher ist das?** Die ID wird aus Vorname, Anfangsbuchstabe und allen 5 Bausteinen berechnet und passt nur zum "
-        "eingegebenen Namen. Eine ID einer Mitschülerin ist für andere Namen ungültig. Wer sich aber alle 5 Bausteine von anderen geben "
-        "lässt und das Abschlussquiz besteht, kommt durch. Die ID belegt die Bearbeitung, nicht den Lernerfolg. Empfehlung: kurzes "
+        "eingegebenen Namen. Eine ID einer Mitschülerin ist für andere Namen ungültig. Weil die Bausteine persönlich sind, hilft auch das "
+        "Weitergeben von Bausteinen nicht. Nicht verhindern lässt sich ohne Login nur, dass jemand alle Übungen unter dem Namen einer "
+        "anderen Person bearbeitet. Die ID belegt die Bearbeitung, nicht den Lernerfolg. Empfehlung: kurzes "
         "Quiz (5 Min.) zu Beginn der nächsten Präsenzstunde.", size=10, before=60)
     d.p("**Datenschutz:** Die Übungsseiten speichern nichts auf einem Server. Bausteine werden nur auf dem Gerät der SuS gemerkt "
         "(Browser-Speicher). Die Prüfseite rechnet ebenfalls nur lokal.", size=10, before=60)
+
+    d.p("**Persönliche Bausteine:** In jeder Übung geben die SuS zuerst Vorname und Anfangsbuchstaben ein. Der Baustein besteht aus "
+        "dem Wort und 3 Ziffern, die aus dem Namen berechnet werden (z. B. „Lena M.“ → WORT-207, „Tom K.“ → WORT-437). Die "
+        "Abschlussseite prüft, ob die Ziffern zum eingegebenen Namen passen. Abgeschriebene oder per WhatsApp verschickte Bausteine "
+        "sind für andere Namen ungültig. Für die Prüfseite brauchen Sie nur den Schlüssel (die Wörter ohne Ziffern).", size=10, before=60)
 
     d.h2("2 | Links")
     d.table(["Seite", "Adresse"], [
