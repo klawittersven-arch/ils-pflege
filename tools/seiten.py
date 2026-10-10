@@ -116,7 +116,7 @@ U2 = [{"type": "mc", "keep": True, "q": f, "options": CATS, "correct": c, "expla
 # ---------------------------------------------------------------- Übung 3
 U3 = [
     {"type": "order", "section": "Teil A: DK bei einer Frau legen – die richtige Reihenfolge",
-     "q": "Bringen Sie die Schritte in die richtige Reihenfolge. Der erste Schritt gehört ganz nach oben.",
+     "q": "Bringen Sie die Schritte in die richtige Reihenfolge: Tippen Sie zuerst auf den 1. Schritt, dann auf den 2. usw. Nur der richtige nächste Schritt wird übernommen.",
      "items": [
          "Anordnung prüfen, Patientin informieren und Einwilligung einholen",
          "Intimsphäre schützen, Patientin lagern, Intimpflege durchführen",
@@ -262,9 +262,9 @@ uebung(2, "Übung 2: Braucht diese Person einen DK?",
        "Oder ist ein DK sogar gefährlich (Kontraindikation)? Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U2,
        "Lesen Sie Abschnitt 2 noch einmal, besonders die Tabelle. Ändern Sie dann die rot markierten Antworten.")
 uebung(3, "Übung 3: Den DK bei einer Frau legen",
-       "<strong>So geht's:</strong> In Teil A ordnen Sie 10 Schritte. Jeder Schritt in der richtigen Reihenfolge gibt 1 Punkt. "
+       "<strong>So geht's:</strong> In Teil A tippen Sie 10 Schritte in der richtigen Reihenfolge an. "
        "Teil B hat 4 Fragen. Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U3,
-       "Lesen Sie in Abschnitt 3 die Schritte „Durchführung bei der Frau“ noch einmal. Verschieben Sie die rot markierten Schritte an die richtige Stelle.")
+       "Lesen Sie in Abschnitt 3 die Schritte „Durchführung bei der Frau“ noch einmal.")
 uebung(4, "Übung 4: Den DK bei einem Mann legen",
        "<strong>So geht's:</strong> Schauen Sie zuerst das Video an (QR-Code auf dem Arbeitsblatt). "
        "In Teil A finden Sie Fehler in einer Geschichte. Für jeden richtig beurteilten Satz gibt es 1 Punkt. "

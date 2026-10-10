@@ -76,30 +76,27 @@ select {
 }
 
 /* Reihenfolge */
-.order-list { list-style: none; counter-reset: step; margin: 0; padding: 0; display: grid; gap: 8px; }
+.order-pool, .order-list { display: grid; gap: 8px; }
+.order-list { list-style: none; counter-reset: step; margin: 0 0 10px; min-height: 52px; padding: 8px; border: 2px dashed var(--line); border-radius: 10px; }
+.order-list:empty::before { content: "Noch kein Schritt gewählt …"; color: var(--muted); padding: 6px; }
 .order-item {
-  display: flex; align-items: center; gap: 8px;
+  text-align: left; font: inherit; color: inherit;
   border: 2px solid var(--line); background: #fff; border-radius: 10px;
-  padding: 6px 6px 6px 0; min-height: 52px; touch-action: manipulation;
+  padding: 10px 12px; cursor: pointer; min-height: 48px;
 }
-.order-item .txt { flex: 1; }
-.order-item .txt::before { counter-increment: step; content: counter(step) ". "; font-weight: 700; color: var(--accent); }
-.order-item .grip {
-  flex: none; display: flex; align-items: center; justify-content: center;
-  width: 40px; align-self: stretch; font-size: 20px; color: var(--muted);
-  cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
-}
-.order-item .mvs { flex: none; display: flex; flex-direction: column; gap: 4px; }
-.order-item .mv {
-  width: 40px; height: 32px; border: 1px solid var(--line); border-radius: 8px;
-  background: #f6f4f1; color: var(--ink); font-size: 14px; cursor: pointer;
-}
-.order-item.dragging { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 6px 18px rgba(0, 0, 0, .18); }
+.order-list .order-item { cursor: default; }
+.order-list .order-item::before { counter-increment: step; content: counter(step) ". "; font-weight: 700; color: var(--ok); }
 .order-item.ok { border-color: var(--ok); background: var(--ok-soft); }
-.order-item.bad { border-color: var(--bad); background: var(--bad-soft); }
-.order-item.ok .txt::after { content: "  ✓"; color: var(--ok); font-weight: 700; }
-.order-item.bad .txt::after { content: "  ↕ verschieben"; color: var(--bad); font-weight: 700; white-space: nowrap; }
-.order-label { font-size: 14px; color: var(--muted); margin: 4px 0 8px; font-weight: 600; }
+.order-item.nope { animation: nope .6s; }
+@keyframes nope {
+  0%, 100% { transform: none; border-color: var(--bad); background: var(--bad-soft); }
+  20%, 60% { transform: translateX(-6px); border-color: var(--bad); background: var(--bad-soft); }
+  40%, 80% { transform: translateX(6px); border-color: var(--bad); background: var(--bad-soft); }
+}
+.order-msg { min-height: 0; font-size: 15px; font-weight: 600; margin: 0 0 6px; }
+.order-msg.bad { color: var(--bad); }
+.order-msg.done { color: var(--ok); }
+.order-label { font-size: 14px; color: var(--muted); margin: 10px 0 6px; font-weight: 600; }
 
 /* Fehlersuche */
 .sent {

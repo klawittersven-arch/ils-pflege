@@ -68,27 +68,11 @@ const ILS = (() => {
   };
   const nameOk = (vn, nn) => normName(vn).length >= 2 && normName(nn).length === 1;
 
-  // Längste aufsteigende Teilfolge: Wie viele Schritte stehen in der richtigen Reihenfolge?
-  // Liefert die Positionen dieser Schritte – alle anderen müssen noch verschoben werden.
-  const lisPositions = (seq) => {
-    const tails = [], tailPos = [], prev = new Array(seq.length).fill(-1);
-    seq.forEach((x, pos) => {
-      let lo = 0, hi = tails.length;
-      while (lo < hi) { const m = (lo + hi) >> 1; if (tails[m] < x) lo = m + 1; else hi = m; }
-      tails[lo] = x; tailPos[lo] = pos;
-      prev[pos] = lo > 0 ? tailPos[lo - 1] : -1;
-    });
-    const out = new Set();
-    for (let pos = tails.length ? tailPos[tails.length - 1] : -1; pos >= 0; pos = prev[pos]) out.add(pos);
-    return out;
-  };
-  const lis = (seq) => lisPositions(seq).size;
-
   /* ---------- Fragetypen ----------
      mc:     { type:'mc', q, options:[...], correct:i, explain, keep:true (Reihenfolge der Optionen behalten) }
      tf:     { type:'tf', q, correct:true|false, explain }
      select: { type:'select', q, options:[...], correct:i, explain }
-     order:  { type:'order', q, items:[... in richtiger Reihenfolge], explain }  (frei verschiebbar, nach dem Auswerten grün/rot)
+     order:  { type:'order', q, items:[... in richtiger Reihenfolge], explain }  (nur der richtige nächste Schritt wird übernommen)
      errors: { type:'errors', q, sentences:[{ t, wrong:bool, explain }] }
   */
   const renderQuestion = (q, idx) => {
@@ -130,75 +114,44 @@ const ILS = (() => {
         score: () => (sel.value === String(q.correct) ? 1 : 0),
       };
     } else if (q.type === 'order') {
-      // Alle Schritte stehen in einer Liste und lassen sich frei verschieben:
-      // ☰ gedrückt halten und ziehen – oder mit ▲ ▼ schrittweise.
+      // Schritte nacheinander antippen. Übernommen wird nur der richtige nächste Schritt;
+      // ein falscher Schritt bleibt stehen und wird kurz rot markiert.
       const list = el('ol', { class: 'order-list' });
+      const pool = el('div', { class: 'order-pool' });
+      const msg = el('div', { class: 'order-msg', 'aria-live': 'polite' });
       let items = shuffle(q.items.map((t, i) => ({ t, i })));
-      for (let k = 0; k < 50 && lis(items.map((it) => it.i)) > Math.ceil(q.items.length / 2); k++) items = shuffle(items);
-      const changed = () => {
-        list.querySelectorAll('.order-item').forEach((n) => n.classList.remove('ok', 'bad'));
-        fb.className = 'fb'; card.classList.remove('ok', 'bad');
-      };
-      const mk = (it) => {
-        const li = el('li', { class: 'order-item' });
-        li.dataset.i = it.i;
-        const grip = el('span', { class: 'grip', title: 'Gedrückt halten und ziehen', 'aria-hidden': 'true' }, '☰');
-        const up = el('button', { type: 'button', class: 'mv', 'aria-label': 'Schritt nach oben' }, '▲');
-        const down = el('button', { type: 'button', class: 'mv', 'aria-label': 'Schritt nach unten' }, '▼');
-        up.addEventListener('click', () => { if (li.previousElementSibling) { list.insertBefore(li, li.previousElementSibling); changed(); } });
-        down.addEventListener('click', () => { if (li.nextElementSibling) { list.insertBefore(li.nextElementSibling, li); changed(); } });
-        // Ziehen: Die Bewegung wird am Fenster verfolgt (nicht am Griff), weil das Umsortieren im DOM
-        // einen Pointer-Capture aufheben würde. Am Bildschirmrand wird automatisch gescrollt.
-        grip.addEventListener('pointerdown', (e) => {
-          if (e.button !== undefined && e.button > 0) return;
-          e.preventDefault();
-          li.classList.add('dragging');
-          let y = e.clientY, raf = 0;
-          const place = () => {
-            const others = Array.from(list.children).filter((n) => n !== li);
-            const before = others.find((n) => { const r = n.getBoundingClientRect(); return y < r.top + r.height / 2; }) || null;
-            if (before !== li.nextElementSibling) list.insertBefore(li, before);
-          };
-          const tick = () => {
-            const edge = 80;
-            if (y < edge) window.scrollBy(0, -Math.ceil((edge - y) / 4));
-            else if (y > window.innerHeight - edge) window.scrollBy(0, Math.ceil((y - window.innerHeight + edge) / 4));
-            place();
-            raf = requestAnimationFrame(tick);
-          };
-          const move = (ev) => { if (ev.pointerId === e.pointerId) { y = ev.clientY; ev.preventDefault(); } };
-          const end = (ev) => {
-            if (ev.pointerId !== e.pointerId) return;
-            cancelAnimationFrame(raf);
-            place();
-            li.classList.remove('dragging');
-            window.removeEventListener('pointermove', move);
-            window.removeEventListener('pointerup', end);
-            window.removeEventListener('pointercancel', end);
-            changed();
-          };
-          window.addEventListener('pointermove', move, { passive: false });
-          window.addEventListener('pointerup', end);
-          window.addEventListener('pointercancel', end);
-          raf = requestAnimationFrame(tick);
+      for (let k = 0; k < 20 && items.length > 1 && items[0].i === 0; k++) items = shuffle(items);
+      const poolLabel = el('div', { class: 'order-label' }, 'Tippen Sie auf den nächsten Schritt:');
+      let fehlversuche = 0;
+      items.forEach((it) => {
+        const b = el('button', { type: 'button', class: 'order-item' }, it.t);
+        b.addEventListener('click', () => {
+          if (b.parentElement !== pool) return;
+          const next = list.children.length;
+          if (it.i === next) {
+            const li = el('li', { class: 'order-item ok' }, it.t);
+            list.append(li);
+            b.remove();
+            msg.className = 'order-msg';
+            msg.textContent = pool.children.length ? '' : '✓ Alle Schritte stehen in der richtigen Reihenfolge.';
+            if (!pool.children.length) { msg.classList.add('done'); poolLabel.classList.add('hidden'); }
+            fb.className = 'fb'; card.classList.remove('ok', 'bad');
+          } else {
+            fehlversuche++;
+            b.classList.remove('nope'); void b.offsetWidth; b.classList.add('nope');
+            msg.className = 'order-msg bad';
+            msg.textContent = `✗ Das ist nicht Schritt ${next + 1}. Lesen Sie die Schritte noch einmal und wählen Sie einen anderen.`;
+          }
         });
-        li.append(grip, el('span', { class: 'txt' }, it.t), el('span', { class: 'mvs' }, up, down));
-        return li;
-      };
-      items.forEach((it) => list.append(mk(it)));
-      card.append(el('div', { class: 'order-label' }, 'Verschieben: ☰ gedrückt halten und ziehen – oder ▲ ▼ antippen.'), list);
-      const seq = () => Array.from(list.children, (n) => Number(n.dataset.i));
+        pool.append(b);
+      });
+      card.append(el('div', { class: 'order-label' }, 'Ihre Reihenfolge:'), list, msg, poolLabel, pool);
       api = {
         max: q.items.length,
-        answered: () => true,
-        score: () => lis(seq()),
-        detail: (s) => (s === q.items.length
-          ? `Alle ${s} Schritte stehen in der richtigen Reihenfolge.`
-          : `${s} von ${q.items.length} Schritten stehen in der richtigen Reihenfolge (grün). Die rot markierten Schritte müssen an eine andere Stelle.`),
-        mark: () => {
-          const ok = lisPositions(seq());
-          Array.from(list.children).forEach((n, pos) => { n.classList.remove('ok', 'bad'); n.classList.add(ok.has(pos) ? 'ok' : 'bad'); });
-        },
+        answered: () => pool.children.length === 0,
+        score: () => (pool.children.length === 0 ? q.items.length : list.children.length),
+        detail: () => `Alle ${q.items.length} Schritte stehen in der richtigen Reihenfolge` +
+          (fehlversuche ? ` (${fehlversuche} ${fehlversuche === 1 ? 'Fehlversuch' : 'Fehlversuche'}).` : ' – ohne Fehlversuch!'),
       };
     } else if (q.type === 'errors') {
       const btns = q.sentences.map((s) => {
@@ -284,7 +237,6 @@ const ILS = (() => {
         r.card.classList.remove('ok', 'bad');
         r.card.classList.add(full ? 'ok' : 'bad');
         r.card.querySelectorAll('.fb.show:not(:last-child)').forEach((n) => { if (n !== r.fb) n.remove(); });
-        if (r.mark) r.mark();
         let text = r.detail ? r.detail(scores[i]) + ' ' : (full ? '✓ Richtig. ' : '✗ Leider falsch. ');
         if (passed) {
           text += r.q.explain || '';
