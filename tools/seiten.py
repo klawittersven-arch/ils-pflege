@@ -189,10 +189,10 @@ U4 = [
      "explain": "Die Erklärungen zu jedem Fehler stehen direkt unter den Sätzen.",
      "hint": "Abschnitt 3, „Beim Mann ist anders“."},
     {"type": "mc", "section": "Teil B: Fragen zum Video (und zum Infotext)",
-     "q": "Im Video wird die Harnröhrenöffnung mit <b>Kochsalzlösung (NaCl)</b> gereinigt. Was verwenden Sie in Deutschland nach den Hygiene-Empfehlungen (KRINKO)?",
-     "options": ["Ein Schleimhaut-Antiseptikum (z. B. auf Octenidin-Basis) mit Einwirkzeit", "Leitungswasser", "Alkoholisches Hautdesinfektionsmittel", "Nur trockene Tupfer"],
-     "correct": 0, "explain": "In Deutschland wird die Schleimhaut vor dem Legen eines DK mit einem Schleimhaut-Antiseptikum desinfiziert. Alkoholische Mittel sind für Schleimhaut nicht geeignet.",
-     "hint": "Abschnitt 3, Materialliste und Kasten zum Video."},
+     "q": "Womit <b>desinfizieren</b> Sie die Harnröhrenöffnung und die Eichel, bevor Sie einem Mann einen DK legen?",
+     "options": ["Mit einem Schleimhaut-Antiseptikum (z. B. auf Octenidin-Basis) – Einwirkzeit beachten", "Mit Leitungswasser und Seife", "Mit einem alkoholischen Hautdesinfektionsmittel", "Mit trockenen sterilen Tupfern"],
+     "correct": 0, "explain": "Die Schleimhaut wird vor dem Legen eines DK mit einem Schleimhaut-Antiseptikum desinfiziert. Alkoholische Mittel sind für Schleimhaut nicht geeignet.",
+     "hint": "Abschnitt 3, Materialliste."},
     {"type": "mc", "section": "Teil B: Fragen zum Video (und zum Infotext)",
      "q": "Im Video spüren die Pflegenden einen Widerstand. Wo ist das typisch?",
      "options": ["Am äußeren Blasenschließmuskel bzw. an der Prostata", "Direkt an der Harnröhrenöffnung", "Im Ballon", "In der Niere"],
@@ -281,7 +281,6 @@ page("dk/video/index.html", "Video: DK beim Mann legen", "ILS Dauerkatheter · V
 <p><strong>Video:</strong> „Katheterisierung mit Dauerkatheter: Mann“ (ca. 7 Minuten, Deutsch).<br>
 Zwei Pflegefachfrauen aus einer Universitätsklinik in Stockholm (Schweden) zeigen, wie man einem Mann einen DK legt.</p>
 <p><a class="btn block" href="{VIDEO_URL}" target="_blank" rel="noopener">▶ Video auf YouTube öffnen</a></p>
-<p class="small">Tipp: Schalten Sie die Untertitel ein (Zahnrad → Untertitel → Deutsch). Sie können das Video anhalten und zurückspulen.</p>
 </div>
 <h2>Beobachtungsauftrag</h2>
 <div class="card">
@@ -292,16 +291,6 @@ Zwei Pflegefachfrauen aus einer Universitätsklinik in Stockholm (Schweden) zeig
 <li><b>4:16–4:40</b> Vorhaut zurückziehen, Harnröhrenöffnung reinigen</li>
 <li><b>4:54–5:34</b> Gleitmittel mit Lokalanästhetikum einbringen, Einwirkzeit</li>
 <li><b>6:00–6:39</b> Einführen, Widerstand, bis zur Gabelung, Urin fließt, Ballon blocken</li>
-</ul>
-</div>
-<h2>Achtung: In Deutschland ist manches anders</h2>
-<div class="card">
-<p>Das Video kommt aus Schweden und von einem Katheter-Hersteller. Vergleichen Sie mit dem Infotext:</p>
-<ul class="steps">
-<li><b>Reinigung:</b> Im Video wird mit Kochsalzlösung gereinigt. In Deutschland: <b>Schleimhaut-Antiseptikum</b> (z. B. Octenidin) mit Einwirkzeit.</li>
-<li><b>Vorhaut:</b> Im Video sieht man das Ende nicht genau. Denken Sie daran: <b>Vorhaut nach dem Legen wieder nach vorne schieben</b> (Paraphimose!).</li>
-<li><b>Gleitmittel:</b> Menge und Einwirkzeit immer <b>nach Herstellerangabe</b>.</li>
-<li><b>Nicht im Video:</b> Fixierung, Beutel unter Blasenniveau, Dokumentation – siehe Infotext.</li>
 </ul>
 <p>Danach: zurück zum Arbeitsblatt und <b>Übung 4</b> machen.</p>
 </div>

@@ -89,9 +89,10 @@ def build(template, out):
 
     d.h2("5 | Videos")
     d.p("**Aufgenommen:** „Katheterisierung mit Dauerkatheter: Mann“ (Bactiguard, ca. 7 Min.). Realistische Demonstration – ersetzt "
-        "zum Teil die praktische Übung. Die Video-Seite weist auf Abweichungen hin: Reinigung mit NaCl statt Schleimhaut-Antiseptikum "
-        "(in D nach KRINKO: Antiseptikum), Herstellervideo (produktspezifische Hinweise), Vorhaut-Reposition, Fixierung, Beutel und "
-        "Dokumentation nicht gezeigt. Übung 4 enthält 3 Fragen dazu.", size=10)
+        "zum Teil die praktische Übung. Die Video-Seite enthält nur einen Beobachtungsauftrag. Hinweise auf Abweichungen vom deutschen "
+        "Standard wurden bewusst weggelassen (didaktische Reduktion). Zur Information: Im Video wird mit NaCl statt mit "
+        "Schleimhaut-Antiseptikum gereinigt (in D nach KRINKO: Antiseptikum), es ist ein Herstellervideo, Vorhaut-Reposition, Fixierung, "
+        "Beutel und Dokumentation werden nicht gezeigt. Übung 4, Teil B: 2 Fragen zum Video, 1 Frage zur Desinfektion (Infotext).", size=10)
     d.p("**Nicht aufgenommen:** „Katheter | Pflege | Pflege Kanal“. Gründe: kaum Mehrwert gegenüber Abschnitt 1; viele Katheterarten "
         "ohne Bezug zum Thema (Pulmonalarterien-, Pigtail-, Doppel-J-Katheter) – für DaZ-Lernende eher verwirrend; feste Liegezeiten "
         "(Latex 1 Woche, Silikon 4–6 Wochen) statt Herstellerangabe; keine Hygiene, keine Indikationsstellung, keine Durchführung; "

@@ -271,8 +271,8 @@ def build(template, out):
     d.p("**Dokumentation:** Datum und Uhrzeit, Grund/Anordnung, Kathetertyp, Material, Größe (Ch), Blockmenge, Urinmenge und "
         "Aussehen, Besonderheiten (z. B. Widerstand, Schmerzen), Handzeichen.", after=80)
     d.qr_task(qr("video/"), "Video: Den DK bei einem Mann legen (ca. 7 Min.)",
-              ["Pflegefachfrauen aus Schweden zeigen das Legen eines DK beim Mann. Auf der Seite finden Sie einen Beobachtungsauftrag.",
-               "❗ In Deutschland ist manches anders (z. B. Schleimhaut-Antiseptikum statt Kochsalzlösung). Die Seite erklärt es."],
+              ["Pflegefachfrauen aus Schweden zeigen das Legen eines DK beim Mann.",
+               "Auf der Seite finden Sie einen Beobachtungsauftrag."],
               SHORT + "video")
     d.qr_task(qr("4/"), "Arbeitsauftrag 4: Übung 4 – Den DK bei einem Mann legen",
               ["Finden Sie die Fehler, die Pfleger Tim macht. Beantworten Sie 3 Fragen zum Video.",
