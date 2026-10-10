@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 3: Assistenz bei der Anlage</title>
+<link rel="stylesheet" href="../../assets/ils.css">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Suprapubischer Katheter · Übung 3 von 5</div><h1>Übung 3: Assistenz bei der Anlage</h1></div></header>
+<main>
+<div id="app"></div>
+<script>
+document.addEventListener('DOMContentLoaded', () => ILS.quiz({
+  mount: '#app',
+  intro: "<strong>So geht's:</strong> In Teil A ordnen Sie 9 Schritte. Jeder Schritt in der richtigen Reihenfolge gibt 1 Punkt. Teil B hat 4 Fragen. Ab 11 von 13 Punkten bekommen Sie Ihren Baustein.",
+  pass: 0.8,
+  baustein: 'ABAWZBo=',
+  storeKey: 'ils-spk-b3',
+  hint: "Lesen Sie Abschnitt 3 noch einmal. Tippen Sie auf Schritte in Ihrer Liste, um sie zu entfernen.",
+  questions: [
+ {
+  "type": "order",
+  "section": "Teil A: Anlage eines SPK – die richtige Reihenfolge",
+  "q": "Bringen Sie die Schritte in die richtige Reihenfolge. Tippen Sie zuerst auf den ersten Schritt, dann auf den zweiten usw.",
+  "items": [
+   "Ärztin/Arzt klärt auf, Patient unterschreibt die Einwilligung",
+   "Gerinnungswerte prüfen, Gerinnungshemmer nach Anordnung pausieren",
+   "Blase gut füllen (trinken lassen oder Infusion nach Anordnung), nicht mehr zur Toilette gehen",
+   "Haare am Unterbauch kürzen, Patient flach auf den Rücken lagern",
+   "Ärztin/Arzt kontrolliert mit Ultraschall, ob die Blase voll ist",
+   "Hautdesinfektion und örtliche Betäubung durch die Ärztin/den Arzt – Pflege reicht steril an",
+   "Punktion: Katheter einführen, Urin fließt, Ballon blocken oder Katheter annähen",
+   "Ableitungssystem anschließen, steriler Verband mit Schlitzkompresse",
+   "Nachsorge: Vitalzeichen, Urin, Verband und Bauch beobachten, dokumentieren"
+  ],
+  "explain": "So ist die richtige Reihenfolge. Am wichtigsten: Die Blase muss vor der Punktion gut gefüllt sein.",
+  "hint": "Abschnitt 3, „Vorbereitung“ und „So läuft die Anlage ab“."
+ },
+ {
+  "type": "mc",
+  "section": "Teil B: Fragen zur Anlage",
+  "q": "Warum muss die Blase vor der Punktion <b>gut gefüllt</b> sein?",
+  "options": [
+   "Die volle Blase schiebt Bauchfell und Darm nach oben. So wird der Darm nicht verletzt.",
+   "Damit der Urin schneller in den Beutel läuft.",
+   "Damit die Haut besser desinfiziert werden kann.",
+   "Damit der Ballon weniger Flüssigkeit braucht."
+  ],
+  "correct": 0,
+  "explain": "Bei leerer Blase liegt der Darm direkt hinter der Bauchdecke (Abb. 1).",
+  "hint": "Abb. 1 (Abschnitt 1) und Abschnitt 3, „Vorbereitung“."
+ },
+ {
+  "type": "mc",
+  "section": "Teil B: Fragen zur Anlage",
+  "q": "Wer legt einen SPK?",
+  "options": [
+   "Die Ärztin oder der Arzt",
+   "Die Pflegefachperson nach Delegation",
+   "Auszubildende unter Anleitung",
+   "Die Praxisanleitung"
+  ],
+  "correct": 0,
+  "explain": "Die Anlage ist eine Punktion und damit eine ärztliche Aufgabe. Die Pflege bereitet vor, assistiert und übernimmt die Nachsorge.",
+  "hint": "Abschnitt 2, Merke-Kasten."
+ },
+ {
+  "type": "mc",
+  "section": "Teil B: Fragen zur Anlage",
+  "q": "Herr Novak hat seit 2 Stunden einen SPK. Der Urin ist leicht rötlich, ohne Gerinnsel. Er hat keine Schmerzen. Was tun Sie?",
+  "options": [
+   "Das kann am Anfang normal sein. Urin weiter beobachten und dokumentieren.",
+   "Sofort den Katheter entfernen.",
+   "Den Katheter mit Wasser spülen.",
+   "Nichts – Urinfarbe ist unwichtig."
+  ],
+  "correct": 0,
+  "explain": "Leicht blutiger Urin ist nach der Punktion häufig. Wird er stärker, kommen Gerinnsel oder fließt kein Urin mehr: Ärztin/Arzt informieren.",
+  "hint": "Abschnitt 3, „Nachsorge“."
+ },
+ {
+  "type": "mc",
+  "section": "Teil B: Fragen zur Anlage",
+  "q": "Am Abend nach der Anlage hat Herr Novak einen harten, sehr schmerzhaften Bauch und Fieber. Woran denken Sie?",
+  "options": [
+   "An eine Verletzung des Darms mit Bauchfellentzündung – sofort Ärztin/Arzt informieren",
+   "An Blähungen – Tee anbieten",
+   "An Muskelkater – abwarten",
+   "An eine normale Reaktion – nichts tun"
+  ],
+  "correct": 0,
+  "explain": "Ein harter Bauch, starke Schmerzen und Fieber sind Warnzeichen (Peritonitis). Das ist ein Notfall.",
+  "hint": "Abschnitt 3, „Nachsorge“."
+ }
+]
+}));
+</script>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag „Suprapubischer Katheter“ · 3BFP2<br>Diese Seite speichert keine Daten auf einem Server.</footer>
+</main>
+<script src="../../assets/ils.js"></script>
+</body>
+</html>

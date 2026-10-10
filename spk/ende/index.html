@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Abschluss: Quiz und persönliche ID</title>
+<link rel="stylesheet" href="../../assets/ils.css">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Suprapubischer Katheter · Abschluss</div><h1>Abschluss: Quiz und persönliche ID</h1></div></header>
+<main>
+
+<div id="step1">
+  <div class="card intro"><strong>Fast geschafft!</strong> Geben Sie Ihren Namen und Ihre 5 Bausteine ein.
+  Danach machen Sie ein kurzes Abschlussquiz (10 Fragen). Dann bekommen Sie Ihre persönliche ID.</div>
+  <div class="card">
+    <div class="grid2">
+      <div class="field"><label for="vn">Vorname</label><input id="vn" autocomplete="given-name" placeholder="z. B. Lena"></div>
+      <div class="field"><label for="nn">1. Buchstabe Nachname</label><input id="nn" maxlength="1" autocomplete="off" placeholder="z. B. M"></div>
+    </div>
+    <p class="small">Schreiben Sie Ihren Vornamen so, wie Sie ihn auch in der Schule benutzen.</p>
+  </div>
+  <div class="card" id="bs"></div>
+  <p id="msg1" class="fb"></p>
+  <button class="btn block" id="go1" type="button">Weiter zum Abschlussquiz</button>
+</div>
+<div id="step2" class="hidden"><div id="quiz"></div></div>
+<div id="step3" class="hidden">
+  <div class="card">
+    <p><strong>Herzlichen Glückwunsch, <span id="nm"></span>!</strong> Sie haben den ILS-Auftrag abgeschlossen. Ihre persönliche ID:</p>
+    <div class="idbox" id="id"></div>
+    <p>Schreiben Sie die ID auch auf Ihr Arbeitsblatt.</p>
+  </div>
+  <h2>Jetzt die E-Mail schicken</h2>
+  <div class="card">
+    <ol class="steps">
+      <li>An: <b>Sven.Klawitter@Karoline-Breitinger-Schule.de</b></li>
+      <li>Betreff: <span class="subject" id="subj"></span></li>
+      <li>Der Text der E-Mail darf leer bleiben.</li>
+    </ol>
+    <p><a class="btn block" id="mailto" href="#">✉️ E-Mail-Programm öffnen</a></p>
+    <p><button class="btn secondary block" id="copy" type="button">Betreff kopieren</button></p>
+    <p class="small">Funktioniert der Knopf nicht? Dann schreiben Sie die E-Mail selbst (z. B. in Outlook oder im Web-Mail). Wichtig ist nur der Betreff.</p>
+  </div>
+</div>
+<script>
+const CHECKS = ["2c11e79bff4fe6ad3261b19788f09fd2b1570eb12a222c9c70b8bd1c296b0c8c", "3374a08a60af87100a4328e297b4517b1d2c6812575a888cfa50f14f9cf9e471", "bf93c0eed1f3fdb428faf01d2b6d3b8fc60d9c405f0c5767de62caf7bb5bfc8e", "7349bdd4c97ad4892f35433d9d392726130101a1506d303c0b2ae3420734ead4", "4d09b0339eb9c5b0fc20ac8312942a6ff990b2e9342d0618951378be2f630375"];
+const KEYHASH = '7499ae4948326ee4bd73d24f8ef4050e457d5d92ae0bf6ec988ebba0cf268c2a';
+const POOL = [{"type": "mc", "q": "Wo liegt die Einstichstelle eines SPK?", "options": ["Etwa 2 Querfinger über dem Schambein", "Am Nabel", "In der Leiste", "Am Rücken über der Niere"], "correct": 0, "explain": "Suprapubisch = über dem Schambein, in der Mitte."}, {"type": "mc", "q": "Was ist ein Vorteil des SPK gegenüber dem DK?", "options": ["Die Harnröhre wird nicht verletzt und ein Miktionsversuch ist möglich.", "Man braucht keinen Urinbeutel.", "Er wird nie gewechselt.", "Pflegende dürfen ihn selbst legen."], "correct": 0, "explain": "Weitere Vorteile: geringeres Infektionsrisiko, angenehmer für viele Menschen."}, {"type": "mc", "q": "Was ist ein Nachteil des SPK?", "options": ["Die Anlage ist eine Punktion mit Risiken wie Blutung oder Darmverletzung.", "Er verletzt die Harnröhre.", "Er kann nur bei Frauen gelegt werden.", "Man kann damit nicht duschen."], "correct": 0, "explain": "Deshalb gibt es Kontraindikationen und eine sorgfältige Vorbereitung."}, {"type": "mc", "q": "Welche Voraussetzung ist für die Punktion am wichtigsten?", "options": ["Die Blase ist gut gefüllt.", "Der Patient ist nüchtern seit 2 Tagen.", "Die Blase ist ganz leer.", "Der Patient sitzt."], "correct": 0, "explain": "Die volle Blase schiebt Bauchfell und Darm nach oben."}, {"type": "mc", "q": "Welcher Patient sollte <b>keinen</b> SPK bekommen?", "options": ["Ein Patient mit bekanntem Blasentumor", "Ein Patient mit Harnröhrenverletzung", "Eine Patientin, deren Urin für Wochen abgeleitet werden muss", "Ein Patient mit akuter Prostataentzündung und Harnverhalt"], "correct": 0, "explain": "Blasentumor ist eine Kontraindikation."}, {"type": "mc", "q": "Wie desinfizieren Sie die Einstichstelle beim Verbandswechsel?", "options": ["Kreisförmig von innen nach außen", "Kreisförmig von außen nach innen", "Von oben nach unten mit einem Tupfer", "Gar nicht, nur trocken tupfen"], "correct": 0, "explain": "Von der Einstichstelle weg – so gelangen keine Keime hinein."}, {"type": "mc", "q": "Wie wird der SPK nach dem Verbandswechsel fixiert?", "options": ["In einer kleinen Schlaufe, zugfrei und nicht abgeknickt", "Straff ohne Schlaufe", "Gar nicht", "Mit einem Knoten im Schlauch"], "correct": 0, "explain": "Zug reizt die Einstichstelle und kann den Katheter herausziehen."}, {"type": "mc", "q": "Was beobachten Sie an der Einstichstelle?", "options": ["Rötung, Schwellung, Sekret, Urinaustritt, Schmerzen", "Nur die Farbe des Pflasters", "Die Haarfarbe", "Nichts – nur der Urin ist wichtig"], "correct": 0, "explain": "Das sind Zeichen für Infektion oder Probleme mit dem Katheter."}, {"type": "mc", "q": "Was messen Sie beim Miktionsversuch?", "options": ["Die Menge des Spontanurins und den Restharn über den SPK", "Nur den Blutdruck", "Nur das Gewicht", "Die Länge des Katheters"], "correct": 0, "explain": "Restharn = Urin, der nach dem Wasserlassen noch in der Blase ist."}, {"type": "mc", "q": "Der SPK ist herausgerutscht. Warum müssen Sie schnell handeln?", "options": ["Der Kanal (Fistel) kann sich in wenigen Stunden verschließen.", "Der Urinbeutel läuft über.", "Die Haut wird kalt.", "Es ist nicht eilig."], "correct": 0, "explain": "Einstichstelle steril abdecken, sofort Ärztin/Arzt informieren."}, {"type": "mc", "q": "Was ist beim Katheterwechsel besonders wichtig?", "options": ["Den neuen Katheter sofort nach dem Ziehen einführen", "Zwischen Ziehen und Einführen eine Pause machen", "Den Ballon mit NaCl blocken", "Den alten Katheter aufheben und wiederverwenden"], "correct": 0, "explain": "Der Kanal zieht sich schnell zusammen."}, {"type": "mc", "q": "Woran erkennen Sie eine mögliche Darmverletzung nach der Anlage?", "options": ["Harter, sehr schmerzhafter Bauch und Fieber", "Leicht rötlicher Urin in den ersten Stunden", "Durst", "Müdigkeit am Abend"], "correct": 0, "explain": "Warnzeichen einer Bauchfellentzündung: sofort Ärztin/Arzt informieren."}, {"type": "tf", "q": "Einen SPK legt immer die Ärztin oder der Arzt.", "correct": true, "explain": "Die Anlage ist eine Punktion – eine ärztliche Aufgabe."}, {"type": "tf", "q": "Vor der Anlage wird der Unterbauch mit einer Klinge rasiert.", "correct": false, "explain": "Haare werden gekürzt (z. B. mit einem Clipper). Rasieren verletzt die Haut und erhöht das Infektionsrisiko."}, {"type": "tf", "q": "Leicht blutiger Urin in den ersten Stunden nach der Anlage kann normal sein.", "correct": true, "explain": "Beobachten. Wird es stärker oder kommen Gerinnsel: Ärztin/Arzt informieren."}, {"type": "tf", "q": "Beim SPK ist ein Miktionsversuch mit Abklemmen nach Anordnung möglich.", "correct": true, "explain": "Die Harnröhre ist frei – die Person kann selbst Wasser lassen."}, {"type": "tf", "q": "Auch beim SPK hängt der Urinbeutel unter Blasenniveau.", "correct": true, "explain": "Das gilt für jede Harnableitung (ILS 1)."}, {"type": "tf", "q": "Ein Katheterventil darf ohne ärztliche Anordnung verwendet werden.", "correct": false, "explain": "Nur nach ärztlicher Anordnung."}, {"type": "tf", "q": "Nach dem Entfernen des SPK wird die Einstichstelle steril abgedeckt.", "correct": true, "explain": "Sie verschließt sich meist innerhalb von 1–2 Tagen."}, {"type": "tf", "q": "Bei Schmerzen während des Miktionsversuchs wird die Klemme geöffnet.", "correct": true, "explain": "Dann Ärztin/Arzt informieren und dokumentieren."}];
+const MAIL = 'Sven.Klawitter@Karoline-Breitinger-Schule.de';
+document.addEventListener('DOMContentLoaded', () => {
+  const $ = (s) => document.querySelector(s);
+  const bs = $('#bs');
+  bs.append(ILS.el('div', { class: 'q-text' }, 'Ihre Bausteine aus den Übungen 1–5'));
+  const inputs = CHECKS.map((_, i) => {
+    const inp = ILS.el('input', { id: 'b' + (i + 1), autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false' });
+    inp.value = ILS.store.get('ils-spk-b' + (i + 1)) || '';
+    bs.append(ILS.el('div', { class: 'field' }, ILS.el('label', { for: 'b' + (i + 1) }, `Baustein aus Übung ${i + 1}`), inp));
+    return inp;
+  });
+  let words = [], vn = '', nn = '';
+  $('#go1').addEventListener('click', async () => {
+    const msg = $('#msg1');
+    vn = $('#vn').value.trim(); nn = $('#nn').value.trim();
+    if (ILS.normName(vn).length < 2 || ILS.normName(nn).length !== 1) {
+      msg.className = 'fb show bad'; msg.textContent = 'Bitte Vorname und den 1. Buchstaben des Nachnamens eingeben.'; return;
+    }
+    words = inputs.map((x) => ILS.normWord(x.value));
+    const bad = [];
+    for (let i = 0; i < words.length; i++) {
+      const ok = (await ILS.sha256hex(`SPK|${i + 1}|${words[i]}`)) === CHECKS[i];
+      inputs[i].className = ok ? 'ok' : 'bad';
+      if (!ok) bad.push(i + 1);
+    }
+    if (bad.length) {
+      msg.className = 'fb show bad';
+      msg.textContent = `Diese Bausteine stimmen nicht: Übung ${bad.join(', ')}. Prüfen Sie die Schreibweise oder machen Sie die Übung noch einmal.`;
+      return;
+    }
+    msg.className = 'fb';
+    $('#step1').classList.add('hidden');
+    $('#step2').classList.remove('hidden');
+    startQuiz();
+    window.scrollTo(0, 0);
+  });
+
+  function startQuiz() {
+    const qs = ILS.shuffle(POOL).slice(0, 10);
+    ILS.quiz({
+      mount: '#quiz', pass: 0.8, questions: qs,
+      intro: '<strong>Abschlussquiz:</strong> 10 Fragen aus allen Abschnitten. Ab 8 richtigen Antworten bekommen Sie Ihre ID. Wenn es nicht klappt, bekommen Sie neue Fragen.',
+      hint: 'Lesen Sie die Themen im Infotext noch einmal und versuchen Sie es mit neuen Fragen.',
+      onFail: (box) => box.append(ILS.el('button', { class: 'btn secondary block', type: 'button', onclick: () => { startQuiz(); window.scrollTo(0, 0); } }, 'Neue Fragen')),
+      onPass: async (box) => {
+        const key = words.join('-');
+        if ((await ILS.sha256hex(`SPK|KEY|${key}`)) !== KEYHASH) return;
+        const id = await ILS.makeId('SPK', key, vn, nn);
+        const name = `${vn} ${nn.toUpperCase()}.`;
+        const subject = `${name} ${id}`;
+        box.append(ILS.el('button', { class: 'btn block', type: 'button', onclick: () => {
+          $('#step2').classList.add('hidden'); $('#step3').classList.remove('hidden');
+          $('#nm').textContent = vn; $('#id').textContent = id; $('#subj').textContent = subject;
+          $('#mailto').href = `mailto:${MAIL}?subject=${encodeURIComponent(subject)}`;
+          window.scrollTo(0, 0);
+        } }, 'Weiter zu meiner ID'));
+      },
+    });
+  }
+
+  $('#copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText($('#subj').textContent); $('#copy').textContent = 'Kopiert ✓'; }
+    catch (e) { $('#copy').textContent = 'Bitte Betreff abschreiben'; }
+  });
+});
+</script>
+
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag „Suprapubischer Katheter“ · 3BFP2<br>Diese Seite speichert keine Daten auf einem Server.</footer>
+</main>
+<script src="../../assets/ils.js"></script>
+</body>
+</html>

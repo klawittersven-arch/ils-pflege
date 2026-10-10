@@ -35,6 +35,7 @@ class Doc:
         self.next_pic = 5000
         self.next_num = 200
         self.nums = []
+        self.header_replace = {}
         # Bild der Vorlage (Diabetes) entfernen
         rels = (self.work / "word/_rels/document.xml.rels").read_text(encoding="utf-8")
         m = re.search(r'<Relationship Id="rId8"[^>]*Target="(media/[^"]+)"/>', rels)
@@ -274,6 +275,14 @@ class Doc:
         sect = doc.index("<w:sectPr")
         doc = doc[:start] + "".join(self.body) + doc[sect:]
         (w / "word/document.xml").write_text(doc, encoding="utf-8")
+
+        if self.header_replace:
+            h_p = w / "word/header1.xml"
+            h = h_p.read_text(encoding="utf-8")
+            for old, new in self.header_replace.items():
+                assert old in h, old
+                h = h.replace(old, new)
+            h_p.write_text(h, encoding="utf-8")
 
         rels_p = w / "word/_rels/document.xml.rels"
         rels = rels_p.read_text(encoding="utf-8").replace("</Relationships>", "".join(self.rels) + "</Relationships>")

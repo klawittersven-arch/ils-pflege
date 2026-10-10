@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 4: Verbandswechsel und Pflege</title>
+<link rel="stylesheet" href="../../assets/ils.css">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Suprapubischer Katheter · Übung 4 von 5</div><h1>Übung 4: Verbandswechsel und Pflege</h1></div></header>
+<main>
+<div id="app"></div>
+<script>
+document.addEventListener('DOMContentLoaded', () => ILS.quiz({
+  mount: '#app',
+  intro: "<strong>So geht's:</strong> In Teil A finden Sie Fehler in einer Geschichte. Für jeden richtig beurteilten Satz gibt es 1 Punkt. Teil B hat 3 Fragen. Ab 13 von 16 Punkten bekommen Sie Ihren Baustein.",
+  pass: 0.8,
+  baustein: 'AA4WYAQJ',
+  storeKey: 'ils-spk-b4',
+  hint: "Lesen Sie Abschnitt 4 noch einmal, besonders „Verbandswechsel Schritt für Schritt“.",
+  questions: [
+ {
+  "type": "errors",
+  "section": "Teil A: Fehlersuche – Pflegerin Mia macht bei Frau Weber einen Verbandswechsel",
+  "q": "Frau Weber hat seit 2 Jahren einen SPK. Mia arbeitet beim ambulanten Pflegedienst. <b>Tippen Sie auf jeden Satz, in dem Mia einen Fehler macht.</b>",
+  "sentences": [
+   {
+    "t": "Mia erklärt Frau Weber, was sie jetzt macht.",
+    "wrong": false
+   },
+   {
+    "t": "Sie desinfiziert die Hände und zieht unsterile Handschuhe an.",
+    "wrong": false
+   },
+   {
+    "t": "Sie zieht den alten Verband mit einem Ruck ab. Den Katheter hält sie dabei nicht fest.",
+    "wrong": true,
+    "explain": "Den Katheter immer festhalten und den Verband vorsichtig lösen. Sonst zieht man am Katheter."
+   },
+   {
+    "t": "Sie schaut sich den alten Verband an: Er ist trocken und sauber.",
+    "wrong": false
+   },
+   {
+    "t": "Sie zieht die Handschuhe aus und desinfiziert die Hände.",
+    "wrong": false
+   },
+   {
+    "t": "Sie beurteilt die Einstichstelle: Ist sie gerötet oder geschwollen? Gibt es Sekret oder tritt Urin aus?",
+    "wrong": false
+   },
+   {
+    "t": "Sie desinfiziert die Haut kreisförmig von außen nach innen zur Einstichstelle hin.",
+    "wrong": true,
+    "explain": "Richtig ist: von innen nach außen – von der Einstichstelle weg. Sonst wischt man Keime zur Einstichstelle."
+   },
+   {
+    "t": "Sie wartet die Einwirkzeit des Antiseptikums ab.",
+    "wrong": false
+   },
+   {
+    "t": "Sie legt mit einer sterilen Pinzette eine sterile Schlitzkompresse um den Katheter.",
+    "wrong": false
+   },
+   {
+    "t": "Sie fixiert den Katheter straff und ohne Schlaufe, damit er nicht wackelt.",
+    "wrong": true,
+    "explain": "Der Katheter wird in einer kleinen Schlaufe zugfrei fixiert. Straffer Zug reizt die Einstichstelle und kann den Katheter herausziehen."
+   },
+   {
+    "t": "Den Urinbeutel legt sie neben Frau Webers Bauch auf das Bett.",
+    "wrong": true,
+    "explain": "Der Beutel muss unter Blasenniveau hängen (ILS 1). Sonst fließt Urin zurück in die Blase."
+   },
+   {
+    "t": "Sie dokumentiert Datum, Zustand der Einstichstelle und den Verband.",
+    "wrong": false
+   },
+   {
+    "t": "Frau Weber fragt, ob sie duschen darf. Mia sagt: „Nie, solange Sie einen Katheter haben.“",
+    "wrong": true,
+    "explain": "Ist die Einstichstelle abgeheilt und reizlos, ist Duschen meist erlaubt (Hausstandard). Danach Verband wechseln."
+   }
+  ],
+  "explain": "Die Erklärungen zu jedem Fehler stehen direkt unter den Sätzen.",
+  "hint": "Abschnitt 4, „Verbandswechsel Schritt für Schritt“."
+ },
+ {
+  "type": "mc",
+  "section": "Teil B: Pflege bei liegendem SPK",
+  "q": "Die Einstichstelle bei Frau Weber ist heute gerötet, geschwollen und es kommt gelbliches Sekret. Was tun Sie?",
+  "options": [
+   "Beobachtungen dokumentieren, Ärztin/Arzt informieren, steril verbinden",
+   "Den Katheter selbst herausziehen",
+   "Eine Salbe aus dem Badezimmer auftragen",
+   "Nichts – das ist normal"
+  ],
+  "correct": 0,
+  "explain": "Das sind Zeichen einer Infektion der Einstichstelle. Die Ärztin oder der Arzt entscheidet über die Behandlung.",
+  "hint": "Abschnitt 4, „Beobachtung der Einstichstelle“."
+ },
+ {
+  "type": "mc",
+  "section": "Teil B: Pflege bei liegendem SPK",
+  "q": "Beim <b>Katheterwechsel</b> ist besonders wichtig:",
+  "options": [
+   "Den neuen Katheter sofort einführen, weil sich der Kanal schnell verkleinert",
+   "Nach dem Ziehen eine Stunde warten, damit die Stelle sich erholt",
+   "Den alten Katheter abwaschen und wieder verwenden",
+   "Den Ballon mit Luft blocken"
+  ],
+  "correct": 0,
+  "explain": "Der Fistelkanal zieht sich schnell zusammen. Deshalb liegt alles bereit und der neue Katheter wird sofort eingeführt.",
+  "hint": "Abschnitt 4, „Katheterwechsel“."
+ },
+ {
+  "type": "mc",
+  "section": "Teil B: Pflege bei liegendem SPK",
+  "q": "Was ist richtig zum <b>Katheterventil</b> (statt Urinbeutel)?",
+  "options": [
+   "Das Ventil wird regelmäßig geöffnet, z. B. alle 3–4 Stunden. Dazwischen füllt sich die Blase – das trainiert sie.",
+   "Das Ventil bleibt immer offen.",
+   "Ein Ventil braucht keine ärztliche Anordnung.",
+   "Mit Ventil darf man nicht aus dem Bett aufstehen."
+  ],
+  "correct": 0,
+  "explain": "Das Ventil gibt es nur nach ärztlicher Anordnung. Die Person muss es bedienen können und die Blase muss die Füllung vertragen.",
+  "hint": "Abschnitt 4, „Katheterventil“."
+ }
+]
+}));
+</script>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag „Suprapubischer Katheter“ · 3BFP2<br>Diese Seite speichert keine Daten auf einem Server.</footer>
+</main>
+<script src="../../assets/ils.js"></script>
+</body>
+</html>

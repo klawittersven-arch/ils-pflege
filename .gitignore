@@ -4,3 +4,5 @@ _lehrkraft/
 tools/build_ab/
 tools/build_lk/
 __pycache__/
+tools/build_ab_spk/
+tools/build_lk_spk/
