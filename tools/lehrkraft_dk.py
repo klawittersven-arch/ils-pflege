@@ -55,7 +55,7 @@ def build(template, out):
 
     d.h2("3 | Ablauf und Bestehensgrenzen")
     d.table(["Übung", "Aufgaben", "Bestanden ab"], [
-        ["1", "5 × Beschriftung Katheter, 5 × Multiple Choice (Ch, Länge, Material, Ableitungssystem)", "8 / 10"],
+        ["1", "5 × Beschriftung Katheter (12 Auswahlmöglichkeiten), 5 × Multiple Choice (Ch, Länge, Katheterauswahl, Ableitungssystem)", "10 / 10"],
         ["2", "10 Fallentscheidungen: indiziert / Alternative / Kontraindikation", "8 / 10"],
         ["3", "10 Schritte ordnen (Frau) + 4 Fragen", "12 / 14"],
         ["4", "Fehlersuche: 13 Sätze (6 Fehler) + 3 Fragen zum Video", "13 / 16"],

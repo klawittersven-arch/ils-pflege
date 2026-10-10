@@ -255,8 +255,8 @@ U5 += [
 
 uebung(1, "Übung 1: Katheter und Material",
        "<strong>So geht's:</strong> Beantworten Sie alle Aufgaben. Tippen Sie dann unten auf „Auswerten“. "
-       "Ab 8 von 10 Punkten bekommen Sie Ihren Baustein.", U1,
-       "Lesen Sie Abschnitt 1 noch einmal. Ändern Sie dann die rot markierten Antworten und werten Sie erneut aus.")
+       "Den Baustein bekommen Sie nur, wenn <strong>alle 10 Aufgaben richtig</strong> sind.", U1,
+       "Lesen Sie Abschnitt 1 noch einmal. Ändern Sie dann die rot markierten Antworten und werten Sie erneut aus.", pass_ratio=1.0)
 uebung(2, "Übung 2: Braucht diese Person einen DK?",
        "<strong>So geht's:</strong> Lesen Sie jeden Fall. Entscheiden Sie: Ist ein DK sinnvoll? Gibt es eine bessere Alternative? "
        "Oder ist ein DK sogar gefährlich (Kontraindikation)? Ab 8 von 10 Punkten bekommen Sie Ihren Baustein.", U2,

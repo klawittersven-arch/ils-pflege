@@ -35,7 +35,7 @@ def build(template, out):
             "Sie brauchen: dieses Arbeitsblatt, einen Stift und ein Smartphone oder Tablet mit Internet.",
             "Lesen Sie die Abschnitte der Reihe nach. **Fachwörter** erklärt das Glossar am Ende.",
             "Nach jedem Abschnitt scannen Sie den **QR-Code** und machen die Übung.",
-            "Haben Sie mindestens 80 % richtig, bekommen Sie ein **Lösungswort (Baustein)**. Schreiben Sie es in das Kästchen ✍️.",
+            "Haben Sie genug Aufgaben richtig (Übung 1: alle, sonst mindestens 80 %), bekommen Sie ein **Lösungswort (Baustein)**. Schreiben Sie es in das Kästchen ✍️.",
             "Am Ende geben Sie alle 5 Bausteine ein, machen ein kurzes Abschlussquiz und bekommen Ihre **persönliche ID**.",
             f"Sie schicken die ID per E-Mail an **{MAIL}**. So sehe ich, dass Sie den Auftrag bearbeitet haben.",
         ], "decimal")
@@ -140,7 +140,7 @@ def build(template, out):
     d.image(PNG / "ableitung.png", 14.5, "Abb. 2: Geschlossenes Urinableitungssystem am Bett", descr="Patient im Bett mit Urinbeutel unter Blasenniveau")
     d.qr_task(qr("1/"), "Arbeitsauftrag 1: Übung 1 – Katheter und Material",
               ["Scannen Sie den QR-Code. Beschriften Sie den Katheter und beantworten Sie die Fragen.",
-               "Ab 8 von 10 Punkten bekommen Sie Baustein 1."], SHORT + "1", 1)
+               "Nur wenn **alle 10 Aufgaben richtig** sind, bekommen Sie Baustein 1."], SHORT + "1", 1, grenze="Nur bei 100 % richtig")
 
     # ================================================================ 2
     d.h2("2 | Indikation: Braucht dieser Mensch wirklich einen DK?")

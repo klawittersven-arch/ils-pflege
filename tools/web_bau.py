@@ -72,14 +72,14 @@ class Thema:
     def page(self, path, title, kicker, body, depth=2):
         page(path, title, kicker, body, depth, footer_thema=self.titel)
 
-    def uebung(self, nr, title, intro, questions, hint):
+    def uebung(self, nr, title, intro, questions, hint, pass_ratio=0.8):
         data = json.dumps(questions, ensure_ascii=False, indent=1)
         body = f"""<div id="app"></div>
 <script>
 document.addEventListener('DOMContentLoaded', () => ILS.quiz({{
   mount: '#app',
   intro: {json.dumps(intro, ensure_ascii=False)},
-  pass: 0.8,
+  pass: {pass_ratio},
   baustein: '{enc(self.bausteine[nr - 1])}',
   storeKey: 'ils-{self.slug}-b{nr}',
   hint: {json.dumps(hint, ensure_ascii=False)},
