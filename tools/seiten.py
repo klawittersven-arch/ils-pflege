@@ -137,7 +137,7 @@ U2_FAELLE = [
     ("Frau Krüger (85) ist harninkontinent. Im Nachtdienst ist wenig Personal da. Eine Kollegin sagt: „Ein DK wäre einfacher.“", 1,
      "Inkontinenz allein oder Personalmangel sind keine Indikation. Alternativen: Inkontinenzmaterial, Toilettengänge, Toilettentraining."),
     ("Herr Meier (34) hatte einen Motorradunfall mit Beckenbruch. An der Harnröhrenöffnung ist Blut.", 2,
-     "Blut an der Harnröhrenöffnung nach einem Beckentrauma kann eine Harnröhrenverletzung bedeuten. Kein transurethraler DK! Die Ärztin oder der Arzt entscheidet (z. B. suprapubischer Katheter)."),
+     "Blut an der Harnröhrenöffnung nach einem Beckentrauma kann eine Harnröhrenverletzung bedeuten. Kein transurethraler DK! Die Ärztin oder der Arzt entscheidet über das weitere Vorgehen."),
     ("Frau Sommer (58) liegt im Schock auf der Intensivstation. Die Urinmenge soll jede Stunde gemessen werden.", 0,
      "Eine genaue, stündliche Bilanz bei schwer kranken Menschen ist eine Indikation (mit Urimeter)."),
     ("Von Frau Lang (79) braucht man eine sterile Urinprobe. Sie kann keinen Mittelstrahlurin abgeben.", 1,
@@ -352,7 +352,7 @@ Zwei Pflegefachfrauen aus einer Universitätsklinik in Stockholm (Schweden) zeig
 
 # ---------------------------------------------------------------- Abschluss
 POOL = [
-    {"type": "mc", "q": "Was bedeutet <b>transurethral</b>?", "options": ["durch die Harnröhre", "durch die Bauchdecke", "durch die Niere", "durch den After"], "correct": 0, "explain": "trans = durch, Urethra = Harnröhre."},
+    {"type": "mc", "q": "Was bedeutet <b>transurethral</b>?", "options": ["durch die Harnröhre", "durch die Speiseröhre", "durch die Niere", "durch den After"], "correct": 0, "explain": "trans = durch, Urethra = Harnröhre."},
     {"type": "mc", "q": "Wer ordnet einen DK an?", "options": ["Die Ärztin oder der Arzt", "Die Praxisanleitung", "Der Patient selbst", "Die Stationsleitung"], "correct": 0, "explain": "Der DK ist eine ärztlich angeordnete Maßnahme. Die Durchführung kann an Pflegefachpersonen delegiert werden."},
     {"type": "mc", "q": "Welche Komplikation eines DK ist am häufigsten?", "options": ["Harnwegsinfektion", "Allergie gegen Silikon", "Nierenversagen", "Thrombose"], "correct": 0, "explain": "Katheterassoziierte Harnwegsinfektionen gehören zu den häufigsten Infektionen im Krankenhaus."},
     {"type": "mc", "q": "Ein Katheter hat 18 Ch. Wie groß ist der Außendurchmesser?", "options": ["6 mm", "18 mm", "3 mm", "9 mm"], "correct": 0, "explain": "18 : 3 = 6 mm."},

@@ -85,8 +85,7 @@ def build(template, out):
     d.p("An der Spitze hat der DK einen kleinen **Ballon**. In der Blase füllen Sie den Ballon mit Flüssigkeit. Das nennt man "
         "**blocken**. Jetzt kann der Katheter nicht mehr herausrutschen.", before=60)
     d.p("**Andere Katheter:** Ein **Einmalkatheter** wird sofort wieder entfernt (z. B. für eine sterile Urinprobe oder bei "
-        "Harnverhalt). Ein **suprapubischer Katheter (SPK)** geht durch die Bauchdecke über dem Schambein in die Blase – ihn legt "
-        "die Ärztin oder der Arzt. Ein **Spülkatheter** hat 3 Kanäle; über den dritten Kanal kann die Blase gespült werden "
+        "Harnverhalt). Ein **Spülkatheter** hat 3 Kanäle; über den dritten Kanal kann die Blase gespült werden "
         "(z. B. nach Operationen an Prostata oder Blase).", before=60)
     d.image(PNG / "katheter-beschriftet.png", 15.5, "Abb. 1: Aufbau eines Ballonkatheters (2-Wege-Katheter). Rechts oben: Querschnitt mit großem Kanal (Urin) und kleinem Kanal (Ballon).",
             descr="Schema eines Ballonkatheters")
@@ -172,7 +171,7 @@ def build(template, out):
             ["Verdacht auf **Verletzung der Harnröhre** (z. B. Blut an der Harnröhrenöffnung nach Beckentrauma)",
              "akute **Entzündung** von Harnröhre, Prostata oder Nebenhoden",
              "bekannte Engstelle der Harnröhre (Striktur): nur ärztlich",
-             "→ Kein DK durch die Pflege. **Ärztin oder Arzt informieren** (ggf. suprapubischer Katheter)."],
+             "→ Kein DK durch die Pflege. **Ärztin oder Arzt informieren**."],
         ]],
         [3020, 3020, 3020], size=9.5,
     )
@@ -180,7 +179,6 @@ def build(template, out):
     d.bullets([
         "**Einmalkatheterismus** (intermittierend, auch als Selbstkatheterismus): geringeres Infektionsrisiko.",
         "**Kondomurinal** beim Mann, **Inkontinenzmaterial**, regelmäßige Toilettengänge, Toilettentraining.",
-        "**Suprapubischer Katheter**, wenn Urin längere Zeit abgeleitet werden muss (Entscheidung der Ärztin/des Arztes).",
     ])
     d.h3("Mögliche Komplikationen")
     d.table(
@@ -399,7 +397,6 @@ def build(template, out):
         ("Restharn", "Urin, der nach dem Wasserlassen noch in der Blase ist"),
         ("Schleimhaut", "feuchte Haut im Inneren des Körpers, z. B. in der Harnröhre"),
         ("steril", "frei von allen lebenden Keimen"),
-        ("suprapubisch", "über dem Schambein (durch die Bauchdecke)"),
         ("Symphyse", "Schambeinfuge, vorne am Becken"),
         ("transurethral", "durch die Harnröhre"),
         ("Urosepsis", "Blutvergiftung, die von den Harnwegen ausgeht; lebensgefährlich"),

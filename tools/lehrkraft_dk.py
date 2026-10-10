@@ -65,6 +65,9 @@ def build(template, out):
     d.p("Bei „nicht bestanden“ sehen die SuS nur, welche Aufgaben falsch sind, plus einen Tipp zum Abschnitt im Infotext – nicht die "
         "richtige Lösung. Nach dem Bestehen werden alle Erklärungen angezeigt.", size=10)
 
+    d.p("**Abgrenzung:** Der suprapubische Katheter (Cystofix) ist bewusst ausgespart – er ist Thema des folgenden ILS-Auftrags. "
+        "Bei Kontraindikationen heißt es deshalb nur „Ärztin oder Arzt informieren“.", size=10, before=60)
+
     d.h2("4 | Fachlich mit Pflegias abgleichen")
     d.p("Diese Punkte werden in Lehrbüchern und Hausstandards unterschiedlich gehandhabt. Bitte kurz mit Pflegias vergleichen; "
         "Änderungen kann ich schnell einarbeiten:", after=40)
