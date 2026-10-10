@@ -30,8 +30,17 @@ def bausteine(prefix):
     return json.loads((ROOT / "tools/bausteine.json").read_text(encoding="utf-8"))[prefix]
 
 
+def asset_version():
+    """Kurzer Hash von CSS und JS – erzwingt nach Änderungen das Neuladen im Browser (kein alter Cache)."""
+    h = hashlib.sha256()
+    for name in ("ils.css", "ils.js"):
+        h.update((ROOT / "assets" / name).read_bytes())
+    return h.hexdigest()[:8]
+
+
 def page(path, title, kicker, body, depth=2, footer_thema=""):
     up = "../" * depth
+    v = asset_version()
     html = f"""<!doctype html>
 <html lang="de">
 <head>
@@ -39,7 +48,7 @@ def page(path, title, kicker, body, depth=2, footer_thema=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>{title}</title>
-<link rel="stylesheet" href="{up}assets/ils.css">
+<link rel="stylesheet" href="{up}assets/ils.css?v={v}">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">{kicker}</div><h1>{title}</h1></div></header>
@@ -47,7 +56,7 @@ def page(path, title, kicker, body, depth=2, footer_thema=""):
 {body}
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag „{footer_thema}“ · 3BFP2<br>Diese Seite speichert keine Daten auf einem Server.</footer>
 </main>
-<script src="{up}assets/ils.js"></script>
+<script src="{up}assets/ils.js?v={v}"></script>
 </body>
 </html>
 """

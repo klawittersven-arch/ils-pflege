@@ -82,7 +82,7 @@ U2 = [{"type": "mc", "keep": True, "q": f, "options": CATS, "correct": c, "expla
 # ---------------------------------------------------------------- Übung 3
 U3 = [
     {"type": "order", "section": "Teil A: Anlage eines SPK – die richtige Reihenfolge",
-     "q": "Bringen Sie die Schritte in die richtige Reihenfolge. Tippen Sie zuerst auf den ersten Schritt, dann auf den zweiten usw.",
+     "q": "Bringen Sie die Schritte in die richtige Reihenfolge. Der erste Schritt gehört ganz nach oben.",
      "items": [
          "Ärztin/Arzt klärt auf, Patient unterschreibt die Einwilligung",
          "Gerinnungswerte prüfen, Gerinnungshemmer nach Anordnung pausieren",
@@ -225,7 +225,7 @@ T.uebung(2, "Übung 2: Ist ein SPK sinnvoll?",
 T.uebung(3, "Übung 3: Assistenz bei der Anlage",
          "<strong>So geht's:</strong> In Teil A ordnen Sie 9 Schritte. Jeder Schritt in der richtigen Reihenfolge gibt 1 Punkt. "
          "Teil B hat 4 Fragen. Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U3,
-         "Lesen Sie Abschnitt 3 noch einmal. Tippen Sie auf Schritte in Ihrer Liste, um sie zu entfernen.")
+         "Lesen Sie Abschnitt 3 noch einmal. Verschieben Sie die rot markierten Schritte an die richtige Stelle.")
 T.uebung(4, "Übung 4: Verbandswechsel und Pflege",
          "<strong>So geht's:</strong> In Teil A finden Sie Fehler in einer Geschichte. Für jeden richtig beurteilten Satz gibt es 1 Punkt. "
          "Teil B hat 3 Fragen. Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U4,
