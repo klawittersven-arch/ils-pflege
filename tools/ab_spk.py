@@ -244,7 +244,7 @@ def build(template, out):
         "delegiert werden. Es wird aseptisch gearbeitet. ❗ Alles liegt bereit: Der neue Katheter wird **sofort** nach dem Ziehen des "
         "alten eingeführt, weil sich der Kanal schnell zusammenzieht.", after=60)
     d.qr_task(qr("4/"), "Arbeitsauftrag 4: Übung 4 – Verbandswechsel und Pflege",
-              ["Finden Sie die Fehler, die Pflegerin Mia beim Verbandswechsel macht. Dazu 3 Fragen.",
+              ["Finden Sie die 5 Fehler, die Pflegerin Mia beim Verbandswechsel macht. Dazu 3 Fragen.",
                "Nur wenn **alle Aufgaben richtig** sind, bekommen Sie Baustein 4."], SHORT + "4", 4)
 
     # ================================================================ 5
