@@ -44,13 +44,15 @@ def build(template, out):
 
     d.h2("3 | Ablauf und Bestehensgrenzen")
     d.table(["Übung", "Aufgaben", "Bestanden ab"], [
-        ["1", "7 × „nur DK / nur SPK / beide“, 4 Grundlagenfragen (suprapubisch, Cystofix, Infektionsrisiko, Fistel)", "9 / 11"],
-        ["2", "10 Fälle: SPK sinnvoll / andere Lösung / Kontraindikation", "8 / 10"],
-        ["3", "9 Schritte der Anlage ordnen + 4 Fragen (gefüllte Blase, wer legt, Hämaturie, Peritonitis)", "11 / 13"],
-        ["4", "Fehlersuche Verbandswechsel: 13 Sätze (5 Fehler) + 3 Fragen (Infektion, Wechsel, Ventil)", "13 / 16"],
-        ["5", "8 × richtig/falsch + 4 Fallfragen (Restharn, Entfernung, Dislokation, Verstopfung)", "10 / 12"],
+        ["1", "7 × „nur DK / nur SPK / beide“, 4 Grundlagenfragen (suprapubisch, Cystofix, Infektionsrisiko, Fistel)", "11 / 11"],
+        ["2", "10 Fälle: SPK sinnvoll / andere Lösung / Kontraindikation", "10 / 10"],
+        ["3", "9 Schritte der Anlage ordnen + 4 Fragen (gefüllte Blase, wer legt, Hämaturie, Peritonitis)", "13 / 13"],
+        ["4", "Fehlersuche Verbandswechsel: 13 Sätze (5 Fehler) + 3 Fragen (Infektion, Wechsel, Ventil)", "16 / 16"],
+        ["5", "8 × richtig/falsch + 4 Fallfragen (Restharn, Entfernung, Dislokation, Verstopfung)", "12 / 12"],
         ["Abschluss", "10 Zufallsfragen aus einem Pool von 20", "8 / 10"],
     ], [1300, 6260, 1500], size=9.5)
+
+    d.p("Alle Übungen verlangen 100 % (alle Aufgaben richtig). Das Abschlussquiz bleibt bei 8 von 10 (neue Zufallsfragen bei jedem Versuch).", size=10)
 
     d.h2("4 | Aufbau auf ILS 1 (DK)")
     d.p("Nicht erneut erklärt, nur als Wiederholungskasten genannt: Katheteraufbau, Charrière, Material, Blocken/Entblocken, "

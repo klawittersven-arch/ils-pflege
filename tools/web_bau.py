@@ -72,7 +72,7 @@ class Thema:
     def page(self, path, title, kicker, body, depth=2):
         page(path, title, kicker, body, depth, footer_thema=self.titel)
 
-    def uebung(self, nr, title, intro, questions, hint, pass_ratio=0.8):
+    def uebung(self, nr, title, intro, questions, hint, pass_ratio=1.0):
         data = json.dumps(questions, ensure_ascii=False, indent=1)
         body = f"""<div id="app"></div>
 <script>

@@ -37,7 +37,7 @@ def build(template, out):
             "Dieser ILS-Auftrag baut auf dem ILS-Auftrag **„Transurethraler Dauerkatheter (DK)“** auf. Legen Sie das Arbeitsblatt dazu bereit.",
             "Sie brauchen: dieses Arbeitsblatt, einen Stift und ein Smartphone oder Tablet mit Internet.",
             "Lesen Sie die Abschnitte der Reihe nach. **Fachwörter** erklärt das Glossar am Ende.",
-            "Nach jedem Abschnitt scannen Sie den **QR-Code** und machen die Übung. Ab 80 % richtig bekommen Sie einen **Baustein** ✍️.",
+            "Nach jedem Abschnitt scannen Sie den **QR-Code** und machen die Übung. Sind **alle Aufgaben richtig**, bekommen Sie einen **Baustein** ✍️.",
             "Am Ende geben Sie alle 5 Bausteine ein, machen das Abschlussquiz und bekommen Ihre **persönliche ID**.",
             f"Sie schicken die ID per E-Mail an **{MAIL}**.",
         ], "decimal")
@@ -122,7 +122,7 @@ def build(template, out):
     )
     d.qr_task(qr("1/"), "Arbeitsauftrag 1: Übung 1 – SPK: Grundlagen und Vergleich",
               ["Gilt eine Aussage nur für den DK, nur für den SPK oder für beide? Dazu 4 Fragen.",
-               "Ab 9 von 11 Punkten bekommen Sie Baustein 1."], SHORT + "1", 1)
+               "Nur wenn **alle Aufgaben richtig** sind, bekommen Sie Baustein 1."], SHORT + "1", 1)
 
     # ================================================================ 2
     d.h2("2 | Indikationen und Kontraindikationen")
@@ -152,7 +152,7 @@ def build(template, out):
     d.p("Für eine einzelne Urinprobe oder bei Inkontinenz allein ist ein SPK – genau wie ein DK – **nicht** angezeigt (siehe ILS 1).", after=60)
     d.qr_task(qr("2/"), "Arbeitsauftrag 2: Übung 2 – Ist ein SPK sinnvoll?",
               ["Entscheiden Sie bei 10 Fällen: SPK sinnvoll? Andere Lösung besser? Kontraindikation?",
-               "Ab 8 von 10 Punkten bekommen Sie Baustein 2."], SHORT + "2", 2)
+               "Nur wenn **alle Aufgaben richtig** sind, bekommen Sie Baustein 2."], SHORT + "2", 2)
 
     # ================================================================ 3
     d.h2("3 | Assistenz bei der Anlage")
@@ -199,7 +199,7 @@ def build(template, out):
     ])
     d.qr_task(qr("3/"), "Arbeitsauftrag 3: Übung 3 – Assistenz bei der Anlage",
               ["Bringen Sie 9 Schritte in die richtige Reihenfolge und beantworten Sie 4 Fragen.",
-               "Ab 11 von 13 Punkten bekommen Sie Baustein 3."], SHORT + "3", 3)
+               "Nur wenn **alle Aufgaben richtig** sind, bekommen Sie Baustein 3."], SHORT + "3", 3)
 
     # ================================================================ 4
     d.h2("4 | Pflege bei liegendem SPK")
@@ -244,7 +244,7 @@ def build(template, out):
         "alten eingeführt, weil sich der Kanal schnell zusammenzieht.", after=60)
     d.qr_task(qr("4/"), "Arbeitsauftrag 4: Übung 4 – Verbandswechsel und Pflege",
               ["Finden Sie die Fehler, die Pflegerin Mia beim Verbandswechsel macht. Dazu 3 Fragen.",
-               "Ab 13 von 16 Punkten bekommen Sie Baustein 4."], SHORT + "4", 4)
+               "Nur wenn **alle Aufgaben richtig** sind, bekommen Sie Baustein 4."], SHORT + "4", 4)
 
     # ================================================================ 5
     d.h2("5 | Miktionsversuch, Komplikationen und Entfernung")
@@ -286,7 +286,7 @@ def build(template, out):
         "bei Bedarf wechseln. Die Person soll regelmäßig zur Toilette gehen, damit die Blase nicht zu voll wird. Spontanmiktion beobachten (wie in ILS 1).", after=80)
     d.qr_task(qr("5/"), "Arbeitsauftrag 5: Übung 5 – Miktionsversuch, Komplikationen, Entfernung",
               ["8 Aussagen: richtig oder falsch? Dazu 4 Fragen zu Herrn Novak und Frau Weber.",
-               "Ab 10 von 12 Punkten bekommen Sie Baustein 5."], SHORT + "5", 5)
+               "Nur wenn **alle Aufgaben richtig** sind, bekommen Sie Baustein 5."], SHORT + "5", 5)
 
     # ================================================================ Abschluss
     d.h2("Abschluss: Quiz und persönliche ID")

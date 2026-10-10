@@ -256,23 +256,23 @@ U5 += [
 uebung(1, "Übung 1: Katheter und Material",
        "<strong>So geht's:</strong> Beantworten Sie alle Aufgaben. Tippen Sie dann unten auf „Auswerten“. "
        "Den Baustein bekommen Sie nur, wenn <strong>alle 10 Aufgaben richtig</strong> sind.", U1,
-       "Lesen Sie Abschnitt 1 noch einmal. Ändern Sie dann die rot markierten Antworten und werten Sie erneut aus.", pass_ratio=1.0)
+       "Lesen Sie Abschnitt 1 noch einmal. Ändern Sie dann die rot markierten Antworten und werten Sie erneut aus.")
 uebung(2, "Übung 2: Braucht diese Person einen DK?",
        "<strong>So geht's:</strong> Lesen Sie jeden Fall. Entscheiden Sie: Ist ein DK sinnvoll? Gibt es eine bessere Alternative? "
-       "Oder ist ein DK sogar gefährlich (Kontraindikation)? Ab 8 von 10 Punkten bekommen Sie Ihren Baustein.", U2,
+       "Oder ist ein DK sogar gefährlich (Kontraindikation)? Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U2,
        "Lesen Sie Abschnitt 2 noch einmal, besonders die Tabelle. Ändern Sie dann die rot markierten Antworten.")
 uebung(3, "Übung 3: Den DK bei einer Frau legen",
        "<strong>So geht's:</strong> In Teil A ordnen Sie 10 Schritte. Jeder Schritt in der richtigen Reihenfolge gibt 1 Punkt. "
-       "Teil B hat 4 Fragen. Ab 12 von 14 Punkten bekommen Sie Ihren Baustein.", U3,
+       "Teil B hat 4 Fragen. Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U3,
        "Lesen Sie in Abschnitt 3 die Schritte „Durchführung bei der Frau“ noch einmal. Tippen Sie auf Schritte in Ihrer Liste, um sie zu entfernen.")
 uebung(4, "Übung 4: Den DK bei einem Mann legen",
        "<strong>So geht's:</strong> Schauen Sie zuerst das Video an (QR-Code auf dem Arbeitsblatt). "
        "In Teil A finden Sie Fehler in einer Geschichte. Für jeden richtig beurteilten Satz gibt es 1 Punkt. "
-       "Teil B hat 3 Fragen. Ab 13 von 16 Punkten bekommen Sie Ihren Baustein.", U4,
+       "Teil B hat 3 Fragen. Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U4,
        "Lesen Sie in Abschnitt 3 „Beim Mann ist anders“ noch einmal. Prüfen Sie jeden Satz der Geschichte Schritt für Schritt.")
 uebung(5, "Übung 5: Pflege, Beobachtung und Entfernung",
        "<strong>So geht's:</strong> 12 Aussagen (richtig oder falsch) und 2 Fragen zu Fällen. "
-       "Ab 12 von 14 Punkten bekommen Sie Ihren Baustein.", U5,
+       "Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U5,
        "Lesen Sie Abschnitt 4 und 5 noch einmal. Ändern Sie dann die rot markierten Antworten.")
 
 # ---------------------------------------------------------------- Video

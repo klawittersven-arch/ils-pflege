@@ -252,7 +252,7 @@ class Doc:
     def lernziel(self, text):
         self.add(self.p_xml(f"🎯 **Lernziel:** {text}", before=0, after=60))
 
-    def qr_task(self, qr_png, title, lines, url_text, baustein_nr=None, grenze="Ab 80 % richtig"):
+    def qr_task(self, qr_png, title, lines, url_text, baustein_nr=None, grenze="Nur bei 100 % richtig"):
         left = f'<w:p>{self.ppr(0, 0, align="center")}{self.image_run(qr_png, 2.9, descr=url_text)}</w:p>'
         mid = self.p_xml(f"📱 {title}", bold=True, after=40, keep=True)
         mid += "".join(self.p_xml(l, size=10, after=20) for l in lines)

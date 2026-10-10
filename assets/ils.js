@@ -222,7 +222,9 @@ const ILS = (() => {
         if (cfg.onPass) cfg.onPass(result);
       } else {
         result.append(
-          el('p', {}, `Für den Baustein brauchen Sie mindestens ${Math.ceil((cfg.pass ?? 0.8) * max)} Punkte.`),
+          el('p', {}, (cfg.pass ?? 0.8) >= 1
+            ? `Für den Baustein müssen alle Aufgaben richtig sein (${max} von ${max} Punkten).`
+            : `Für den Baustein brauchen Sie mindestens ${Math.ceil((cfg.pass ?? 0.8) * max)} Punkte.`),
           el('p', { class: 'small' }, cfg.hint || 'Lesen Sie die rot markierten Themen im Infotext noch einmal. Ändern Sie dann Ihre Antworten und tippen Sie erneut auf „Auswerten“.'));
         if (cfg.onFail) cfg.onFail(result);
         const firstBad = qs.find((r, i) => scores[i] < r.max);

@@ -35,7 +35,7 @@ def build(template, out):
             "Sie brauchen: dieses Arbeitsblatt, einen Stift und ein Smartphone oder Tablet mit Internet.",
             "Lesen Sie die Abschnitte der Reihe nach. **Fachwörter** erklärt das Glossar am Ende.",
             "Nach jedem Abschnitt scannen Sie den **QR-Code** und machen die Übung.",
-            "Haben Sie genug Aufgaben richtig (Übung 1: alle, sonst mindestens 80 %), bekommen Sie ein **Lösungswort (Baustein)**. Schreiben Sie es in das Kästchen ✍️.",
+            "Sind **alle Aufgaben** einer Übung **richtig**, bekommen Sie ein **Lösungswort (Baustein)**. Schreiben Sie es in das Kästchen ✍️.",
             "Am Ende geben Sie alle 5 Bausteine ein, machen ein kurzes Abschlussquiz und bekommen Ihre **persönliche ID**.",
             f"Sie schicken die ID per E-Mail an **{MAIL}**. So sehe ich, dass Sie den Auftrag bearbeitet haben.",
         ], "decimal")
@@ -140,7 +140,7 @@ def build(template, out):
     d.image(PNG / "ableitung.png", 14.5, "Abb. 2: Geschlossenes Urinableitungssystem am Bett", descr="Patient im Bett mit Urinbeutel unter Blasenniveau")
     d.qr_task(qr("1/"), "Arbeitsauftrag 1: Übung 1 – Katheter und Material",
               ["Scannen Sie den QR-Code. Beschriften Sie den Katheter und beantworten Sie die Fragen.",
-               "Nur wenn **alle 10 Aufgaben richtig** sind, bekommen Sie Baustein 1."], SHORT + "1", 1, grenze="Nur bei 100 % richtig")
+               "Nur wenn **alle 10 Aufgaben richtig** sind, bekommen Sie Baustein 1."], SHORT + "1", 1)
 
     # ================================================================ 2
     d.h2("2 | Indikation: Braucht dieser Mensch wirklich einen DK?")
@@ -194,7 +194,7 @@ def build(template, out):
     )
     d.qr_task(qr("2/"), "Arbeitsauftrag 2: Übung 2 – Braucht diese Person einen DK?",
               ["Entscheiden Sie bei 10 Fällen: DK sinnvoll? Alternative? Kontraindikation?",
-               "Ab 8 von 10 Punkten bekommen Sie Baustein 2."], SHORT + "2", 2)
+               "Nur wenn **alle Aufgaben richtig** sind, bekommen Sie Baustein 2."], SHORT + "2", 2)
 
     # ================================================================ 3
     d.h2("3 | Vorbereitung und Durchführung")
@@ -244,7 +244,7 @@ def build(template, out):
     d.p("❗ **Katheter in der Scheide?** Den Katheter liegen lassen (als Orientierung). Mit einem **neuen, sterilen Katheter** neu beginnen.", after=60)
     d.qr_task(qr("3/"), "Arbeitsauftrag 3: Übung 3 – Den DK bei einer Frau legen",
               ["Bringen Sie 10 Schritte in die richtige Reihenfolge und beantworten Sie 4 Fragen.",
-               "Ab 12 von 14 Punkten bekommen Sie Baustein 3."], SHORT + "3", 3)
+               "Nur wenn **alle Aufgaben richtig** sind, bekommen Sie Baustein 3."], SHORT + "3", 3)
 
     d.h3("Beim Mann ist anders")
     d.p("Die Harnröhre des Mannes ist **20–25 cm** lang. Sie hat **2 Krümmungen** und **Engstellen** (Prostata, Schließmuskel). "
@@ -274,7 +274,7 @@ def build(template, out):
               SHORT + "video")
     d.qr_task(qr("4/"), "Arbeitsauftrag 4: Übung 4 – Den DK bei einem Mann legen",
               ["Finden Sie die Fehler, die Pfleger Tim macht. Beantworten Sie 3 Fragen zum Video.",
-               "Ab 13 von 16 Punkten bekommen Sie Baustein 4."], SHORT + "4", 4)
+               "Nur wenn **alle Aufgaben richtig** sind, bekommen Sie Baustein 4."], SHORT + "4", 4)
 
     # ================================================================ 4
     d.h2("4 | Pflege bei liegendem DK")
@@ -335,7 +335,7 @@ def build(template, out):
     ])
     d.qr_task(qr("5/"), "Arbeitsauftrag 5: Übung 5 – Pflege, Beobachtung und Entfernung",
               ["12 Aussagen: richtig oder falsch? Dazu 2 Fragen zu Frau Brandt und Herrn Novak.",
-               "Ab 12 von 14 Punkten bekommen Sie Baustein 5."], SHORT + "5", 5)
+               "Nur wenn **alle Aufgaben richtig** sind, bekommen Sie Baustein 5."], SHORT + "5", 5)
 
     # ================================================================ Abschluss
     d.h2("Abschluss: Quiz und persönliche ID")

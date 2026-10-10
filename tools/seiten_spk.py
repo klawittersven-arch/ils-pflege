@@ -216,23 +216,23 @@ U5 += [
 
 T.uebung(1, "Übung 1: SPK – Grundlagen und Vergleich",
          "<strong>So geht's:</strong> Teil A: Gilt die Aussage nur für den DK, nur für den SPK oder für beide? Teil B: 4 Fragen. "
-         "Ab 9 von 11 Punkten bekommen Sie Ihren Baustein.", U1,
+         "Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U1,
          "Lesen Sie Abschnitt 1 noch einmal, besonders die Vergleichstabelle. Ändern Sie dann die rot markierten Antworten.")
 T.uebung(2, "Übung 2: Ist ein SPK sinnvoll?",
          "<strong>So geht's:</strong> Lesen Sie jeden Fall. Entscheiden Sie: Ist ein SPK sinnvoll? Ist eine andere Lösung besser? "
-         "Oder ist ein SPK gefährlich (Kontraindikation)? Ab 8 von 10 Punkten bekommen Sie Ihren Baustein.", U2,
+         "Oder ist ein SPK gefährlich (Kontraindikation)? Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U2,
          "Lesen Sie Abschnitt 2 noch einmal, besonders die Tabelle. Ändern Sie dann die rot markierten Antworten.")
 T.uebung(3, "Übung 3: Assistenz bei der Anlage",
          "<strong>So geht's:</strong> In Teil A ordnen Sie 9 Schritte. Jeder Schritt in der richtigen Reihenfolge gibt 1 Punkt. "
-         "Teil B hat 4 Fragen. Ab 11 von 13 Punkten bekommen Sie Ihren Baustein.", U3,
+         "Teil B hat 4 Fragen. Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U3,
          "Lesen Sie Abschnitt 3 noch einmal. Tippen Sie auf Schritte in Ihrer Liste, um sie zu entfernen.")
 T.uebung(4, "Übung 4: Verbandswechsel und Pflege",
          "<strong>So geht's:</strong> In Teil A finden Sie Fehler in einer Geschichte. Für jeden richtig beurteilten Satz gibt es 1 Punkt. "
-         "Teil B hat 3 Fragen. Ab 13 von 16 Punkten bekommen Sie Ihren Baustein.", U4,
+         "Teil B hat 3 Fragen. Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U4,
          "Lesen Sie Abschnitt 4 noch einmal, besonders „Verbandswechsel Schritt für Schritt“.")
 T.uebung(5, "Übung 5: Miktionsversuch, Komplikationen, Entfernung",
          "<strong>So geht's:</strong> 8 Aussagen (richtig oder falsch) und 4 Fragen zu Fällen. "
-         "Ab 10 von 12 Punkten bekommen Sie Ihren Baustein.", U5,
+         "Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U5,
          "Lesen Sie Abschnitt 5 noch einmal. Ändern Sie dann die rot markierten Antworten.")
 
 # ---------------------------------------------------------------- Abschluss

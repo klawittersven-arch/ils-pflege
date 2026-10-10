@@ -56,12 +56,13 @@ def build(template, out):
     d.h2("3 | Ablauf und Bestehensgrenzen")
     d.table(["Übung", "Aufgaben", "Bestanden ab"], [
         ["1", "5 × Beschriftung Katheter (12 Auswahlmöglichkeiten), 5 × Multiple Choice (Ch, Länge, Katheterauswahl, Ableitungssystem)", "10 / 10"],
-        ["2", "10 Fallentscheidungen: indiziert / Alternative / Kontraindikation", "8 / 10"],
-        ["3", "10 Schritte ordnen (Frau) + 4 Fragen", "12 / 14"],
-        ["4", "Fehlersuche: 13 Sätze (6 Fehler) + 3 Fragen zum Video", "13 / 16"],
-        ["5", "12 × richtig/falsch + 2 Fallfragen (Frau Brandt, Herr Novak)", "12 / 14"],
+        ["2", "10 Fallentscheidungen: indiziert / Alternative / Kontraindikation", "10 / 10"],
+        ["3", "10 Schritte ordnen (Frau) + 4 Fragen", "14 / 14"],
+        ["4", "Fehlersuche: 13 Sätze (6 Fehler) + 3 Fragen zum Video", "16 / 16"],
+        ["5", "12 × richtig/falsch + 2 Fallfragen (Frau Brandt, Herr Novak)", "14 / 14"],
         ["Abschluss", "10 Zufallsfragen aus einem Pool von 20", "8 / 10"],
     ], [1300, 6260, 1500], size=9.5)
+    d.p("Alle Übungen verlangen 100 % (alle Aufgaben richtig). Das Abschlussquiz bleibt bei 8 von 10, weil dort bei jedem Versuch neue Zufallsfragen kommen.", size=10)
     d.p("Bei „nicht bestanden“ sehen die SuS nur, welche Aufgaben falsch sind, plus einen Tipp zum Abschnitt im Infotext – nicht die "
         "richtige Lösung. Nach dem Bestehen werden alle Erklärungen angezeigt.", size=10)
 
