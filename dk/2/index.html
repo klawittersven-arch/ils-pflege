@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 2: Braucht diese Person einen DK?</title>
+<link rel="stylesheet" href="../../assets/ils.css">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Dauerkatheter · Übung 2 von 5</div><h1>Übung 2: Braucht diese Person einen DK?</h1></div></header>
+<main>
+<div id="app"></div>
+<script>
+document.addEventListener('DOMContentLoaded', () => ILS.quiz({
+  mount: '#app',
+  intro: "<strong>So geht's:</strong> Lesen Sie jeden Fall. Entscheiden Sie: Ist ein DK sinnvoll? Gibt es eine bessere Alternative? Oder ist ein DK sogar gefährlich (Kontraindikation)? Ab 8 von 10 Punkten bekommen Sie Ihren Baustein.",
+  pass: 0.8,
+  baustein: 'DBAGYw0=',
+  storeKey: 'ils-dk-b2',
+  hint: "Lesen Sie Abschnitt 2 noch einmal, besonders die Tabelle. Ändern Sie dann die rot markierten Antworten.",
+  questions: [
+ {
+  "type": "mc",
+  "keep": true,
+  "q": "Herr Novak (72) kann seit 10 Stunden kein Wasser lassen. Der Blasenscanner zeigt 900 ml. Die Ärztin vermutet eine vergrößerte Prostata.",
+  "options": [
+   "DK ist sinnvoll (indiziert)",
+   "Kein DK – es gibt eine bessere Alternative",
+   "Kein DK – Kontraindikation: Ärztin/Arzt informieren"
+  ],
+  "correct": 0,
+  "explain": "Akuter Harnverhalt ist eine klassische Indikation. Der DK leitet den Urin sicher ab.",
+  "hint": "Abschnitt 2, Tabelle „Indikationen – keine Indikation – Kontraindikationen“."
+ },
+ {
+  "type": "mc",
+  "keep": true,
+  "q": "Frau Krüger (85) ist harninkontinent. Im Nachtdienst ist wenig Personal da. Eine Kollegin sagt: „Ein DK wäre einfacher.“",
+  "options": [
+   "DK ist sinnvoll (indiziert)",
+   "Kein DK – es gibt eine bessere Alternative",
+   "Kein DK – Kontraindikation: Ärztin/Arzt informieren"
+  ],
+  "correct": 1,
+  "explain": "Inkontinenz allein oder Personalmangel sind keine Indikation. Alternativen: Inkontinenzmaterial, Toilettengänge, Toilettentraining.",
+  "hint": "Abschnitt 2, Tabelle „Indikationen – keine Indikation – Kontraindikationen“."
+ },
+ {
+  "type": "mc",
+  "keep": true,
+  "q": "Herr Meier (34) hatte einen Motorradunfall mit Beckenbruch. An der Harnröhrenöffnung ist Blut.",
+  "options": [
+   "DK ist sinnvoll (indiziert)",
+   "Kein DK – es gibt eine bessere Alternative",
+   "Kein DK – Kontraindikation: Ärztin/Arzt informieren"
+  ],
+  "correct": 2,
+  "explain": "Blut an der Harnröhrenöffnung nach einem Beckentrauma kann eine Harnröhrenverletzung bedeuten. Kein transurethraler DK! Die Ärztin oder der Arzt entscheidet (z. B. suprapubischer Katheter).",
+  "hint": "Abschnitt 2, Tabelle „Indikationen – keine Indikation – Kontraindikationen“."
+ },
+ {
+  "type": "mc",
+  "keep": true,
+  "q": "Frau Sommer (58) liegt im Schock auf der Intensivstation. Die Urinmenge soll jede Stunde gemessen werden.",
+  "options": [
+   "DK ist sinnvoll (indiziert)",
+   "Kein DK – es gibt eine bessere Alternative",
+   "Kein DK – Kontraindikation: Ärztin/Arzt informieren"
+  ],
+  "correct": 0,
+  "explain": "Eine genaue, stündliche Bilanz bei schwer kranken Menschen ist eine Indikation (mit Urimeter).",
+  "hint": "Abschnitt 2, Tabelle „Indikationen – keine Indikation – Kontraindikationen“."
+ },
+ {
+  "type": "mc",
+  "keep": true,
+  "q": "Von Frau Lang (79) braucht man eine sterile Urinprobe. Sie kann keinen Mittelstrahlurin abgeben.",
+  "options": [
+   "DK ist sinnvoll (indiziert)",
+   "Kein DK – es gibt eine bessere Alternative",
+   "Kein DK – Kontraindikation: Ärztin/Arzt informieren"
+  ],
+  "correct": 1,
+  "explain": "Für eine einzelne Urinprobe reicht ein Einmalkatheter. Ein DK wäre ein unnötiges Infektionsrisiko.",
+  "hint": "Abschnitt 2, Tabelle „Indikationen – keine Indikation – Kontraindikationen“."
+ },
+ {
+  "type": "mc",
+  "keep": true,
+  "q": "Herr Peters (81) ist in der letzten Lebensphase. Jede Bewegung tut ihm sehr weh. Er wünscht sich einen Katheter.",
+  "options": [
+   "DK ist sinnvoll (indiziert)",
+   "Kein DK – es gibt eine bessere Alternative",
+   "Kein DK – Kontraindikation: Ärztin/Arzt informieren"
+  ],
+  "correct": 0,
+  "explain": "In der Palliativpflege kann ein DK auf Wunsch der Person den Komfort verbessern.",
+  "hint": "Abschnitt 2, Tabelle „Indikationen – keine Indikation – Kontraindikationen“."
+ },
+ {
+  "type": "mc",
+  "keep": true,
+  "q": "Bei Frau Tran (66) soll geprüft werden, ob nach dem Wasserlassen noch Urin in der Blase ist (Restharn).",
+  "options": [
+   "DK ist sinnvoll (indiziert)",
+   "Kein DK – es gibt eine bessere Alternative",
+   "Kein DK – Kontraindikation: Ärztin/Arzt informieren"
+  ],
+  "correct": 1,
+  "explain": "Restharn misst man mit dem Blasenscanner oder mit einem Einmalkatheter – nicht mit einem DK.",
+  "hint": "Abschnitt 2, Tabelle „Indikationen – keine Indikation – Kontraindikationen“."
+ },
+ {
+  "type": "mc",
+  "keep": true,
+  "q": "Frau Brandt (81) hat einen Dekubitus Kategorie 4 am Kreuzbein. Sie ist inkontinent. Die Wunde wird immer wieder mit Urin verschmutzt.",
+  "options": [
+   "DK ist sinnvoll (indiziert)",
+   "Kein DK – es gibt eine bessere Alternative",
+   "Kein DK – Kontraindikation: Ärztin/Arzt informieren"
+  ],
+  "correct": 0,
+  "explain": "Bei Inkontinenz und einer offenen Wunde im Gesäß- oder Intimbereich kann ein DK die Wundheilung unterstützen.",
+  "hint": "Abschnitt 2, Tabelle „Indikationen – keine Indikation – Kontraindikationen“."
+ },
+ {
+  "type": "mc",
+  "keep": true,
+  "q": "Herr Roth (55) hat eine akute Prostataentzündung mit Fieber.",
+  "options": [
+   "DK ist sinnvoll (indiziert)",
+   "Kein DK – es gibt eine bessere Alternative",
+   "Kein DK – Kontraindikation: Ärztin/Arzt informieren"
+  ],
+  "correct": 2,
+  "explain": "Bei einer akuten Entzündung von Prostata oder Harnröhre ist ein transurethraler DK kontraindiziert. Ärztin oder Arzt informieren.",
+  "hint": "Abschnitt 2, Tabelle „Indikationen – keine Indikation – Kontraindikationen“."
+ },
+ {
+  "type": "mc",
+  "keep": true,
+  "q": "Herr Jung (30) hatte vor 3 Tagen eine Knie-OP. Er läuft auf dem Flur. Der DK aus dem OP liegt noch.",
+  "options": [
+   "DK ist sinnvoll (indiziert)",
+   "Kein DK – es gibt eine bessere Alternative",
+   "Kein DK – Kontraindikation: Ärztin/Arzt informieren"
+  ],
+  "correct": 1,
+  "explain": "Der DK ist nicht mehr nötig. Jeder Tag mit DK erhöht das Infektionsrisiko. Die Entfernung bei der Ärztin oder beim Arzt ansprechen.",
+  "hint": "Abschnitt 2, Tabelle „Indikationen – keine Indikation – Kontraindikationen“."
+ }
+]
+}));
+</script>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag „Transurethraler Dauerkatheter“ · 3BFP2<br>Diese Seite speichert keine Daten auf einem Server.</footer>
+</main>
+<script src="../../assets/ils.js"></script>
+</body>
+</html>

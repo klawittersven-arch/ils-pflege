@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Abschluss: Quiz und persönliche ID</title>
+<link rel="stylesheet" href="../../assets/ils.css">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Dauerkatheter · Abschluss</div><h1>Abschluss: Quiz und persönliche ID</h1></div></header>
+<main>
+
+<div id="step1">
+  <div class="card intro"><strong>Fast geschafft!</strong> Geben Sie Ihren Namen und Ihre 5 Bausteine ein.
+  Danach machen Sie ein kurzes Abschlussquiz (10 Fragen). Dann bekommen Sie Ihre persönliche ID.</div>
+  <div class="card">
+    <div class="grid2">
+      <div class="field"><label for="vn">Vorname</label><input id="vn" autocomplete="given-name" placeholder="z. B. Lena"></div>
+      <div class="field"><label for="nn">1. Buchstabe Nachname</label><input id="nn" maxlength="1" autocomplete="off" placeholder="z. B. M"></div>
+    </div>
+    <p class="small">Schreiben Sie Ihren Vornamen so, wie Sie ihn auch in der Schule benutzen.</p>
+  </div>
+  <div class="card" id="bs"></div>
+  <p id="msg1" class="fb"></p>
+  <button class="btn block" id="go1" type="button">Weiter zum Abschlussquiz</button>
+</div>
+<div id="step2" class="hidden"><div id="quiz"></div></div>
+<div id="step3" class="hidden">
+  <div class="card">
+    <p><strong>Herzlichen Glückwunsch, <span id="nm"></span>!</strong> Sie haben den ILS-Auftrag abgeschlossen. Ihre persönliche ID:</p>
+    <div class="idbox" id="id"></div>
+    <p>Schreiben Sie die ID auch auf Ihr Arbeitsblatt.</p>
+  </div>
+  <h2>Jetzt die E-Mail schicken</h2>
+  <div class="card">
+    <ol class="steps">
+      <li>An: <b>Sven.Klawitter@Karoline-Breitinger-Schule.de</b></li>
+      <li>Betreff: <span class="subject" id="subj"></span></li>
+      <li>Der Text der E-Mail darf leer bleiben.</li>
+    </ol>
+    <p><a class="btn block" id="mailto" href="#">✉️ E-Mail-Programm öffnen</a></p>
+    <p><button class="btn secondary block" id="copy" type="button">Betreff kopieren</button></p>
+    <p class="small">Funktioniert der Knopf nicht? Dann schreiben Sie die E-Mail selbst (z. B. in Outlook oder im Web-Mail). Wichtig ist nur der Betreff.</p>
+  </div>
+</div>
+<script>
+const CHECKS = ["b2a8530189352ec13ce671fa49edf1d80039c818ac8df1aa08ffc3ab90661249", "0767b27bafbf50bef25a54e67c941ad469649bd71c28d291bffbd112cf6116ef", "4deeee999137c41b5531fa4767f713561728ab3d1e754d532433032db3a844e3", "e1845e7850c6ca0bb62be56e1300ae3d7cb0babfca21a56c5aecedab2fae2cda", "6bbcd05e3ed3de04d1b2fd657a1d20f9e778eeb60691a04e311b165e01b1ebe8"];
+const KEYHASH = '666ce802906c6b94e915f4e95db55cfcbb33526f4ff0c50badc91ec24751a1e2';
+const POOL = [{"type": "mc", "q": "Was bedeutet <b>transurethral</b>?", "options": ["durch die Harnröhre", "durch die Bauchdecke", "durch die Niere", "durch den After"], "correct": 0, "explain": "trans = durch, Urethra = Harnröhre."}, {"type": "mc", "q": "Wer ordnet einen DK an?", "options": ["Die Ärztin oder der Arzt", "Die Praxisanleitung", "Der Patient selbst", "Die Stationsleitung"], "correct": 0, "explain": "Der DK ist eine ärztlich angeordnete Maßnahme. Die Durchführung kann an Pflegefachpersonen delegiert werden."}, {"type": "mc", "q": "Welche Komplikation eines DK ist am häufigsten?", "options": ["Harnwegsinfektion", "Allergie gegen Silikon", "Nierenversagen", "Thrombose"], "correct": 0, "explain": "Katheterassoziierte Harnwegsinfektionen gehören zu den häufigsten Infektionen im Krankenhaus."}, {"type": "mc", "q": "Ein Katheter hat 18 Ch. Wie groß ist der Außendurchmesser?", "options": ["6 mm", "18 mm", "3 mm", "9 mm"], "correct": 0, "explain": "18 : 3 = 6 mm."}, {"type": "mc", "q": "Wie desinfizieren Sie bei der Frau?", "options": ["Von oben nach unten (Richtung Anus), für jeden Wisch ein neuer Tupfer", "Von unten nach oben mit einem Tupfer", "Kreisförmig von außen nach innen", "Gar nicht, nur waschen"], "correct": 0, "explain": "So werden keine Keime vom Anus zur Harnröhrenöffnung gewischt."}, {"type": "mc", "q": "Was ist eine <b>Paraphimose</b>?", "options": ["Die zurückgeschobene Vorhaut schnürt die Eichel ein (Schwellung).", "Eine Entzündung der Blase", "Ein verstopfter Katheter", "Eine Verletzung der Scheide"], "correct": 0, "explain": "Deshalb die Vorhaut nach dem Katheterisieren immer wieder nach vorne schieben."}, {"type": "mc", "q": "Warum bekommt ein Mann Gleitmittel mit Lokalanästhetikum?", "options": ["Die lange Harnröhre wird betäubt und gleitfähig. Das senkt Schmerzen und Verletzungen.", "Es desinfiziert die Blase.", "Es ersetzt die sterilen Handschuhe.", "Es füllt den Ballon."], "correct": 0, "explain": "Einwirkzeit nach Herstellerangabe abwarten."}, {"type": "mc", "q": "Wo hängt der Urinbeutel richtig?", "options": ["Unter Blasenniveau, ohne Bodenkontakt", "Auf dem Boden", "Auf dem Bauch der Patientin", "Über Blasenniveau am Infusionsständer"], "correct": 0, "explain": "Kein Rückfluss in die Blase, keine Keime vom Boden."}, {"type": "mc", "q": "Welche Person braucht <b>keinen</b> DK?", "options": ["Eine Bewohnerin, die nur inkontinent ist", "Ein Patient mit akutem Harnverhalt", "Eine Patientin im Schock mit stündlicher Bilanz", "Ein Palliativpatient, der es wünscht, weil jede Bewegung schmerzt"], "correct": 0, "explain": "Inkontinenz allein ist keine Indikation."}, {"type": "mc", "q": "Wie gelangen Bakterien bei einem DK in die Blase?", "options": ["Außen am Katheter entlang und innen durch den Katheter", "Nur über das Blut", "Nur über die Luft im Zimmer", "Gar nicht, der Katheter ist steril"], "correct": 0, "explain": "Deshalb: Intimpflege (außen) und geschlossenes System, kein Rückfluss (innen)."}, {"type": "mc", "q": "Was dokumentieren Sie nach dem Legen eines DK <b>nicht</b> unbedingt?", "options": ["Die Farbe des Lochtuchs", "Kathetergröße (Ch) und Material", "Blockmenge", "Urinmenge und Aussehen"], "correct": 0, "explain": "Wichtig sind: Datum/Uhrzeit, Kathetertyp, Größe, Material, Blockmenge, Urin, Besonderheiten, Handzeichen."}, {"type": "mc", "q": "Ein Patient hat seit dem Morgen keinen DK mehr. Es ist 16 Uhr. Er hat noch nicht uriniert und hat Bauchschmerzen. Was tun Sie?", "options": ["Blasenscanner/Ärztin oder Arzt: Verdacht auf Harnverhalt", "Abwarten bis morgen", "Ihm weniger zu trinken geben", "Sofort einen neuen DK legen, ohne Anordnung"], "correct": 0, "explain": "Nach der Entfernung die Spontanmiktion beobachten. Bei Problemen Restharn prüfen und ärztlich abklären."}, {"type": "tf", "q": "Der Ballon wird geblockt, sobald die Katheterspitze in der Harnröhre ist.", "correct": false, "explain": "Erst blocken, wenn Urin fließt und der Katheter noch weiter vorgeschoben wurde."}, {"type": "tf", "q": "Beim Mann wird der Katheter fast bis zur Gabelung eingeführt, bevor geblockt wird.", "correct": true, "explain": "So liegt der Ballon sicher in der Blase."}, {"type": "tf", "q": "Silikonkatheter eignen sich für eine längere Liegedauer.", "correct": true, "explain": "Latex nur kurz; Silikon länger (Herstellerangabe)."}, {"type": "tf", "q": "Der Ballon wird mit NaCl 0,9 % geblockt.", "correct": false, "explain": "Aqua dest. oder Glycerinlösung nach Herstellerangabe."}, {"type": "tf", "q": "Bei Blut an der Harnröhrenöffnung nach einem Beckentrauma legen Pflegende keinen transurethralen DK.", "correct": true, "explain": "Verdacht auf Harnröhrenverletzung: Kontraindikation."}, {"type": "tf", "q": "Ein Einmalkatheter hat ein geringeres Infektionsrisiko als ein Dauerkatheter.", "correct": true, "explain": "Er liegt nur kurz – deshalb ist er oft die bessere Alternative."}, {"type": "tf", "q": "Zum Leeren des Beutels öffnet man die Verbindung zwischen Katheter und Beutel.", "correct": false, "explain": "Geleert wird nur über das Ablassventil."}, {"type": "tf", "q": "Ein DK bleibt so kurz wie möglich liegen.", "correct": true, "explain": "Jeder Tag erhöht das Infektionsrisiko."}];
+const MAIL = 'Sven.Klawitter@Karoline-Breitinger-Schule.de';
+document.addEventListener('DOMContentLoaded', () => {
+  const $ = (s) => document.querySelector(s);
+  const bs = $('#bs');
+  bs.append(ILS.el('div', { class: 'q-text' }, 'Ihre Bausteine aus den Übungen 1–5'));
+  const inputs = CHECKS.map((_, i) => {
+    const inp = ILS.el('input', { id: 'b' + (i + 1), autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false' });
+    inp.value = ILS.store.get('ils-dk-b' + (i + 1)) || '';
+    bs.append(ILS.el('div', { class: 'field' }, ILS.el('label', { for: 'b' + (i + 1) }, `Baustein aus Übung ${i + 1}`), inp));
+    return inp;
+  });
+  let words = [], vn = '', nn = '';
+  $('#go1').addEventListener('click', async () => {
+    const msg = $('#msg1');
+    vn = $('#vn').value.trim(); nn = $('#nn').value.trim();
+    if (ILS.normName(vn).length < 2 || ILS.normName(nn).length !== 1) {
+      msg.className = 'fb show bad'; msg.textContent = 'Bitte Vorname und den 1. Buchstaben des Nachnamens eingeben.'; return;
+    }
+    words = inputs.map((x) => ILS.normWord(x.value));
+    const bad = [];
+    for (let i = 0; i < words.length; i++) {
+      const ok = (await ILS.sha256hex(`DK|${i + 1}|${words[i]}`)) === CHECKS[i];
+      inputs[i].className = ok ? 'ok' : 'bad';
+      if (!ok) bad.push(i + 1);
+    }
+    if (bad.length) {
+      msg.className = 'fb show bad';
+      msg.textContent = `Diese Bausteine stimmen nicht: Übung ${bad.join(', ')}. Prüfen Sie die Schreibweise oder machen Sie die Übung noch einmal.`;
+      return;
+    }
+    msg.className = 'fb';
+    $('#step1').classList.add('hidden');
+    $('#step2').classList.remove('hidden');
+    startQuiz();
+    window.scrollTo(0, 0);
+  });
+
+  function startQuiz() {
+    const qs = ILS.shuffle(POOL).slice(0, 10);
+    ILS.quiz({
+      mount: '#quiz', pass: 0.8, questions: qs,
+      intro: '<strong>Abschlussquiz:</strong> 10 Fragen aus allen Abschnitten. Ab 8 richtigen Antworten bekommen Sie Ihre ID. Wenn es nicht klappt, bekommen Sie neue Fragen.',
+      hint: 'Lesen Sie die Themen im Infotext noch einmal und versuchen Sie es mit neuen Fragen.',
+      onFail: (box) => box.append(ILS.el('button', { class: 'btn secondary block', type: 'button', onclick: () => { startQuiz(); window.scrollTo(0, 0); } }, 'Neue Fragen')),
+      onPass: async (box) => {
+        const key = words.join('-');
+        if ((await ILS.sha256hex(`DK|KEY|${key}`)) !== KEYHASH) return;
+        const id = await ILS.makeId('DK', key, vn, nn);
+        const name = `${vn} ${nn.toUpperCase()}.`;
+        const subject = `${name} ${id}`;
+        box.append(ILS.el('button', { class: 'btn block', type: 'button', onclick: () => {
+          $('#step2').classList.add('hidden'); $('#step3').classList.remove('hidden');
+          $('#nm').textContent = vn; $('#id').textContent = id; $('#subj').textContent = subject;
+          $('#mailto').href = `mailto:${MAIL}?subject=${encodeURIComponent(subject)}`;
+          window.scrollTo(0, 0);
+        } }, 'Weiter zu meiner ID'));
+      },
+    });
+  }
+
+  $('#copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText($('#subj').textContent); $('#copy').textContent = 'Kopiert ✓'; }
+    catch (e) { $('#copy').textContent = 'Bitte Betreff abschreiben'; }
+  });
+});
+</script>
+
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag „Transurethraler Dauerkatheter“ · 3BFP2<br>Diese Seite speichert keine Daten auf einem Server.</footer>
+</main>
+<script src="../../assets/ils.js"></script>
+</body>
+</html>

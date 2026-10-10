@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Prüfseite für die Lehrkraft</title>
+<link rel="stylesheet" href="../../assets/ils.css">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Dauerkatheter · nur für Lehrkräfte</div><h1>Prüfseite für die Lehrkraft</h1></div></header>
+<main>
+
+<div class="card intro">Kopieren Sie die Betreffzeilen der E-Mails hier hinein (eine pro Zeile). Die Seite prüft, ob Name und ID zusammenpassen.
+Es werden keine Daten gesendet oder gespeichert.</div>
+<div class="card">
+  <div class="field"><label for="key">Schlüssel (steht im Lehrkraft-Link oder in Ihrer Lehrkraft-Info)</label><input id="key" autocomplete="off" spellcheck="false"></div>
+  <p id="keymsg" class="small"></p>
+  <div class="field"><label for="lines">Betreffzeilen (z. B. „Lena M. DK-1A2B-3C4D“)</label><textarea id="lines" rows="10" spellcheck="false"></textarea></div>
+  <div class="field"><label for="klasse">Optional: Klassenliste (eine Person pro Zeile, „Vorname N.“) – zeigt, wer noch fehlt</label><textarea id="klasse" rows="5" spellcheck="false"></textarea></div>
+  <button class="btn block" id="check" type="button">Prüfen</button>
+</div>
+<div class="card hidden" id="out"></div>
+<script>
+const KEYHASH = '666ce802906c6b94e915f4e95db55cfcbb33526f4ff0c50badc91ec24751a1e2';
+document.addEventListener('DOMContentLoaded', () => {
+  const $ = (s) => document.querySelector(s);
+  const m = location.hash.match(/k=([^&]+)/);
+  if (m) $('#key').value = decodeURIComponent(m[1]);
+  const keyOk = async () => {
+    const k = $('#key').value.split('-').map(ILS.normWord).join('-');
+    const ok = (await ILS.sha256hex(`DK|KEY|${k}`)) === KEYHASH;
+    $('#keymsg').textContent = ok ? '✓ Schlüssel korrekt' : '✗ Schlüssel falsch';
+    $('#keymsg').style.color = ok ? 'var(--ok)' : 'var(--bad)';
+    return ok ? k : null;
+  };
+  $('#key').addEventListener('change', keyOk);
+  keyOk();
+
+  $('#check').addEventListener('click', async () => {
+    const key = await keyOk();
+    const out = $('#out');
+    out.classList.remove('hidden');
+    if (!key) { out.textContent = 'Bitte zuerst den richtigen Schlüssel eingeben.'; return; }
+    const rows = [];
+    const valid = new Set();
+    for (const raw of $('#lines').value.split(/\n/)) {
+      const line = raw.trim();
+      if (!line) continue;
+      const mm = line.match(/DK-?([0-9A-F]{4})-?([0-9A-F]{4})/i);
+      if (!mm) { rows.push([line, '', false, 'keine ID gefunden']); continue; }
+      const id = `DK-${mm[1]}-${mm[2]}`.toUpperCase();
+      const before = line.slice(0, mm.index).replace(/^(re|aw|wg|fw|fwd)\s*:\s*/i, '').trim();
+      const toks = before.split(/[\s,;|–—-]+/).filter(Boolean);
+      let hit = null;
+      for (let j = toks.length - 1; j >= 1 && !hit; j--) {
+        const ini = toks[j].replace(/\./g, '');
+        if (ILS.normName(ini).length !== 1) continue;
+        for (let k = 1; k <= Math.min(3, j) && !hit; k++) {
+          const vn = toks.slice(j - k, j).join('');
+          if ((await ILS.makeId('DK', key, vn, ini)) === id) hit = `${toks.slice(j - k, j).join(' ')} ${ini.toUpperCase()}.`;
+        }
+      }
+      if (hit) valid.add(ILS.normName(hit));
+      rows.push([hit || before || line, id, !!hit, hit ? '' : 'Name und ID passen nicht zusammen']);
+    }
+    out.innerHTML = '';
+    const tbl = ILS.el('table', { class: 'check' }, ILS.el('tr', {}, ILS.el('th', {}, 'Name'), ILS.el('th', {}, 'ID'), ILS.el('th', {}, 'Ergebnis')));
+    rows.forEach(([n, id, ok, why]) => tbl.append(ILS.el('tr', {}, ILS.el('td', {}, n), ILS.el('td', {}, id),
+      ILS.el('td', { class: 'st ' + (ok ? 'ok' : 'bad') }, ok ? '✓ gültig' : '✗ ' + why))));
+    const okCount = rows.filter((r) => r[2]).length;
+    out.append(ILS.el('p', {}, ILS.el('b', {}, `${okCount} von ${rows.length} gültig`)), tbl);
+    const klasse = $('#klasse').value.split(/\n/).map((s) => s.trim()).filter(Boolean);
+    if (klasse.length) {
+      const fehlt = klasse.filter((n) => !valid.has(ILS.normName(n)));
+      out.append(ILS.el('h2', {}, `Noch keine gültige ID (${fehlt.length})`),
+        fehlt.length ? ILS.el('ul', {}, ...fehlt.map((n) => ILS.el('li', {}, n))) : ILS.el('p', {}, 'Alle haben eine gültige ID geschickt. 🎉'));
+    }
+  });
+});
+</script>
+
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag „Transurethraler Dauerkatheter“ · 3BFP2<br>Diese Seite speichert keine Daten auf einem Server.</footer>
+</main>
+<script src="../../assets/ils.js"></script>
+</body>
+</html>

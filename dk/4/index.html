@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 4: Den DK bei einem Mann legen</title>
+<link rel="stylesheet" href="../../assets/ils.css">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Dauerkatheter · Übung 4 von 5</div><h1>Übung 4: Den DK bei einem Mann legen</h1></div></header>
+<main>
+<div id="app"></div>
+<script>
+document.addEventListener('DOMContentLoaded', () => ILS.quiz({
+  mount: '#app',
+  intro: "<strong>So geht's:</strong> Schauen Sie zuerst das Video an (QR-Code auf dem Arbeitsblatt). In Teil A finden Sie Fehler in einer Geschichte. Für jeden richtig beurteilten Satz gibt es 1 Punkt. Teil B hat 3 Fragen. Ab 13 von 16 Punkten bekommen Sie Ihren Baustein.",
+  pass: 0.8,
+  baustein: 'DAcXeAUI',
+  storeKey: 'ils-dk-b4',
+  hint: "Lesen Sie in Abschnitt 3 „Beim Mann ist anders“ noch einmal. Prüfen Sie jeden Satz der Geschichte Schritt für Schritt.",
+  questions: [
+ {
+  "type": "errors",
+  "section": "Teil A: Fehlersuche – Pfleger Tim legt Herrn Novak einen DK",
+  "q": "Lesen Sie alle Sätze. <b>Tippen Sie auf jeden Satz, in dem Tim einen Fehler macht.</b> Es gibt mehrere Fehler.",
+  "sentences": [
+   {
+    "t": "Tim informiert Herrn Novak über die Maßnahme und fragt, ob er einverstanden ist.",
+    "wrong": false
+   },
+   {
+    "t": "Er schließt die Tür, stellt einen Sichtschutz auf und deckt nur den Intimbereich auf.",
+    "wrong": false
+   },
+   {
+    "t": "Tim nimmt einen kurzen Frauenkatheter (20 cm), weil er gerade griffbereit liegt.",
+    "wrong": true,
+    "explain": "Beim Mann immer einen langen Katheter (ca. 40–45 cm) nehmen. Sonst wird der Ballon in der Harnröhre geblockt."
+   },
+   {
+    "t": "Er desinfiziert die Hände und zieht sterile Handschuhe an.",
+    "wrong": false
+   },
+   {
+    "t": "Er schiebt die Vorhaut zurück und desinfiziert die Eichel kreisförmig von außen nach innen zur Harnröhrenöffnung hin.",
+    "wrong": true,
+    "explain": "Richtig ist: von innen nach außen – von der Harnröhrenöffnung weg. Sonst wischt man Keime zur Öffnung hin."
+   },
+   {
+    "t": "Er spritzt das Gleitmittel mit Lokalanästhetikum langsam in die Harnröhre und wartet die Einwirkzeit ab.",
+    "wrong": false
+   },
+   {
+    "t": "Er hält den Penis gestreckt, etwa 90° zum Körper, und führt den Katheter langsam ein.",
+    "wrong": false
+   },
+   {
+    "t": "Bei einem starken Widerstand drückt Tim fest, damit der Katheter weitergeht.",
+    "wrong": true,
+    "explain": "Nie mit Gewalt! Penis langsam Richtung Beine senken, Patienten tief atmen lassen. Bei starkem Widerstand abbrechen und die Ärztin oder den Arzt informieren."
+   },
+   {
+    "t": "Als Urin kommt, schiebt Tim den Katheter noch fast bis zur Gabelung vor.",
+    "wrong": false
+   },
+   {
+    "t": "Er blockt den Ballon mit 10 ml NaCl 0,9 %.",
+    "wrong": true,
+    "explain": "Nicht mit NaCl blocken (Kristalle können den Kanal verstopfen). Richtig: steriles Aqua dest. oder Glycerinlösung nach Herstellerangabe."
+   },
+   {
+    "t": "Er zieht den Katheter vorsichtig zurück, bis er einen leichten Widerstand spürt.",
+    "wrong": false
+   },
+   {
+    "t": "Zum Schluss lässt Tim die Vorhaut hinter der Eichel, damit sie beim Fixieren nicht stört.",
+    "wrong": true,
+    "explain": "Die Vorhaut muss wieder nach vorne! Sonst droht eine Paraphimose (Schwellung und Durchblutungsstörung der Eichel)."
+   },
+   {
+    "t": "Er hängt den Beutel unter Blasenniveau an das Bett und dokumentiert die Maßnahme.",
+    "wrong": false
+   }
+  ],
+  "explain": "Die Erklärungen zu jedem Fehler stehen direkt unter den Sätzen.",
+  "hint": "Abschnitt 3, „Beim Mann ist anders“."
+ },
+ {
+  "type": "mc",
+  "section": "Teil B: Fragen zum Video (und zum Infotext)",
+  "q": "Im Video wird die Harnröhrenöffnung mit <b>Kochsalzlösung (NaCl)</b> gereinigt. Was verwenden Sie in Deutschland nach den Hygiene-Empfehlungen (KRINKO)?",
+  "options": [
+   "Ein Schleimhaut-Antiseptikum (z. B. auf Octenidin-Basis) mit Einwirkzeit",
+   "Leitungswasser",
+   "Alkoholisches Hautdesinfektionsmittel",
+   "Nur trockene Tupfer"
+  ],
+  "correct": 0,
+  "explain": "In Deutschland wird die Schleimhaut vor dem Legen eines DK mit einem Schleimhaut-Antiseptikum desinfiziert. Alkoholische Mittel sind für Schleimhaut nicht geeignet.",
+  "hint": "Abschnitt 3, Materialliste und Kasten zum Video."
+ },
+ {
+  "type": "mc",
+  "section": "Teil B: Fragen zum Video (und zum Infotext)",
+  "q": "Im Video spüren die Pflegenden einen Widerstand. Wo ist das typisch?",
+  "options": [
+   "Am äußeren Blasenschließmuskel bzw. an der Prostata",
+   "Direkt an der Harnröhrenöffnung",
+   "Im Ballon",
+   "In der Niere"
+  ],
+  "correct": 0,
+  "explain": "Engstellen der männlichen Harnröhre: Schließmuskel und Prostata. Hier langsam und vorsichtig arbeiten, Patienten entspannen lassen.",
+  "hint": "Abschnitt 3, Grafik „Harnröhre Frau und Mann“."
+ },
+ {
+  "type": "mc",
+  "section": "Teil B: Fragen zum Video (und zum Infotext)",
+  "q": "Wie helfen die Pflegenden im Video dem Patienten, den Beckenboden zu entspannen?",
+  "options": [
+   "Er legt die Hände auf den Bauch und atmet tief ein.",
+   "Er soll pressen.",
+   "Er hält die Luft an.",
+   "Er bekommt ein Schlafmittel."
+  ],
+  "correct": 0,
+  "explain": "Tiefes, ruhiges Atmen entspannt den Beckenboden. Das erleichtert das Einführen.",
+  "hint": "Video, ca. 0:34–0:45, oder Abschnitt 3."
+ }
+]
+}));
+</script>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag „Transurethraler Dauerkatheter“ · 3BFP2<br>Diese Seite speichert keine Daten auf einem Server.</footer>
+</main>
+<script src="../../assets/ils.js"></script>
+</body>
+</html>
