@@ -64,7 +64,7 @@ def build(template, out):
         ["1", "5 × Beschriftung Katheter (12 Auswahlmöglichkeiten), 5 × Multiple Choice (Ch, Länge, Katheterauswahl, Ableitungssystem)", "10 / 10"],
         ["2", "10 Fallentscheidungen: indiziert / Alternative / Kontraindikation", "10 / 10"],
         ["3", "10 Schritte ordnen (Frau) + 4 Fragen", "14 / 14"],
-        ["4", "Fehlersuche: 13 Sätze (6 Fehler) + 3 Fragen zum Video", "16 / 16"],
+        ["4", "Fehlersuche: 13 Sätze (5 Fehler) + 3 Fragen zum Video", "16 / 16"],
         ["5", "12 × richtig/falsch + 2 Fallfragen (Frau Brandt, Herr Novak)", "14 / 14"],
         ["Abschluss", "10 Zufallsfragen aus einem Pool von 20", "8 / 10"],
     ], [1300, 6260, 1500], size=9.5)

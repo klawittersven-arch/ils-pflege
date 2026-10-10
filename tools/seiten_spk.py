@@ -124,7 +124,8 @@ U3 = [
 # ---------------------------------------------------------------- Übung 4
 U4 = [
     {"type": "errors", "section": "Teil A: Fehlersuche – Pflegerin Mia macht bei Frau Weber einen Verbandswechsel",
-     "q": "Frau Weber hat seit 2 Jahren einen SPK. Mia arbeitet beim ambulanten Pflegedienst. <b>Tippen Sie auf jeden Satz, in dem Mia einen Fehler macht.</b>",
+     "q": "Frau Weber hat seit 2 Jahren einen SPK. Mia arbeitet beim ambulanten Pflegedienst. <b>Tippen Sie auf jeden Satz, in dem Mia einen Fehler macht.</b> Es gibt 5 Fehler.",
+     "richtig": "Nein – das macht Mia hier richtig.",
      "sentences": [
          {"t": "Mia erklärt Frau Weber, was sie jetzt macht.", "wrong": False},
          {"t": "Sie desinfiziert die Hände und zieht unsterile Handschuhe an.", "wrong": False},
@@ -227,7 +228,7 @@ T.uebung(3, "Übung 3: Assistenz bei der Anlage",
          "Teil B hat 4 Fragen. Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U3,
          "Lesen Sie Abschnitt 3 noch einmal.")
 T.uebung(4, "Übung 4: Verbandswechsel und Pflege",
-         "<strong>So geht's:</strong> In Teil A finden Sie Fehler in einer Geschichte. Für jeden richtig beurteilten Satz gibt es 1 Punkt. "
+         "<strong>So geht's:</strong> In Teil A finden Sie die 5 Fehler in einer Geschichte. "
          "Teil B hat 3 Fragen. Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U4,
          "Lesen Sie Abschnitt 4 noch einmal, besonders „Verbandswechsel Schritt für Schritt“.")
 T.uebung(5, "Übung 5: Miktionsversuch, Komplikationen, Entfernung",

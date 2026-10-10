@@ -165,7 +165,8 @@ U3 = [
 # ---------------------------------------------------------------- Übung 4
 U4 = [
     {"type": "errors", "section": "Teil A: Fehlersuche – Pfleger Tim legt Herrn Novak einen DK",
-     "q": "Lesen Sie alle Sätze. <b>Tippen Sie auf jeden Satz, in dem Tim einen Fehler macht.</b> Es gibt mehrere Fehler.",
+     "q": "Lesen Sie alle Sätze. <b>Tippen Sie auf jeden Satz, in dem Tim einen Fehler macht.</b> Es gibt 5 Fehler.",
+     "richtig": "Nein – das macht Tim hier richtig.",
      "sentences": [
          {"t": "Tim informiert Herrn Novak über die Maßnahme und fragt, ob er einverstanden ist.", "wrong": False},
          {"t": "Er schließt die Tür, stellt einen Sichtschutz auf und deckt nur den Intimbereich auf.", "wrong": False},
@@ -267,7 +268,7 @@ uebung(3, "Übung 3: Den DK bei einer Frau legen",
        "Lesen Sie in Abschnitt 3 die Schritte „Durchführung bei der Frau“ noch einmal.")
 uebung(4, "Übung 4: Den DK bei einem Mann legen",
        "<strong>So geht's:</strong> Schauen Sie zuerst das Video an (QR-Code auf dem Arbeitsblatt). "
-       "In Teil A finden Sie Fehler in einer Geschichte. Für jeden richtig beurteilten Satz gibt es 1 Punkt. "
+       "In Teil A finden Sie die 5 Fehler in einer Geschichte. "
        "Teil B hat 3 Fragen. Den Baustein bekommen Sie nur, wenn <strong>alle Aufgaben richtig</strong> sind.", U4,
        "Lesen Sie in Abschnitt 3 „Beim Mann ist anders“ noch einmal. Prüfen Sie jeden Satz der Geschichte Schritt für Schritt.")
 uebung(5, "Übung 5: Pflege, Beobachtung und Entfernung",

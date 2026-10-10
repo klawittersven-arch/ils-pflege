@@ -104,8 +104,12 @@ select {
   background: #fff; border: 2px solid var(--line); border-radius: 10px;
   padding: 10px 12px; margin: 8px 0; cursor: pointer; min-height: 48px;
 }
-.sent[aria-pressed="true"] { border-color: var(--bad); background: var(--bad-soft); }
+.sent[aria-pressed="true"] { border-color: var(--bad); background: var(--bad-soft); cursor: default; }
 .sent[aria-pressed="true"]::after { content: "  ✗ Fehler"; color: var(--bad); font-weight: 700; white-space: nowrap; }
+.sent.nope { animation: nope .6s; }
+.sent + .fb.show { margin: -2px 0 8px; }
+.err-counter { font-weight: 700; margin: 0 0 6px; padding: 8px 12px; border-radius: 10px; background: #f1efec; }
+.err-counter.done { background: var(--ok-soft); color: var(--ok); }
 
 /* Bild */
 .figure { margin: 6px 0 14px; }

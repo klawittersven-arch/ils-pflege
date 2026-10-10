@@ -73,7 +73,7 @@ const ILS = (() => {
      tf:     { type:'tf', q, correct:true|false, explain }
      select: { type:'select', q, options:[...], correct:i, explain }
      order:  { type:'order', q, items:[... in richtiger Reihenfolge], explain }  (nur der richtige nächste Schritt wird übernommen)
-     errors: { type:'errors', q, sentences:[{ t, wrong:bool, explain }] }
+     errors: { type:'errors', q, richtig (Text bei richtigem Satz), sentences:[{ t, wrong:bool, explain }] }
   */
   const renderQuestion = (q, idx) => {
     const card = el('div', { class: 'card' });
@@ -154,23 +154,50 @@ const ILS = (() => {
           (fehlversuche ? ` (${fehlversuche} ${fehlversuche === 1 ? 'Fehlversuch' : 'Fehlversuche'}).` : ' – ohne Fehlversuch!'),
       };
     } else if (q.type === 'errors') {
-      const btns = q.sentences.map((s) => {
-        const b = el('button', { type: 'button', class: 'sent', 'aria-pressed': 'false' }, s.t);
-        b.addEventListener('click', () => b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'));
-        card.append(b);
-        return b;
+      // Fehlersuche: Die Anzahl der Fehler ist bekannt. Ein gefundener Fehler wird markiert und sofort erklärt.
+      // Ein richtiger Satz wird nicht übernommen – es erscheint kurz „Nein, das ist hier richtig“.
+      const anzahl = q.sentences.filter((x) => x.wrong).length;
+      const counter = el('div', { class: 'err-counter', 'aria-live': 'polite' });
+      let gefunden = 0, fehlversuche = 0;
+      const update = () => {
+        counter.textContent = gefunden === anzahl
+          ? `✓ Alle ${anzahl} Fehler gefunden!`
+          : `Gefundene Fehler: ${gefunden} von ${anzahl}`;
+        counter.classList.toggle('done', gefunden === anzahl);
+      };
+      card.append(counter);
+      q.sentences.forEach((x) => {
+        const b = el('button', { type: 'button', class: 'sent', 'aria-pressed': 'false' }, x.t);
+        const note = el('div', { class: 'fb' });
+        let timer = 0;
+        b.addEventListener('click', () => {
+          if (b.getAttribute('aria-pressed') === 'true') return;
+          if (x.wrong) {
+            b.setAttribute('aria-pressed', 'true');
+            gefunden++;
+            note.className = 'fb show ok';
+            note.textContent = `✓ Fehler gefunden: ${x.explain}`;
+            update();
+            fb.className = 'fb'; card.classList.remove('ok', 'bad');
+          } else {
+            fehlversuche++;
+            b.classList.remove('nope'); void b.offsetWidth; b.classList.add('nope');
+            note.className = 'fb show bad';
+            note.textContent = q.richtig || 'Nein – das ist hier richtig gemacht.';
+            clearTimeout(timer);
+            timer = setTimeout(() => { note.className = 'fb'; }, 2500);
+          }
+        });
+        card.append(b, note);
       });
+      update();
       api = {
         max: q.sentences.length,
-        answered: () => true,
-        score: () => q.sentences.reduce((n, s, i) => n + ((btns[i].getAttribute('aria-pressed') === 'true') === s.wrong ? 1 : 0), 0),
-        detail: (s) => `${s} von ${q.sentences.length} Sätzen haben Sie richtig beurteilt.`,
-        reveal: () => btns.forEach((b, i) => {
-          const s = q.sentences[i];
-          const right = (b.getAttribute('aria-pressed') === 'true') === s.wrong;
-          if (s.wrong) b.insertAdjacentElement('afterend', el('div', { class: 'fb show ' + (right ? 'ok' : 'bad') }, (right ? '✓ Fehler gefunden: ' : '✗ Diesen Fehler haben Sie übersehen: ') + s.explain));
-          else if (!right) b.insertAdjacentElement('afterend', el('div', { class: 'fb show bad' }, '✗ Dieser Satz ist richtig. ' + (s.explain || '')));
-        }),
+        answered: () => gefunden === anzahl,
+        missingText: () => `Sie haben erst ${gefunden} von ${anzahl} Fehlern gefunden. Lesen Sie die übrigen Sätze noch einmal genau.`,
+        score: () => (gefunden === anzahl ? q.sentences.length : 0),
+        detail: () => `Alle ${anzahl} Fehler gefunden` +
+          (fehlversuche ? ` (${fehlversuche} ${fehlversuche === 1 ? 'Fehlversuch' : 'Fehlversuche'}).` : ' – ohne Fehlversuch!'),
       };
     }
 
@@ -224,7 +251,7 @@ const ILS = (() => {
       }
       const missing = qs.filter((r) => !r.answered());
       if (missing.length) {
-        missing.forEach((r) => { r.fb.className = 'fb show hint'; r.fb.textContent = 'Bitte beantworten Sie diese Aufgabe noch.'; });
+        missing.forEach((r) => { r.fb.className = 'fb show hint'; r.fb.textContent = r.missingText ? r.missingText() : 'Bitte beantworten Sie diese Aufgabe noch.'; });
         missing[0].card.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
@@ -236,11 +263,9 @@ const ILS = (() => {
         const full = scores[i] === r.max;
         r.card.classList.remove('ok', 'bad');
         r.card.classList.add(full ? 'ok' : 'bad');
-        r.card.querySelectorAll('.fb.show:not(:last-child)').forEach((n) => { if (n !== r.fb) n.remove(); });
         let text = r.detail ? r.detail(scores[i]) + ' ' : (full ? '✓ Richtig. ' : '✗ Leider falsch. ');
         if (passed) {
           text += r.q.explain || '';
-          if (r.reveal) r.reveal();
         } else if (!full) {
           text += r.q.hint ? `Tipp: ${r.q.hint}` : 'Lesen Sie im Infotext noch einmal nach.';
         }
