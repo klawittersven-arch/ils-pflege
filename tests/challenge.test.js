@@ -47,7 +47,7 @@ async function anmelden(s, basis, vorname, t, m, j) {
 }
 
 // Spielt einen Durchgang; mitFehlern = Anzahl absichtlich falscher Einzelantworten
-async function spielen(s, mitFehlern) {
+async function spielen(s, mitFehlern, sofort = false) {
   const startReal = Date.now();
   await s.click('#ch-start');
   await s.waitForSelector('.lern-karte');
@@ -61,7 +61,11 @@ async function spielen(s, mitFehlern) {
       return POOLS[ref.p].aufgaben[ref.i];
     });
     try {
-      if (falsch < mitFehlern) { if (await falschLoesen(s, auf)) falsch++; } else await loesen(s, auf);
+      if (falsch < mitFehlern) { if (await falschLoesen(s, auf)) falsch++; } else await loesen(s, auf, { warten: !sofort });
+      if (sofort) {   // ohne Wartezeit geantwortet → muss trotzdem gewertet sein
+        const fb = await s.getAttribute('.fb', 'class');
+        if (!/ ok/.test(fb)) throw new Error('sofortige richtige Antwort nicht gewertet: ' + (await s.textContent('.lern-hinweis')));
+      }
     } catch (e) {
       const dom = await s.evaluate(() => ({ frage: document.querySelector('.lern-karte .q-text')?.textContent, typ: document.querySelector('.lern-karte')?.dataset.typ,
         knoepfe: [...document.querySelectorAll('.antwort')].map((b) => b.textContent + (b.disabled ? ' [aus]' : '')) }));
@@ -111,10 +115,10 @@ async function spielen(s, mitFehlern) {
     await lena.waitForFunction(() => /Noch niemand/.test(document.body.textContent));
     pruefe(/20 Aufgaben/.test(await lena.textContent('.challenge')), 'Startseite mit Regeln und leerer Bestenliste');
     await foto(lena, 'c1_start');
-    await spielen(lena, 0);
+    await spielen(lena, 0, true);   // jede Antwort sofort, ohne Lesezeit
     const erg1 = await lena.textContent('.ch-ergebnis');
     const p1 = parseInt((await lena.textContent('.ch-gesamt')).replace(/\D/g, ''), 10);
-    pruefe(p1 > 3000 && p1 <= 3750 && /Aufgaben: 3000 von 3000/.test(erg1), 'alles richtig: 3000 Aufgabenpunkte + Zeitbonus', erg1);
+    pruefe(p1 > 3000 && p1 <= 3750 && /Aufgaben: 3000 von 3000/.test(erg1), 'alles sofort und richtig beantwortet: 3000 Aufgabenpunkte + Zeitbonus (keine Lese-Sperre)', erg1);
     pruefe(/Platz 1 von 1/.test(erg1) && /Neuer persönlicher Rekord/.test(erg1), 'Platz 1 von 1, neuer Rekord');
     pruefe(/Alles richtig/.test(await lena.textContent('body')), 'keine Fehlerliste bei 100 %');
     await foto(lena, 'c2_ergebnis_lena');

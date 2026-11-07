@@ -14,7 +14,9 @@ async function klickText(s, selektor, text) {
 }
 const vor = (s, ms = 16000) => s.clock.fastForward(ms);
 
-async function loesen(s, a) {
+// warten: false = ohne Vorspulen der Uhr (z. B. ILS-Challenge: sofort antworten)
+async function loesen(s, a, { warten = true } = {}) {
+  const vor = (s2, ms) => (warten ? s2.clock.fastForward(ms || 16000) : null);
   await vor(s);
   switch (a.typ) {
     case 'wahl': await klickText(s, '.antwort', ohneTags(a.optionen[a.richtig])); break;

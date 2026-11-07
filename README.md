@@ -168,7 +168,9 @@ beliebig oft – wie die Klausur-Challenge der Lernkarten:
   Aufgaben, die das Arbeitsblatt brauchen (Drainageprotokoll, Anordnung), sind ausgenommen.
 - **Punkte:** 150 je Aufgabe, bei mehrschrittigen Aufgaben anteilig (jeder Fehlklick kostet). **Zeitbonus** bis 750 Punkte,
   sinkt in 15 Minuten linear auf 0 und zählt nur anteilig zu den richtigen Antworten. Die **Zeit misst der Server**;
-  ein Durchgang unter 5 Sekunden je Aufgabe wird nicht gewertet. Die Mindest-Lesezeit je Aufgabe gilt weiter.
+  ein Durchgang unter 2 Sekunden je Aufgabe (40 s für 20 Aufgaben) wird nicht gewertet (Schutz gegen Manipulation).
+  **Keine Mindest-Lesezeit** in der Challenge: Richtige Antworten zählen sofort – Tempo bringt Zeitbonus. Raten lohnt
+  sich trotzdem nicht, weil falsche Antworten 0 Punkte bringen und der Bonus nur anteilig zu den richtigen zählt.
 - **Lösungen erst am Ende**, dazu Punkte je Abschnitt (schwächster oben) mit Verweis aufs Arbeitsblatt.
 - **Bestenliste je ILS-Auftrag und Klasse** mit Vorname + Initial (Top 10, eigener Platz). Es zählt das beste Ergebnis.
 - **Lehrkraft-Seite:** Spalte „🏁 Challenge“ (auch in der CSV) und **🏆 Siegerehrung** am Beamer: Treppchen 2 – 1 – 3,

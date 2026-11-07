@@ -15,28 +15,13 @@ const ILSChallenge = (() => {
   const K = ILSKonto;
   const L = ILSLern;
   const PUNKTE = 150;
-  const LESEN = { basis: 1000, proWort: 150, max: 8000, folgeBasis: 400, folgeProWort: 80 };   // wie in den Übungen
   const ohneTags = (s) => String(s == null ? '' : s).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-  const woerter = (...t) => t.flat().map(ohneTags).join(' ').split(/\s+/).filter(Boolean).length;
   const span = (h, c) => el('span', { class: c || null, html: String(h) });
   const uhr = (sek) => `${Math.floor(sek / 60)}:${String(Math.floor(sek % 60)).padStart(2, '0')}`;
   const speicher = {
     lesen(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
     schreiben(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* privat */ } }
   };
-
-  function lesetext(a) {
-    switch (a.typ) {
-      case 'wahl': case 'mehrfach': return woerter(a.frage, a.optionen);
-      case 'rf': return woerter(a.frage, a.aussage);
-      case 'reihe': return woerter(a.frage) + Math.min(20, woerter(a.schritte));
-      case 'sortieren': return woerter(a.frage, a.elemente[0].t);
-      case 'luecke': return woerter(a.frage, a.text.split('{{')[0]);   // nur bis zur ersten Lücke
-      case 'bild': return woerter(a.frage, a.ziele[0].frage);
-      case 'dialog': return woerter(a.frage, a.knoten[0].text, a.knoten[0].frage, a.knoten[0].optionen.map((o) => o.t));
-      default: return woerter(a.frage);
-    }
-  }
 
   // Wie viele Teilschritte hat eine Aufgabe? (für anteilige Punkte)
   function teile(a) {
@@ -224,7 +209,7 @@ const ILSChallenge = (() => {
           '20 Aufgaben aus allen Übungen dieses ILS-Auftrags – in zufälliger Reihenfolge.',
           '150 Punkte je richtiger Aufgabe. Bei Aufgaben mit mehreren Schritten kostet jeder Fehlklick Punkte.',
           'Zeitbonus bis 750 Punkte: Er sinkt mit jeder Sekunde (nach 15 Minuten ist er weg) und zählt nur anteilig zu Ihren richtigen Antworten – Raten lohnt sich nicht.',
-          'Lesen müssen Sie trotzdem: Zu schnelles Tippen wird nicht gewertet und kostet nur Zeit.',
+          'Tempo zahlt sich aus: Sie können sofort antworten. Aber jede falsche Antwort kostet Punkte – und damit auch Zeitbonus.',
           'Die Lösungen sehen Sie am Ende. Sie können die Challenge so oft spielen, wie Sie möchten – Ihr bestes Ergebnis zählt.',
           'Ihr Name (Vorname und 1. Buchstabe des Nachnamens) erscheint in der Bestenliste Ihrer Klasse.'
         ].map((t) => el('li', {}, t))));
@@ -290,9 +275,6 @@ const ILSChallenge = (() => {
       inhalt.append(karte, hinweis, fb, weiter);
       let fehlerHier = 0;
       let fertig = false;
-      let leseStart = Date.now();
-      let noetig = Math.min(LESEN.max, LESEN.basis + lesetext(auf) * LESEN.proWort);
-      let gelesen = false;
       const zeigeHinweis = (t, art) => { hinweis.className = 'lern-hinweis zeigen ' + art; hinweis.textContent = t; };
 
       function abschliessen(anteil) {
@@ -313,18 +295,10 @@ const ILSChallenge = (() => {
       const api = {
         karte,
         hinweis: (t) => zeigeHinweis(t, 'hint'),
-        versuch() {
-          if (fertig) return false;
-          if (gelesen) return true;
-          if (Date.now() - leseStart >= noetig) { gelesen = true; return true; }
-          zeigeHinweis('⏳ Erst lesen! Diese Antwort zählt nicht – zu schnelles Tippen kostet nur Zeit.', 'bad');
-          return false;
-        },
-        neuerText(n, leicht) {
-          gelesen = false;
-          leseStart = Date.now();
-          noetig = leicht ? LESEN.folgeBasis + n * LESEN.folgeProWort : Math.min(LESEN.max, LESEN.basis + n * LESEN.proWort);
-        },
+        // In der Challenge gibt es keine Mindest-Lesezeit: Tempo bringt Zeitbonus, Raten lohnt sich trotzdem nicht,
+        // weil falsche Antworten 0 Punkte bringen und der Bonus nur anteilig zu den richtigen Antworten zählt.
+        versuch() { return !fertig; },
+        neuerText() { /* keine Lesezeit */ },
         fehler() {
           fehlerHier += 1;
           zeigeHinweis(`✗ Fehlklick – kostet Punkte (${fehlerHier})`, 'bad');

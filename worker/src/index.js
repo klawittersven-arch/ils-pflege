@@ -278,7 +278,7 @@ export default {
           if (!LAUF_MUSTER.test(laufId) || anzahl === null || ap === null || ap > anzahl * CH_PUNKTE_JE_AUFGABE) {
             return antwort({ ok: false, grund: 'ungueltig' }, 400);
           }
-          const minSek = Number.isFinite(Number(env.CHALLENGE_MIN_SEK_JE_AUFGABE)) ? Number(env.CHALLENGE_MIN_SEK_JE_AUFGABE) : 5;
+          const minSek = Number.isFinite(Number(env.CHALLENGE_MIN_SEK_JE_AUFGABE)) ? Number(env.CHALLENGE_MIN_SEK_JE_AUFGABE) : 2;
           return mitStatus(await daten.challengeEnde(token, ils, laufId, ap, anzahl, minSek));
         }
         return antwort({ ok: false, grund: 'nicht-gefunden' }, 404);
