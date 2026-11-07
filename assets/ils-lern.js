@@ -555,7 +555,7 @@ const ILSLern = (() => {
       karte.append(anzeige, knopf);
       inhalt.append(karte);
       const ticken = () => {
-        const rest = Math.ceil((S.schreibenAb + (sch.minSek || 120) * 1000 - Date.now()) / 1000);
+        const rest = Math.ceil((S.schreibenAb + (sch.minSek || 30) * 1000 - Date.now()) / 1000);
         if (rest > 0) { anzeige.textContent = `Nehmen Sie sich Zeit zum Schreiben – weiter geht es in ${zeit(rest)}.`; knopf.disabled = true; } else {
           anzeige.textContent = ''; knopf.disabled = false; clearInterval(uhr);
         }

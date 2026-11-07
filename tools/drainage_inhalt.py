@@ -94,7 +94,7 @@ UEBUNG1 = [
 SCHREIBEN1 = {
     "auftrag": "<strong>Nennen Sie</strong> 3 Ziele (Nutzen) einer Wunddrainage und 2 mögliche Nachteile.",
     "ort": "in den Kasten „Examens-Training 1“ auf dem Arbeitsblatt",
-    "minSek": 120,
+    "minSek": 30,
     "punkte": ["Ziel: Hämatombildung verhindern", "Ziel: Infektionsrisiko senken",
                "Ziel: Nahtdehiszenz vorbeugen / Wundflächen legen sich aneinander",
                "Nachteil: Eintrittspforte für Erreger (aufsteigende Infektion)",
@@ -161,7 +161,7 @@ UEBUNG2 = [
 SCHREIBEN2 = {
     "auftrag": "<strong>Beschreiben Sie</strong> 4 Beobachtungskriterien bei Frau Kramers Redon-Drainage und <strong>begründen</strong> Sie jeweils kurz, warum Sie darauf achten.",
     "ort": "in den Kasten „Examens-Training 2“ auf dem Arbeitsblatt",
-    "minSek": 180,
+    "minSek": 30,
     "punkte": ["Fördermenge (regelmäßig ablesen) – um eine Nachblutung früh zu erkennen",
                "Aussehen des Sekrets (Farbe, Konsistenz, Geruch) – Hinweis auf Blutung oder Infektion",
                "Vakuumindikator – ob noch genug Sog vorhanden ist",
@@ -262,7 +262,7 @@ UEBUNG3 = [
 SCHREIBEN3 = {
     "auftrag": "<strong>Beschreiben Sie</strong> 4 Anzeichen, an denen Sie bei Frau Kramer eine Nachblutung mit beginnendem Schock erkennen, und 4 Sofortmaßnahmen.",
     "ort": "in den Kasten „Examens-Training 3“ auf dem Arbeitsblatt",
-    "minSek": 180,
+    "minSek": 30,
     "punkte": ["Anzeichen: plötzlich viel und hellrotes (frisch-blutiges) Sekret in der Redon",
                "Anzeichen: durchgebluteter Verband, Schwellung im Wundgebiet",
                "Anzeichen: Puls schnell (über 100/min), Blutdruck zunächst normal, dann fallend",
@@ -360,7 +360,7 @@ UEBUNG4 = [
 SCHREIBEN4 = {
     "auftrag": "<strong>Beschreiben Sie</strong> in 6 Schritten den Wechsel einer Redonflasche.",
     "ort": "in den Kasten „Examens-Training 4“ auf dem Arbeitsblatt",
-    "minSek": 150,
+    "minSek": 30,
     "punkte": ["Patientin informieren (kurzer Schmerz durch den Sog möglich)",
                "Hände desinfizieren, Einmalhandschuhe anziehen",
                "erst die patientennahe, dann die patientenferne Klemme schließen",
@@ -423,7 +423,7 @@ UEBUNG5 = [
 SCHREIBEN5 = {
     "auftrag": "<strong>Formulieren Sie</strong> für Frau Kramer das Pflegeproblem „Angst vor der Mobilisation“ nach dem PESR-Schema und <strong>ein</strong> überprüfbares Pflegeziel.",
     "ort": "in den Kasten „Examens-Training 5“ auf dem Arbeitsblatt",
-    "minSek": 240,
+    "minSek": 30,
     "punkte": ["P: Angst vor der Mobilisation (fachlich korrekt benannt)",
                "E: z. B. fürchtet, die Drainage herauszureißen; nicht informiert; 1. Tag nach Hüft-TEP",
                "S: z. B. bewegt sich kaum, fragt nach dem Schlauch, äußert Angst",

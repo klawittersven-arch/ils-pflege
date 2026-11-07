@@ -17,7 +17,7 @@ AUS = ROOT / "arbeitsblatt"
 def build():
     d = Doc(ROOT / "tools/vorlage/ab_vorlage_kbs.docx", ROOT / "tools/build_drainage/docx_lk")
     d.header_replace = {
-        "3BFP2 | KB I | Lo / ": "3BFP2 | Skills | ",
+        "3BFP2 | KB I | Lo / ": "3BFP2 | KB1 | Lo / ",
         "Themenblock I – Thema: Diabetes mellitus · Regelkreis &amp; sicheres Handeln": "Lehrkraft-Information · ILS Wunddrainagen",
     }
     d.h1("ILS Wunddrainagen – Information für Lehrkräfte")

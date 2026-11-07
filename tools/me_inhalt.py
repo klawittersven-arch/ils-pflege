@@ -74,7 +74,7 @@ UEBUNG1 = [
 SCHREIBEN1 = {
     "auftrag": "<strong>Erläutern Sie</strong> je 2 Gründe, die für und die gegen eine Materialentfernung sprechen. Beziehen Sie sich auf Herrn Brandt.",
     "ort": "in den Kasten „Examens-Training 1“ auf dem Arbeitsblatt",
-    "minSek": 150,
+    "minSek": 30,
     "punkte": ["dafür: Lockerung oder Entzündung am Material", "dafür: Beschwerden durch das Material (Druck, Schmerz) oder eingeschränkte Beweglichkeit",
                "dagegen: eine zweite OP wäre ein sehr großes Risiko (Alter, Vorerkrankungen)", "dagegen: das Material stört nicht und schmerzt nicht",
                "Fallbezug: Herr Brandt ist jung, hat Druckschmerzen, der Bruch ist nach 18 Monaten verheilt → Entfernung sinnvoll",
@@ -161,7 +161,7 @@ UEBUNG2 = [
 SCHREIBEN2 = {
     "auftrag": "<strong>Beschreiben Sie</strong>, wie Sie bei Herrn Brandt die DMS-Kontrolle am rechten Fuß durchführen (je mindestens ein Kriterium für Durchblutung, Motorik und Sensibilität), und <strong>nennen Sie</strong>, wann Sie die Ärztin informieren.",
     "ort": "in den Kasten „Examens-Training 2“ auf dem Arbeitsblatt",
-    "minSek": 180,
+    "minSek": 30,
     "punkte": ["Durchblutung: Hautfarbe und Temperatur der Zehen", "Durchblutung: Fußpuls tasten und/oder Nagelbettprobe (Farbe kehrt in unter 2 s zurück)",
                "Motorik: Zehen und Fuß bewegen lassen", "Sensibilität: nach Kribbeln/Taubheit fragen, Berührung prüfen",
                "Vergleich mit dem gesunden Fuß (⚑)", "Ärztin sofort bei: blass/kalt, kein Puls, Taubheit, Bewegungsstörung oder stark zunehmenden Schmerzen",
@@ -226,7 +226,7 @@ UEBUNG3 = [
 SCHREIBEN3 = {
     "auftrag": "<strong>Erklären Sie</strong> die Entstehung einer Thrombose bei Herrn Brandt anhand der Virchow-Trias.",
     "ort": "in den Kasten „Examens-Training 3“ auf dem Arbeitsblatt",
-    "minSek": 180,
+    "minSek": 30,
     "punkte": ["die drei Faktoren der Virchow-Trias genannt", "Endothelläsion: OP am Bein, Gefäßwand verletzt",
                "Hypozirkulation: Bein wird geschont, weniger Bewegung, viel Liegen → Muskelpumpe fehlt, Blut fließt langsamer",
                "Hyperkoagulabilität: Gerinnbarkeit während und nach der OP erhöht (ggf. wenig Trinken)",
@@ -300,7 +300,7 @@ UEBUNG4 = [
 SCHREIBEN4 = {
     "auftrag": "<strong>Leiten Sie</strong> aus dem Expertenstandard „Schmerzmanagement in der Pflege“ 3 Maßnahmen für Herrn Brandt <strong>ab</strong> und <strong>erläutern</strong> Sie diese.",
     "ort": "in den Kasten „Examens-Training 4“ auf dem Arbeitsblatt",
-    "minSek": 180,
+    "minSek": 30,
     "punkte": ["regelmäßige Schmerzeinschätzung mit der NRS, in Ruhe und bei Bewegung (laut Anordnung 2-stündlich, später 3× täglich)",
                "Schmerzmittel nach Anordnung, Bedarfsmedikation ab NRS 4, rechtzeitig vor der Mobilisation",
                "Wirkung und Nebenwirkungen überprüfen und dokumentieren",
@@ -387,7 +387,7 @@ UEBUNG5 = [
 SCHREIBEN5 = {
     "auftrag": "<strong>Beschreiben Sie</strong> 4 Verhaltensweisen, über die Sie Herrn Brandt vor der Entlassung informieren, und <strong>begründen</strong> Sie diese.",
     "ort": "in den Kasten „Examens-Training 5“ auf dem Arbeitsblatt",
-    "minSek": 240,
+    "minSek": 30,
     "punkte": ["Wunde sauber und trocken halten, nur mit Schutz duschen – Infektionsschutz",
                "Fäden laut Arztbrief am 14. Tag beim Hausarzt ziehen lassen – Wundkontrolle",
                "Warnzeichen kennen (Infektion, Thrombose; Atemnot/Brustschmerz → 112) – schnelle Hilfe",

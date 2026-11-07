@@ -50,7 +50,7 @@ def qr_uebung(d, nr, titel, zeilen):
 def build():
     d = Doc(VORLAGE / "ab_vorlage_kbs.docx", BUILD / "docx")
     d.header_replace = {
-        "3BFP2 | KB I | Lo / ": "3BFP2 | Skills | ",
+        "3BFP2 | KB I | Lo / ": "3BFP2 | KB1 | Lo / ",
         "Themenblock I – Thema: Diabetes mellitus · Regelkreis &amp; sicheres Handeln": "Themenblock 2 – Notfall/Katastrophe · ILS Materialentfernung",
     }
 
@@ -243,7 +243,7 @@ def build():
 
     fuss = d.work / "word/footer1.xml"
     fuss.write_text(fuss.read_text(encoding="utf-8").replace("KB I · Regelkreis &amp; sicheres Handeln · Seite ",
-                                                             "ILS Materialentfernung · Skills · Seite "), encoding="utf-8")
+                                                             "ILS Materialentfernung · Seite "), encoding="utf-8")
     out = d.save(AUS / "ILS_Materialentfernung_AB.docx")
     print("geschrieben:", out)
     subprocess.run(["soffice", "--headless", "--convert-to", "pdf", "--outdir", str(AUS), str(out)], check=True,

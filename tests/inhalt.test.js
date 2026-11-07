@@ -89,8 +89,9 @@ function pruefePool(name, pool) {
         pruefe(!fehlerText, `${schritt.titel}: alle ${pool.length} Aufgaben fehlerfrei lösbar`, fehlerText || undefined);
         if (fehlerText) continue;
         if (await s.$('#lern-geschrieben')) {
-          await vor(s, 300000);
-          await s.click('#lern-geschrieben');
+          pruefe(await s.isDisabled('#lern-geschrieben'), `${schritt.titel}: Schreibzeit läuft`);
+          await vor(s, 31000);   // Mindest-Schreibzeit 30 s
+          await s.click('#lern-geschrieben', { timeout: 5000 });
           for (const h of await s.$$('.checkliste input')) await h.check();
           await s.click('#lern-verglichen');
         }

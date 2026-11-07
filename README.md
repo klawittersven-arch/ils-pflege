@@ -133,7 +133,7 @@ Neue ILS-Übungen laufen im Lernmodus (`ILSLern.uebung({...})`, Beispiel: `probe
   3 Warnungen 30 s Lesepause, danach geht es mit **derselben Aufgabe** weiter (kein Neustart). Gleiche Lesezeiten in der Challenge.
 - **Nach einem Fehler** bleibt die Erklärung 4 Sekunden stehen, bevor „Weiter“ geht.
 - **Zwischenstand** (aktuelle Aufgabe, Fehler, laufende Lesepause, Schreibzeit) bleibt auf dem Gerät gespeichert.
-- **Examens-Training** (optional `schreiben`): Schreibauftrag auf Papier mit Mindestzeit, danach Checkliste
+- **Examens-Training** (optional `schreiben`): Schreibauftrag auf Papier mit Mindestzeit (`minSek`, in beiden Aufträgen 30 s), danach Checkliste
   (Erwartungshorizont) zum Selbstabhaken, Hinweis auf Eigenverantwortung und E-Mail an die Lehrkraft mit Betreff.
 - **Abschlussquiz** (`abschluss: true`): erst nach allen Übungen – das prüft auch der Server.
 - **Lehrkraft-Tabelle:** ⚠n = Neustarts wegen Fehlern, ⏳n = Warnungen „zu schnell“, ✍x/y = selbst abgehakte Punkte im Examens-Training.
