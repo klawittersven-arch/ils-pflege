@@ -61,7 +61,7 @@ def qr_uebung(d, nr, titel, zeilen):
 def build():
     d = Doc(VORLAGE / "ab_vorlage_kbs.docx", BUILD / "docx")
     d.header_replace = {
-        "3BFP2 | KB I | Lo / ": "3BFP2 | Skills | ",
+        "3BFP2 | KB I | Lo / ": "3BFP2 | KB1 | Lo / ",
         "Themenblock I – Thema: Diabetes mellitus · Regelkreis &amp; sicheres Handeln":
             "Themenblock 2 – Notfall/Katastrophe · ILS Wunddrainagen",
     }
@@ -145,6 +145,7 @@ def build():
          "**geschlossen:** Auffangbehälter fest mit der Drainage verbunden, Entleerung über einen Ablaufstutzen (z. B. **Robinson-Drainage**)"],
     ]], [4530, 4530], size=10)
 
+    d.page_break()   # von der Lehrkraft in Word so gesetzt
     d.h3("Die Redon-Drainage")
     d.p("Die Redon-Drainage ist eine **Saug- bzw. Vakuumdrainage**. Der dünne Drainagekatheter mit vielen seitlichen Öffnungen wird während der OP "
         "mit einem Redonspieß gelegt – z. B. im Gelenk, unter einer Muskelfaszie oder im Unterhautfettgewebe. Er tritt an einer **eigenen Stelle** "
@@ -156,6 +157,7 @@ def build():
     d.image(PNG / "vakuumindikator.png", 9, "Abb. 2: Vakuumindikator – zusammengezogen und entfaltet")
     d.p("Die Redon bleibt je nach Fördermenge meist **48–72 Stunden** liegen und wird dann von der Ärztin entfernt.", after=60)
 
+    d.page_break()   # von der Lehrkraft in Word so gesetzt
     d.h3("Die Robinson-Drainage")
     d.p("Die Robinson-Drainage ist ein **geschlossenes** System ohne Sog: Ein weicher Schlauch leitet das Sekret aus einer Körperhöhle – häufig dem "
         "**Bauchraum**, z. B. nach einer Gallenblasen- oder Darm-OP – in einen Beutel ab. Der Beutel ist fest mit der Drainage verbunden und wird über einen "
@@ -313,7 +315,7 @@ def build():
 
     fuss = d.work / "word/footer1.xml"   # Fußzeile der Vorlage behalten, nur den Text tauschen
     fuss.write_text(fuss.read_text(encoding="utf-8").replace("KB I · Regelkreis &amp; sicheres Handeln · Seite ",
-                                                             "ILS Wunddrainagen · Skills · Seite "), encoding="utf-8")
+                                                             "ILS Wunddrainagen · Seite "), encoding="utf-8")
     out = d.save(AUS / "ILS_Wunddrainagen_AB.docx")
     print("geschrieben:", out)
     try:
