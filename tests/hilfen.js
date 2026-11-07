@@ -31,11 +31,12 @@ function serverStarten(workerUrl) {
 }
 
 /* Startet den Worker lokal (wrangler dev, Daten in einem leeren Ordner). */
-function workerStarten(port, passwort) {
+function workerStarten(port, passwort, variablen = {}) {
   const wrangler = path.join(WURZEL, 'worker', 'node_modules', '.bin', 'wrangler');
   const zustand = fs.mkdtempSync(path.join(os.tmpdir(), 'ils-wrangler-'));
   const kind = spawn(wrangler, ['dev', '--config', path.join(WURZEL, 'wrangler.jsonc'), '--port', String(port), '--ip', '127.0.0.1',
-    '--var', `LEHRKRAFT_PASSWORT:${passwort}`, '--persist-to', zustand, '--show-interactive-dev-session=false'],
+    '--var', `LEHRKRAFT_PASSWORT:${passwort}`, ...Object.entries(variablen).flatMap(([k, v]) => ['--var', `${k}:${v}`]),
+    '--persist-to', zustand, '--show-interactive-dev-session=false'],
   { cwd: WURZEL, stdio: ['ignore', 'pipe', 'pipe'], env: { ...process.env, WRANGLER_SEND_METRICS: 'false', CI: '1' } });
   let log = '';
   kind.stdout.on('data', (d) => { log += d; });

@@ -12,6 +12,11 @@
  *     GET  /api/ich        (Authorization: Bearer <token>)  → { name, klasse, fortschritt }
  *     POST /api/melden     (Bearer) { ils, schritt, punkte, max, neustarts?, zuSchnell?, selbst?, selbstMax? }
  *                          nur bekannte Schritte (assets/auftraege.js); Abschluss erst nach allen Übungen
+ *   ILS-Challenge (nach bestandenem Abschlussquiz, Bestenliste je ILS-Auftrag und Klasse)
+ *     POST /api/challenge/start (Bearer) { ils }            → { laufId }   (Zeit misst der Server)
+ *     POST /api/challenge/ende  (Bearer) { ils, laufId, aufgabenPunkte, anzahl }
+ *                                                           → { punkte, bonus, sekunden, best, platz, von, liste }
+ *     GET  /api/challenge/liste?ils=… (Bearer)              → Top 10 der eigenen Klasse + eigener Platz
  *   Lehrkraft (Kopfzeile X-Passwort = Secret LEHRKRAFT_PASSWORT)
  *     GET  /api/lehrkraft/stand                 → alle SuS mit Fortschritt
  *     POST /api/lehrkraft/import    { text }    Zeilen „Klasse;Name;TT.MM.JJJJ“
@@ -52,6 +57,13 @@ const SCHRITT_MUSTER = /^[a-z0-9-]{1,20}$/;
 const TOKEN_MUSTER = /^[A-Za-z0-9]{32}$/;
 const SID_MUSTER = /^[a-z0-9]{12}$/;
 const DATUM_ISO = /^(\d{4})-(\d{2})-(\d{2})$/;
+const LAUF_MUSTER = /^[A-Za-z0-9]{16}$/;
+// ILS-Challenge: wie die Klausur-Challenge der Lernkarten – 150 Punkte je Aufgabe, Zeitbonus bis 750 Punkte,
+// der in 15 Minuten linear auf 0 sinkt und nur anteilig zu den richtigen Antworten zählt.
+const CH_PUNKTE_JE_AUFGABE = 150;
+const CH_BONUS_MAX = 750;
+const CH_BONUS_SEK = 900;
+const CH_TOP = 10;
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -153,7 +165,8 @@ async function gleichSicher(a, b) {
   return u === 0;
 }
 
-const STATUS = { ungueltig: 400, abgemeldet: 401, 'nicht-gefunden': 401, passwort: 401, gesperrt: 429, unbekannt: 404, voll: 409, voraussetzung: 409, 'passwort-fehlt': 503 };
+const STATUS = { ungueltig: 400, abgemeldet: 401, 'nicht-gefunden': 401, passwort: 401, gesperrt: 429, unbekannt: 404, voll: 409, voraussetzung: 409,
+  'zu-schnell': 400, 'lauf-unbekannt': 409, 'passwort-fehlt': 503 };
 const mitStatus = (erg) => antwort(erg, erg.ok ? 200 : (STATUS[erg.grund] || 400));
 
 /* ---------- Worker ---------- */
@@ -218,6 +231,36 @@ export default {
         return mitStatus(await daten.melden(token, ils, schritt, punkte, max, zusatz, voraussetzungen));
       }
 
+      /* ----- ILS-Challenge ----- */
+      if (weg.startsWith('/api/challenge/')) {
+        const token = bearer(request);
+        if (!token) return antwort({ ok: false, grund: 'abgemeldet' }, 401);
+        const aktion = weg.slice('/api/challenge/'.length);
+        if (aktion === 'liste' && methode === 'GET') {
+          const ils = url.searchParams.get('ils') || '';
+          if (!schrittFinden(ils, 'x').auftrag) return antwort({ ok: false, grund: 'ungueltig' }, 400);
+          return mitStatus(await daten.challengeListe(token, ils));
+        }
+        if (methode !== 'POST') return antwort({ ok: false, grund: 'nicht-gefunden' }, 404);
+        const d = await jsonLesen(request);
+        const ils = String(d?.ils ?? '');
+        const auftrag = schrittFinden(ils, 'x').auftrag;
+        if (!auftrag) return antwort({ ok: false, grund: 'ungueltig' }, 400);
+        const quiz = auftrag.schritte.find((x) => x.abschluss);
+        if (aktion === 'start') return mitStatus(await daten.challengeStart(token, ils, quiz ? quiz.id : null));
+        if (aktion === 'ende') {
+          const laufId = String(d?.laufId ?? '');
+          const anzahl = ganzzahl(d?.anzahl, 5, 40);
+          const ap = ganzzahl(d?.aufgabenPunkte, 0, 40 * CH_PUNKTE_JE_AUFGABE);
+          if (!LAUF_MUSTER.test(laufId) || anzahl === null || ap === null || ap > anzahl * CH_PUNKTE_JE_AUFGABE) {
+            return antwort({ ok: false, grund: 'ungueltig' }, 400);
+          }
+          const minSek = Number.isFinite(Number(env.CHALLENGE_MIN_SEK_JE_AUFGABE)) ? Number(env.CHALLENGE_MIN_SEK_JE_AUFGABE) : 5;
+          return mitStatus(await daten.challengeEnde(token, ils, laufId, ap, anzahl, minSek));
+        }
+        return antwort({ ok: false, grund: 'nicht-gefunden' }, 404);
+      }
+
       /* ----- Lehrkraft ----- */
       if (weg.startsWith('/api/lehrkraft/')) {
         if (!env.LEHRKRAFT_PASSWORT) return antwort({ ok: false, grund: 'passwort-fehlt' }, 503);
@@ -268,6 +311,8 @@ export default {
  *   s:<sid>         { sid, klasse, name, vn, vnVoll, geb (Prüfwert), angelegt, ersteAnmeldung, zuletzt }
  *   p:<sid>         { <ils>: { <schritt>: { um, punkte, max, quelle: 'sus'|'lehrkraft', zuletzt } } }
  *   t:<token>       { sid, um }   (angemeldetes Gerät)
+ *   c:<ils>:<sid>   { punkte, aufgabenPunkte, sekunden, um, spiele }  bestes Challenge-Ergebnis
+ *   lauf:<ils>:<sid> { laufId, start }  laufende Challenge (Zeit misst der Server)
  *   fehl:<klasse>   { start, anzahl }  fehlgeschlagene Anmeldungen
  *   lkfehl          { start, anzahl }  falsche Lehrkraft-Passwörter */
 export class Daten extends DurableObject {
@@ -383,13 +428,19 @@ export class Daten extends DurableObject {
   }
 
   async stand() {
-    const [schueler, fortschritte, tokens] = await Promise.all([
+    const [schueler, fortschritte, tokens, challenges] = await Promise.all([
       this.alleSchueler(),
       this.ctx.storage.list({ prefix: 'p:' }),
-      this.ctx.storage.list({ prefix: 't:' })
+      this.ctx.storage.list({ prefix: 't:' }),
+      this.ctx.storage.list({ prefix: 'c:' })
     ]);
     const geraete = {};
     for (const t of tokens.values()) geraete[t.sid] = (geraete[t.sid] || 0) + 1;
+    const challenge = {};
+    for (const [k, c] of challenges) {
+      const [, ils, sid] = k.split(':');
+      (challenge[sid] = challenge[sid] || {})[ils] = c;
+    }
     return {
       ok: true,
       jetzt: Date.now(),
@@ -397,7 +448,8 @@ export class Daten extends DurableObject {
         sid: s.sid, klasse: s.klasse, name: s.name,
         ersteAnmeldung: s.ersteAnmeldung || null, zuletzt: s.zuletzt || null,
         geraete: geraete[s.sid] || 0,
-        fortschritt: fortschritte.get('p:' + s.sid) || {}
+        fortschritt: fortschritte.get('p:' + s.sid) || {},
+        challenge: challenge[s.sid] || {}
       }))
     };
   }
@@ -466,11 +518,15 @@ export class Daten extends DurableObject {
 
   async schuelerLoeschen(sid) {
     const weg = await this.tokensVon(sid);
-    await this.ctx.storage.delete([...weg, 's:' + sid, 'p:' + sid]);
+    const ch = [...(await this.ctx.storage.list({ prefix: 'c:' })).keys(), ...(await this.ctx.storage.list({ prefix: 'lauf:' })).keys()]
+      .filter((k) => k.endsWith(':' + sid));
+    await this.ctx.storage.delete([...weg, ...ch, 's:' + sid, 'p:' + sid]);
     return { ok: true };
   }
 
   async auftragLoeschen(ils) {
+    const ch = [...(await this.ctx.storage.list({ prefix: `c:${ils}:` })).keys(), ...(await this.ctx.storage.list({ prefix: `lauf:${ils}:` })).keys()];
+    for (let i = 0; i < ch.length; i += 100) await this.ctx.storage.delete(ch.slice(i, i + 100));
     const alle = await this.ctx.storage.list({ prefix: 'p:' });
     const schreiben = {};
     for (const [k, p] of alle) if (p[ils]) { delete p[ils]; schreiben[k] = p; }
@@ -479,6 +535,64 @@ export class Daten extends DurableObject {
       await this.ctx.storage.put(Object.fromEntries(eintraege.slice(i, i + 100)));
     }
     return { ok: true, betroffen: eintraege.length };
+  }
+
+  /* ----- ILS-Challenge ----- */
+  async challengeStart(token, ils, quizId) {
+    const s = await this.schuelerZuToken(token);
+    if (!s) return { ok: false, grund: 'abgemeldet' };
+    const p = (await this.ctx.storage.get('p:' + s.sid)) || {};
+    if (quizId && !(p[ils] && p[ils][quizId])) return { ok: false, grund: 'voraussetzung' };
+    const laufId = zufall(16, 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789');
+    await this.ctx.storage.put(`lauf:${ils}:${s.sid}`, { laufId, start: Date.now() });
+    return { ok: true, laufId };
+  }
+
+  async bestenliste(ils, klasse) {
+    const [schueler, alle] = await Promise.all([this.alleSchueler(), this.ctx.storage.list({ prefix: `c:${ils}:` })]);
+    const namen = new Map(schueler.filter((x) => x.klasse === klasse).map((x) => [x.sid, x.name]));
+    return [...alle].map(([k, c]) => ({ sid: k.split(':')[2], ...c }))
+      .filter((c) => namen.has(c.sid))
+      .sort((a, b) => b.punkte - a.punkte || a.sekunden - b.sekunden || a.um - b.um)
+      .map((c) => ({ sid: c.sid, name: namen.get(c.sid), punkte: c.punkte, sekunden: c.sekunden }));
+  }
+
+  async challengeListe(token, ils) {
+    const s = await this.schuelerZuToken(token);
+    if (!s) return { ok: false, grund: 'abgemeldet' };
+    const liste = await this.bestenliste(ils, s.klasse);
+    const platz = liste.findIndex((c) => c.sid === s.sid) + 1;
+    return {
+      ok: true, klasse: s.klasse, von: liste.length, platz: platz || null,
+      best: (await this.ctx.storage.get(`c:${ils}:${s.sid}`)) || null,
+      liste: liste.slice(0, CH_TOP).map(({ name, punkte, sekunden }) => ({ name, punkte, sekunden }))
+    };
+  }
+
+  async challengeEnde(token, ils, laufId, aufgabenPunkte, anzahl, minSekJeAufgabe) {
+    const s = await this.schuelerZuToken(token);
+    if (!s) return { ok: false, grund: 'abgemeldet' };
+    const laufSchl = `lauf:${ils}:${s.sid}`;
+    const lauf = await this.ctx.storage.get(laufSchl);
+    if (!lauf || lauf.laufId !== laufId) return { ok: false, grund: 'lauf-unbekannt' };
+    const sekunden = Math.round((Date.now() - lauf.start) / 1000);
+    if (sekunden < anzahl * minSekJeAufgabe) return { ok: false, grund: 'zu-schnell' };
+    const anteil = aufgabenPunkte / (anzahl * CH_PUNKTE_JE_AUFGABE);
+    const bonus = Math.round(CH_BONUS_MAX * Math.max(0, 1 - sekunden / CH_BONUS_SEK) * anteil);
+    const punkte = aufgabenPunkte + bonus;
+    const schl = `c:${ils}:${s.sid}`;
+    const alt = await this.ctx.storage.get(schl);
+    const neuerRekord = !alt || punkte > alt.punkte || (punkte === alt.punkte && sekunden < alt.sekunden);
+    const best = neuerRekord ? { punkte, aufgabenPunkte, sekunden, um: Date.now(), spiele: (alt ? alt.spiele || 1 : 0) + 1 }
+      : { ...alt, spiele: (alt.spiele || 1) + 1 };
+    await this.ctx.storage.put(schl, best);
+    await this.ctx.storage.delete(laufSchl);
+    const liste = await this.bestenliste(ils, s.klasse);
+    return {
+      ok: true, punkte, bonus, aufgabenPunkte, sekunden, neuerRekord, best,
+      platz: liste.findIndex((c) => c.sid === s.sid) + 1, von: liste.length,
+      liste: liste.slice(0, CH_TOP).map(({ name, punkte: pk, sekunden: sk }) => ({ name, punkte: pk, sekunden: sk }))
+    };
   }
 
   async allesLoeschen() {

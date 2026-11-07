@@ -7,6 +7,7 @@
             Er wird erst freigeschaltet, wenn alle anderen Schritte erledigt sind.
    Reihenfolge der Schritte = Reihenfolge auf der Übersichtsseite und in der Tabelle.
    betreff  Betreff für E-Mails an die Lehrkraft (Examens-Training)
+   challenge Seite der ILS-Challenge (Highscore), freigeschaltet nach dem Abschlussquiz
    Diese Datei liest auch der Server (worker/src/index.js): Er nimmt nur bekannte Schritte an und das
    Abschlussquiz erst, wenn alle anderen Schritte erledigt sind. */
 (typeof window !== 'undefined' ? window : globalThis).ILS_AUFTRAEGE = [
@@ -16,6 +17,7 @@
     kurz: 'Drainage',
     pfad: 'drainage/',
     betreff: 'ILS Drainage',
+    challenge: 'drainage/challenge/',
     schritte: [
       { id: '1', titel: 'Übung 1: Wozu Wunddrainagen?', kurz: 'Ü1', pfad: 'drainage/1/' },
       { id: '2', titel: 'Übung 2: Beobachten und dokumentieren', kurz: 'Ü2', pfad: 'drainage/2/' },
@@ -31,6 +33,7 @@
     kurz: 'Materialentf.',
     pfad: 'me/',
     betreff: 'ILS Metallentfernung',
+    challenge: 'me/challenge/',
     schritte: [
       { id: '1', titel: 'Übung 1: Osteosynthese und Materialentfernung', kurz: 'Ü1', pfad: 'me/1/' },
       { id: '2', titel: 'Übung 2: Nach der OP überwachen', kurz: 'Ü2', pfad: 'me/2/' },

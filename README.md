@@ -153,3 +153,20 @@ node tests/inhalt.test.js            # spielt jede Aufgabe aller Pools einmal du
 Die Inhalte stehen in `tools/drainage_inhalt.py` und `tools/me_inhalt.py`. Mit (⚑) markierte Stellen stammen nicht aus
 Pflegias (Standardwissen) – die Markierung ist für die SuS unsichtbar und in den Lehrkraft-Informationen aufgelistet.
 `<version>` ist ein beliebiger kurzer Text (Cache-Bremse für die Browser), z. B. das Datum.
+
+## ILS-Challenge (Highscore) – nach dem Abschlussquiz
+
+Wer das Abschlussquiz bestanden hat, kann freiwillig die **ILS-Challenge** spielen (`drainage/challenge/`, `me/challenge/`),
+beliebig oft – wie die Klausur-Challenge der Lernkarten:
+
+- **20 Aufgaben** aus allen Übungen des Auftrags (je Übung 3, aus dem Abschlussquiz 5), zufällige Reihenfolge.
+  Aufgaben, die das Arbeitsblatt brauchen (Drainageprotokoll, Anordnung), sind ausgenommen.
+- **Punkte:** 150 je Aufgabe, bei mehrschrittigen Aufgaben anteilig (jeder Fehlklick kostet). **Zeitbonus** bis 750 Punkte,
+  sinkt in 15 Minuten linear auf 0 und zählt nur anteilig zu den richtigen Antworten. Die **Zeit misst der Server**;
+  ein Durchgang unter 5 Sekunden je Aufgabe wird nicht gewertet. Die Mindest-Lesezeit je Aufgabe gilt weiter.
+- **Lösungen erst am Ende**, dazu Punkte je Abschnitt (schwächster oben) mit Verweis aufs Arbeitsblatt.
+- **Bestenliste je ILS-Auftrag und Klasse** mit Vorname + Initial (Top 10, eigener Platz). Es zählt das beste Ergebnis.
+- **Lehrkraft-Seite:** Spalte „🏁 Challenge“ (auch in der CSV) und **🏆 Siegerehrung** am Beamer: Treppchen 2 – 1 – 3,
+  Plätze 4–12, Konfetti. Tasten **F** Vollbild, **R**/Leertaste nochmal, **Esc** schließen. Ohne gewählte Klasse wird sie zuerst abgefragt.
+- „Fortschritt eines Auftrags löschen“, „Person löschen“ und „Alles löschen“ löschen auch die Challenge-Ergebnisse.
+- Test: `node tests/challenge.test.js`

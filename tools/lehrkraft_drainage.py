@@ -28,6 +28,7 @@ def build():
         "Übersicht für Sie: **klawittersven-arch.github.io/ils-pflege/lehrkraft/** → ILS-Auftrag „Wunddrainagen“ wählen",
         "In der Tabelle: **✓ Datum** = erledigt, **⚠2** = zwei Neustarts (zu viele Fehler oder zu schnell getippt – Hinweis auf Raten), "
         "**✍5/7** = im Examens-Training selbst abgehakte Punkte. „Wer fehlt noch?“ liefert den Text für die PPT.",
+        "**ILS-Challenge** (freiwillig, nach dem Abschlussquiz): 20 Aufgaben, 150 Punkte je Aufgabe + Zeitbonus (wie die Klausur-Challenge der Lernkarten), Bestenliste je Klasse mit Vorname + Initial. Auf der Lehrkraft-Seite: Spalte „🏁 Challenge“ und **🏆 Siegerehrung** am Beamer (Taste F = Vollbild, R = nochmal, Esc = schließen).",
         "Schutz gegen Raten: Aufgaben einzeln, 3 Fehler erlaubt, dann 60 s Lesepause und neue Aufgaben; Mindest-Lesezeit je Aufgabe "
         "(3× zu schnell = Neustart); Abschlussquiz (10 aus 25, max. 2 Fehler) erst nach allen Übungen – das prüft auch der Server.",
     ], after_last=60)

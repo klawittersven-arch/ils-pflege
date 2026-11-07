@@ -593,6 +593,9 @@ const ILSLern = (() => {
         K.meldungsZeile(zeile, K.nachreichen());
       }
       const w = K.weiterKnopf(a, cfg.schritt);
+      if (cfg.abschluss && a && a.challenge) {
+        karte.append(el('a', { class: 'btn block challenge-knopf weiter', href: K.link(a.challenge) }, '🏁 Jetzt die ILS-Challenge spielen – Highscore!'));
+      }
       if (w) karte.append(w);
       karte.append(el('button', { type: 'button', class: 'btn secondary block weiter', onclick: () => { S.phase = 'start'; sichern(); zeigen(); } }, 'Noch einmal üben'));
       inhalt.append(karte);

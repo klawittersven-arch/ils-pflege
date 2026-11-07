@@ -133,7 +133,8 @@
       el('div', { class: 'lk-knoepfe' },
         el('button', { type: 'button', class: 'btn secondary', onclick: () => laden(false) }, '↻ Aktualisieren'),
         el('button', { type: 'button', class: 'btn secondary', id: 'lk-wer-fehlt', onclick: werFehlt }, 'Wer fehlt noch?'),
-        el('button', { type: 'button', class: 'btn secondary', id: 'lk-csv', onclick: csv }, 'Excel-Datei (CSV)')));
+        el('button', { type: 'button', class: 'btn secondary', id: 'lk-csv', onclick: csv }, 'Excel-Datei (CSV)'),
+        el('button', { type: 'button', class: 'btn secondary', id: 'lk-siegerehrung', onclick: siegerehrung }, '🏆 Siegerehrung')));
 
     app.append(el('div', { id: 'lk-haupt' },
       leiste, teile.status, fehltBox, teile.zusammenfassung, teile.tabelle,
@@ -192,7 +193,8 @@
       el('th', { scope: 'col' }, 'Name'),
       mitKlasse ? el('th', { scope: 'col' }, 'Klasse') : null,
       a.schritte.map((x) => el('th', { scope: 'col', title: x.titel }, x.kurz || x.titel)),
-      el('th', { scope: 'col' }, 'Stand'));
+      el('th', { scope: 'col' }, 'Stand'),
+      a.challenge ? el('th', { scope: 'col', title: 'bestes Ergebnis in der ILS-Challenge' }, '🏁 Challenge') : null);
     const zeilen = liste.map((s) => {
       const w = auswerten(s, a);
       const zellen = a.schritte.map((x) => {
@@ -217,7 +219,8 @@
         el('th', { scope: 'row' }, s.name),
         mitKlasse ? el('td', {}, s.klasse) : null,
         zellen,
-        el('td', { class: 'stand' }, statusText));
+        el('td', { class: 'stand' }, statusText),
+        a.challenge ? el('td', { class: 'challenge-zelle' }, ((s.challenge || {})[a.id] ? `${s.challenge[a.id].punkte} P.` : '–')) : null);
     });
     teile.tabelle.append(el('table', { class: 'lk' }, el('thead', {}, kopf), el('tbody', {}, zeilen)));
   }
@@ -266,12 +269,92 @@
     box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
+  /* ---------- Siegerehrung (ILS-Challenge) am Beamer ---------- */
+  function rangliste(a, klasse) {
+    return stand.schueler.filter((s) => s.klasse === klasse && s.challenge && s.challenge[a.id])
+      .map((s) => ({ name: s.name, ...s.challenge[a.id] }))
+      .sort((x, y) => y.punkte - x.punkte || x.sekunden - y.sekunden || x.um - y.um)
+      .slice(0, 12);
+  }
+
+  function siegerehrung() {
+    const a = auftrag();
+    if (!a || !stand) return;
+    const klassen = [...new Set(stand.schueler.map((s) => s.klasse))].sort();
+    const ov = el('div', { class: 'se-overlay', id: 'se-overlay', tabindex: '-1' });
+    const schliessen = () => { document.removeEventListener('keydown', taste); if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); ov.remove(); };
+    let abspielen = () => {};
+    function taste(ev) {
+      if (ev.key === 'Escape') schliessen();
+      else if (ev.key === 'f' || ev.key === 'F') { if (!document.fullscreenElement) ov.requestFullscreen && ov.requestFullscreen().catch(() => {}); else document.exitFullscreen().catch(() => {}); }
+      else if (ev.key === 'r' || ev.key === 'R' || ev.key === ' ') { ev.preventDefault(); abspielen(); }
+    }
+    document.addEventListener('keydown', taste);
+    document.body.append(ov);
+
+    function klasseWaehlen() {
+      ov.innerHTML = '';
+      ov.append(el('div', { class: 'se-wahl' }, el('h2', {}, '🏆 Siegerehrung – welche Klasse?'),
+        el('div', { class: 'se-klassen' }, klassen.map((k) => el('button', { type: 'button', class: 'btn', onclick: () => zeigen(k) }, k))),
+        el('button', { type: 'button', class: 'btn secondary', onclick: schliessen }, 'Schließen')));
+    }
+
+    function zeigen(klasse) {
+      const liste = rangliste(a, klasse);
+      ov.innerHTML = '';
+      const kopf = el('div', { class: 'se-kopf' }, el('div', { class: 'se-titel' }, '🏆 Siegerehrung'), el('div', { class: 'se-unter' }, `ILS-Challenge „${a.titel}“ · ${klasse}`));
+      const buehne = el('div', { class: 'se-treppchen' });
+      const rest = el('ol', { class: 'se-rest', start: '4' });
+      const knoepfe = el('div', { class: 'se-knoepfe' },
+        el('button', { type: 'button', class: 'btn secondary', onclick: () => abspielen() }, '↻ Nochmal (R)'),
+        el('button', { type: 'button', class: 'btn secondary', onclick: () => taste({ key: 'f' }) }, '⛶ Vollbild (F)'),
+        klassen.length > 1 ? el('button', { type: 'button', class: 'btn secondary', onclick: klasseWaehlen }, 'Klasse wechseln') : null,
+        el('button', { type: 'button', class: 'btn secondary', onclick: schliessen }, 'Schließen (Esc)'));
+      ov.append(kopf, buehne, rest, knoepfe);
+      if (!liste.length) { buehne.append(el('p', { class: 'se-leer' }, 'Noch keine Ergebnisse in dieser Klasse.')); abspielen = () => {}; return; }
+      const stufe = (platz) => {
+        const e = liste[platz - 1];
+        return el('div', { class: `se-stufe se-p${platz}` + (e ? '' : ' leer') },
+          el('div', { class: 'se-name' }, e ? (platz === 1 ? '🏆 ' : '') + e.name : ''),
+          el('div', { class: 'se-punkte' }, e ? `${e.punkte} Punkte` : ''),
+          el('div', { class: 'se-block' }, String(platz)));
+      };
+      const stufen = { 2: stufe(2), 1: stufe(1), 3: stufe(3) };
+      buehne.append(stufen[2], stufen[1], stufen[3]);
+      const zeilen = liste.slice(3).map((e) => el('li', {}, el('span', {}, e.name), el('strong', {}, `${e.punkte} P.`)));
+      rest.append(...zeilen);
+      let timer = [];
+      abspielen = () => {
+        timer.forEach(clearTimeout); timer = [];
+        [stufen[1], stufen[2], stufen[3], ...zeilen].forEach((x) => x.classList.remove('zeigen'));
+        let t = 300;
+        [...zeilen].reverse().forEach((z) => { timer.push(setTimeout(() => z.classList.add('zeigen'), t)); t += 250; });
+        timer.push(setTimeout(() => stufen[3].classList.add('zeigen'), t + 300));
+        timer.push(setTimeout(() => stufen[2].classList.add('zeigen'), t + 900));
+        timer.push(setTimeout(() => { stufen[1].classList.add('zeigen'); konfetti(ov); }, t + 2700));
+      };
+      abspielen();
+    }
+
+    if (wahl.klasse) zeigen(wahl.klasse); else if (klassen.length === 1) zeigen(klassen[0]); else klasseWaehlen();
+  }
+
+  function konfetti(ziel) {
+    const farben = ['#b4572a', '#1d7a46', '#1f3a5f', '#e8b923', '#c0392b', '#7a5bb5'];
+    for (let i = 0; i < 140; i++) {
+      const k = el('i', { class: 'se-konfetti', style: `left:${Math.random() * 100}%;background:${farben[i % farben.length]};` +
+        `animation-delay:${Math.random() * 0.8}s;animation-duration:${2.5 + Math.random() * 2}s;transform:rotate(${Math.random() * 360}deg)` });
+      ziel.append(k);
+      setTimeout(() => k.remove(), 5500);
+    }
+  }
+
   /* ---------- CSV für Excel ---------- */
   function csv() {
     const a = auftrag();
     if (!a || !stand) return;
     const feld = (v) => { const t = String(v ?? ''); return /[;"\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
-    const zeilen = [['Klasse', 'Name', ...a.schritte.map((x) => x.titel), 'Abgeschlossen'].map(feld).join(';')];
+    const zeilen = [['Klasse', 'Name', ...a.schritte.map((x) => x.titel), 'Abgeschlossen', ...(a.challenge ? ['Challenge (beste Punkte)'] : [])].map(feld).join(';')];
     stand.schueler.filter((s) => !wahl.klasse || s.klasse === wahl.klasse).sort(vergleich).forEach((s) => {
       const w = auswerten(s, a);
       zeilen.push([s.klasse, s.name, ...a.schritte.map((x) => {
@@ -279,7 +362,7 @@
         if (!e) return '';
         return datum(e.um) + (e.quelle === 'lehrkraft' ? ' (von Hand)' : '') + (x.abschluss && e.max ? ` (${e.punkte}/${e.max})` : '') +
           (e.neustarts ? ` Neustarts: ${e.neustarts}` : '') + (e.selbstMax ? ` Selbstkontrolle: ${e.selbst}/${e.selbstMax}` : '');
-      }), w.fertig ? 'ja' : 'nein'].map(feld).join(';'));
+      }), w.fertig ? 'ja' : 'nein', ...(a.challenge ? [((s.challenge || {})[a.id] || {}).punkte ?? ''] : [])].map(feld).join(';'));
     });
     const blob = new Blob(['﻿' + zeilen.join('\r\n') + '\r\n'], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);

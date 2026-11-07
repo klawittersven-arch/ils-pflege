@@ -335,3 +335,52 @@ table.lk td.zelle .neustarts { color: var(--hint); font-weight: 800; }
 table.lk td.zelle.warn button { background: var(--hint-soft); color: #4d3a00; }
 table.lk td.zelle .selbst { color: var(--muted); font-weight: 600; font-size: 12px; }
 .antwort, .chip, .order-item { min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
+
+/* ---------- ILS-Challenge ---------- */
+.btn.challenge-knopf { background: #1f3a5f; color: #fff; margin-top: 10px; }
+.ch-kopf .ch-uhr { font-variant-numeric: tabular-nums; color: var(--ink); }
+.ch-kopf .ch-punkte { color: #1f3a5f; }
+.ch-ergebnis { text-align: center; }
+.ch-gesamt { font-size: 40px; font-weight: 800; color: #1f3a5f; line-height: 1.1; margin: 4px 0; }
+.bestenliste { list-style: none; padding: 0; margin: 8px 0 0; }
+.bestenliste li { display: grid; grid-template-columns: 2.2em 1fr auto auto; gap: 8px; align-items: center; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+.bestenliste li.ich { background: #eaf1fb; border-radius: 8px; font-weight: 700; }
+.bestenliste .platz { font-weight: 800; text-align: center; }
+.bestenliste .pkt { font-weight: 800; color: #1f3a5f; font-variant-numeric: tabular-nums; }
+.bestenliste .zeit { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.ch-themen { list-style: none; padding: 0; margin: 6px 0; }
+.ch-themen li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.ch-fehler { border-top: 1px solid var(--line); padding: 10px 0; }
+.ch-frage { font-weight: 600; margin: 2px 0 4px; }
+.ch-loesung { background: var(--ok-soft); color: #134d2d; border-radius: 8px; padding: 6px 10px; margin: 4px 0; font-size: 15px; }
+table.lk td.challenge-zelle { font-weight: 700; color: #1f3a5f; white-space: nowrap; }
+/* Siegerehrung */
+.se-overlay { position: fixed; inset: 0; z-index: 1000; background: radial-gradient(circle at 50% 30%, #2a4a75, #0f1f36); color: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 3vh 4vw; overflow: hidden; }
+.se-overlay .btn.secondary { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.5); }
+.se-wahl { margin: auto; text-align: center; display: grid; gap: 18px; }
+.se-klassen { display: flex; gap: 14px; justify-content: center; }
+.se-klassen .btn { font-size: 26px; padding: 18px 36px; }
+.se-kopf { text-align: center; }
+.se-titel { font-size: clamp(32px, 5vw, 64px); font-weight: 800; }
+.se-unter { font-size: clamp(16px, 2vw, 26px); opacity: .85; }
+.se-treppchen { display: flex; align-items: flex-end; justify-content: center; gap: 2vw; margin-top: 3vh; width: min(1000px, 100%); }
+.se-stufe { flex: 1; display: flex; flex-direction: column; align-items: center; opacity: 0; transform: translateY(40px); transition: opacity .6s, transform .6s; }
+.se-stufe.zeigen { opacity: 1; transform: none; }
+.se-stufe.leer { visibility: hidden; }
+.se-name { font-size: clamp(18px, 2.6vw, 36px); font-weight: 800; text-align: center; }
+.se-punkte { font-size: clamp(14px, 1.8vw, 24px); opacity: .9; margin-bottom: 8px; }
+.se-block { width: 100%; border-radius: 12px 12px 0 0; display: flex; align-items: flex-start; justify-content: center; padding-top: 10px;
+  font-size: clamp(36px, 6vw, 80px); font-weight: 800; color: rgba(255,255,255,.9); }
+.se-p1 .se-block { height: 30vh; background: linear-gradient(#f1c232, #c99a06); }
+.se-p2 .se-block { height: 21vh; background: linear-gradient(#cfd8e0, #9aa9b5); }
+.se-p3 .se-block { height: 15vh; background: linear-gradient(#d99a6c, #a8653a); }
+.se-rest { columns: 3; column-gap: 4vw; margin: 3vh 0 0; padding-left: 1.5em; font-size: clamp(14px, 1.7vw, 22px); width: min(1000px, 100%); }
+.se-rest li { opacity: 0; transition: opacity .4s; break-inside: avoid; margin: 4px 0; }
+.se-rest li.zeigen { opacity: 1; }
+.se-rest li strong { margin-left: 10px; color: #f1c232; }
+.se-leer { font-size: 28px; opacity: .8; }
+.se-knoepfe { position: fixed; right: 16px; bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.se-knoepfe .btn { padding: 8px 12px; min-height: 40px; font-size: 14px; }
+.se-konfetti { position: absolute; top: -12px; width: 10px; height: 14px; border-radius: 2px; animation: se-fall linear forwards; }
+@keyframes se-fall { to { top: 105vh; transform: rotate(720deg) translateX(40px); } }

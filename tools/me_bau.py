@@ -8,6 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from seite_lern import seite  # noqa: E402
+from challenge_bau import challenge_seite  # noqa: E402
 import me_inhalt as I  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -60,6 +61,9 @@ def main():
     js = "const POOL = " + pool_js(I.ABSCHLUSS) + ";\nILSLern.uebung(Object.assign(" + json.dumps(cfg, ensure_ascii=False) + ", { pool: POOL }));"
     (ROOT / "me/abschluss").mkdir(exist_ok=True)
     seite(ROOT / "me/abschluss/index.html", "Abschlussquiz Materialentfernung", f"{KICKER} · Abschluss", js, "../../", V)
+    challenge_seite(ROOT, "me", "Materialentfernung", KICKER, [
+        (I.ABSCHNITT[1], I.UEBUNG1, 3), (I.ABSCHNITT[2], I.UEBUNG2, 3), (I.ABSCHNITT[3], I.UEBUNG3, 3),
+        (I.ABSCHNITT[4], I.UEBUNG4, 3), (I.ABSCHNITT[5], I.UEBUNG5, 3), ("Abschlussquiz", I.ABSCHLUSS, 5)], V, pool_js)
     print("Seiten erzeugt.")
 
 

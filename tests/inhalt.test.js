@@ -13,53 +13,7 @@ const BILDER = process.env.BILDER || '';
 const kontext = { globalThis: {} };
 vm.runInNewContext(fs.readFileSync(path.join(WURZEL, 'assets/auftraege.js'), 'utf8'), kontext);
 const AUFTRAEGE = kontext.globalThis.ILS_AUFTRAEGE.filter((a) => a.id !== 'probe' && (process.argv.length < 3 || process.argv.includes(a.id)));
-const ohneTags = (s) => String(s).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-
-async function klickText(s, selektor, text) {
-  const ok = await s.evaluate(([sel, t]) => {
-    const norm = (x) => x.replace(/\s+/g, ' ').trim();
-    const el = [...document.querySelectorAll(sel)].find((e) => norm(e.textContent) === t && !e.disabled);
-    if (el) el.click();
-    return !!el;
-  }, [selektor, text]);
-  if (!ok) throw new Error(`nicht gefunden: ${selektor} „${text}“`);
-}
-const vor = (s, ms = 16000) => s.clock.fastForward(ms);
-
-async function loesen(s, a) {
-  await vor(s);
-  switch (a.typ) {
-    case 'wahl': await klickText(s, '.antwort', ohneTags(a.optionen[a.richtig])); break;
-    case 'rf':
-      await klickText(s, '.antwort', a.richtig ? 'Richtig' : 'Falsch');
-      if (a.begruendung) { await vor(s); await klickText(s, '.antwort', ohneTags(a.begruendung.optionen[a.begruendung.richtig])); }
-      break;
-    case 'mehrfach':
-      for (const i of a.richtig) await klickText(s, '.antwort', ohneTags(a.optionen[i]));
-      await s.click('.lern-pruefen'); break;
-    case 'reihe': for (const t of a.schritte) await klickText(s, '.order-pool .order-item', ohneTags(t)); break;
-    case 'sortieren':
-      for (let n = 0; n < a.elemente.length; n++) {
-        const t = ohneTags(await s.textContent('.sort-text'));
-        const e = a.elemente.find((x) => ohneTags(x.t) === t);
-        if (!e) throw new Error('Element nicht gefunden: ' + t);
-        await klickText(s, '.sort-knopf', ohneTags(a.kategorien[e.k]));
-        await vor(s, 6000);
-      }
-      break;
-    case 'zahl': await s.fill('.lern-zahl', String(a.richtig).replace('.', ',')); await s.click('.lern-zahlzeile button'); break;
-    case 'luecke':
-      for (const m of a.text.matchAll(/\{\{([^}]+)\}\}/g)) await klickText(s, '.chip', m[1]);
-      break;
-    case 'bild':
-      for (const z of a.ziele) { await s.locator(`[data-ziel="${z.id}"] .feld`).click(); await vor(s, 8000); }
-      break;
-    case 'dialog':
-      for (const k of a.knoten) { await klickText(s, '.antwort', ohneTags(k.optionen.find((o) => o.richtig).t)); await vor(s); }
-      break;
-    default: throw new Error('unbekannter Typ ' + a.typ);
-  }
-}
+const { ohneTags, klickText, vor, loesen } = require('./loeser');
 
 // statische Prüfungen der Pools
 function pruefePool(name, pool) {

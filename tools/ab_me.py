@@ -236,7 +236,8 @@ def build():
     # ================================================================ Abschluss
     d.h2("Abschluss", before=120)
     d.qr_task(qr("abschluss/"), "Abschlussquiz", ["Neuer Fall: Frau Schäfer, Materialentfernung am Unterarm. 10 Fragen, höchstens 2 Fehler.",
-                                                 "Das Quiz wird erst freigeschaltet, wenn alle 5 Übungen erledigt sind."], f"{KURZ}abschluss/")
+                                                 "Das Quiz wird erst freigeschaltet, wenn alle 5 Übungen erledigt sind.",
+                                                 "Danach: 🏁 ILS-Challenge (freiwillig) – 20 Aufgaben, Highscore-Liste Ihrer Klasse."], f"{KURZ}abschluss/")
     d.p(f"**Ihre Verantwortung:** Die Examens-Trainings prüft niemand automatisch nach – Sie bereiten sich damit selbst auf das Examen vor. "
         f"Sie möchten eine Rückmeldung? Schicken Sie ein Foto Ihrer Antworten an **{MAIL}** mit dem Betreff **„ILS Metallentfernung“**.", size=10)
 

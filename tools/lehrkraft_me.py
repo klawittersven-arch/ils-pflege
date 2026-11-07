@@ -27,6 +27,7 @@ def build():
         "Start für die SuS: **klawittersven-arch.github.io/ils-pflege/me/** (wer beim ILS Wunddrainagen angemeldet war, bleibt auf dem Handy angemeldet)",
         "Übersicht für Sie: **klawittersven-arch.github.io/ils-pflege/lehrkraft/** → ILS-Auftrag „Materialentfernung“ wählen",
         "E-Mails der SuS zum Examens-Training kommen mit dem Betreff **„ILS Metallentfernung“**.",
+        "**ILS-Challenge** (freiwillig, nach dem Abschlussquiz): 20 Aufgaben, 150 Punkte je Aufgabe + Zeitbonus (wie die Klausur-Challenge der Lernkarten), Bestenliste je Klasse mit Vorname + Initial. Auf der Lehrkraft-Seite: Spalte „🏁 Challenge“ und **🏆 Siegerehrung** am Beamer (Taste F = Vollbild, R = nochmal, Esc = schließen).",
         "Begriff: Pflegias schreibt **Materialentfernung**; das Arbeitsblatt nennt beim ersten Mal auch „Metallentfernung (ME)“.",
     ], after_last=60)
 
