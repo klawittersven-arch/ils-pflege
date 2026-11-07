@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 2: Beobachten und dokumentieren</title>
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Wunddrainagen · Übung 2 von 5</div><h1>Übung 2: Beobachten und dokumentieren</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
+<script>
+const POOL = [
+ {
+  "typ": "zahl",
+  "fest": true,
+  "gruppe": "protokoll",
+  "frage": "Schauen Sie in das <b>Drainageprotokoll von Frau Kramer</b> (Arbeitsblatt, Abschnitt 2). Wie viel ml hat die Redon zwischen 15:30 Uhr und 16:30 Uhr gefördert?",
+  "richtig": 35,
+  "einheit": "ml",
+  "erklaerung": "125 ml − 90 ml = 35 ml in einer Stunde."
+ },
+ {
+  "typ": "zahl",
+  "gruppe": "protokoll2",
+  "frage": "Drainageprotokoll (Abschnitt 2): Wie viel ml hat die Redon <b>zwischen 14:30 Uhr und 18:30 Uhr</b> gefördert?",
+  "richtig": 130,
+  "einheit": "ml",
+  "erklaerung": "170 ml − 40 ml = 130 ml. Die 40 ml waren schon bei der Übernahme in der Flasche."
+ },
+ {
+  "typ": "zahl",
+  "gruppe": "protokoll2",
+  "frage": "Drainageprotokoll (Abschnitt 2): Um 20:30 Uhr wurde die Flasche gewechselt. Wie viel ml hat die Redon <b>seit der OP bis 0:30 Uhr insgesamt</b> gefördert?",
+  "richtig": 225,
+  "einheit": "ml",
+  "erklaerung": "Alte Flasche 195 ml + neue Flasche 30 ml = 225 ml. Nach einem Flaschenwechsel müssen Sie die Mengen addieren."
+ },
+ {
+  "typ": "zahl",
+  "gruppe": "anordnung",
+  "frage": "Schauen Sie in die <b>ärztliche Anordnung</b> (Fallsituation, Seite 1): Ab wie viel ml Förderung in einer Stunde informieren Sie sofort die Ärztin? (mehr als …)",
+  "richtig": 100,
+  "einheit": "ml",
+  "erklaerung": "Laut Anordnung: bei mehr als 100 ml in einer Stunde. Solche Grenzwerte legt immer die Ärztin fest."
+ },
+ {
+  "typ": "sortieren",
+  "fest": true,
+  "frage": "Was ist zu tun? Ordnen Sie jede Beobachtung bei Frau Kramer zu.",
+  "kategorien": [
+   "✅ normal – weiter beobachten",
+   "🔧 selbst handeln",
+   "🚨 Ärztin sofort informieren"
+  ],
+  "elemente": [
+   {
+    "t": "blutig-seröses Sekret, die Menge nimmt langsam ab",
+    "k": 0
+   },
+   {
+    "t": "Vakuumindikator zusammengezogen",
+    "k": 0,
+    "warum": "Zusammengezogen heißt: Es ist genug Sog da."
+   },
+   {
+    "t": "Vakuumindikator entfaltet",
+    "k": 1,
+    "warum": "Entfaltet heißt: kein ausreichender Sog – die Flasche wird gewechselt."
+   },
+   {
+    "t": "Schlauch ist unter dem Bein abgeknickt",
+    "k": 1,
+    "warum": "Den Knick beseitigen Sie sofort selbst (Förderstau!) und beobachten weiter."
+   },
+   {
+    "t": "120 ml frisch-blutiges Sekret in der letzten Stunde",
+    "k": 2
+   },
+   {
+    "t": "keine Förderung seit der OP vor 3 Stunden (Schlauch nicht abgeknickt)",
+    "k": 2,
+    "warum": "Fördert die Redon in den ersten Stunden gar nicht, wird die Ärztin informiert."
+   },
+   {
+    "t": "Puls 112/min, Haut blass und feucht",
+    "k": 2,
+    "warum": "Das sind Schockzeichen."
+   },
+   {
+    "t": "trübes, übel riechendes Sekret",
+    "k": 2,
+    "warum": "Das spricht für eine Infektion."
+   }
+  ],
+  "erklaerung": "Grenzwerte und Meldekriterien stehen in der ärztlichen Anordnung. Einen Knick beseitigen und eine leere Flasche wechseln dürfen Sie selbst."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Was beobachten Sie an einer Redon-Drainage? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "Fördermenge",
+   "Aussehen des Sekrets (Farbe, Konsistenz, Geruch)",
+   "Vakuumindikator (Sog)",
+   "Durchgängigkeit – kein Knick im Schlauch",
+   "Austrittsstelle und Fixierung",
+   "Temperatur der Flasche",
+   "Gewicht des Schlauchs"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "erklaerung": "Dazu kommen die Schmerzäußerungen und der Zustand der Patientin (Vitalzeichen, Bewusstsein)."
+ },
+ {
+  "typ": "wahl",
+  "gruppe": "indikator",
+  "frage": "Was bedeutet ein <b>entfalteter</b> Vakuumindikator an der Redonflasche?",
+  "optionen": [
+   "Es ist kein ausreichender Sog mehr da – die Flasche muss gewechselt werden.",
+   "Die Drainage fördert besonders gut.",
+   "Die Flasche ist steril.",
+   "Die Drainage kann gezogen werden."
+  ],
+  "richtig": 0,
+  "erklaerung": "Wenn die Flasche voll oder der Vakuumindikator entfaltet ist, wird die Flasche gewechselt."
+ },
+ {
+  "typ": "wahl",
+  "gruppe": "indikator",
+  "frage": "Wann muss eine Redonflasche gewechselt werden?",
+  "optionen": [
+   "wenn sie voll ist oder der Vakuumindikator entfaltet ist",
+   "immer genau alle 12 Stunden",
+   "nur, wenn die Patientin es wünscht",
+   "wenn das Sekret blutig-serös ist"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "So steht es in Pflegias – ein fester Zeitplan ist nicht nötig."
+ },
+ {
+  "typ": "luecke",
+  "frage": "Ergänzen Sie den Merksatz zur Dokumentation.",
+  "text": "Die {{Fördermenge}} wird mit {{Datum}} und {{Uhrzeit}} in der Patientenkurve dokumentiert. Beim Flaschenwechsel dokumentieren Sie den Wechsel und die Fördermenge der {{entfernten}} Flasche.",
+  "extra": [
+   "Blutgruppe",
+   "neuen"
+  ],
+  "erklaerung": "Nur so lässt sich die Gesamtmenge später nachvollziehen."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Frau Kramer kommt aus dem Aufwachraum. Wie oft kontrollieren Sie in der <b>ersten Stunde</b>, wenn nichts anderes angeordnet ist?",
+  "optionen": [
+   "alle 15 Minuten",
+   "einmal pro Stunde",
+   "einmal pro Schicht",
+   "nur bei Klingeln"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "In der Regel: erste Stunde alle 15 Minuten, in den nächsten zwei Stunden halbstündlich, danach stündlich."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Frau Kramer liegt auf dem Redonschlauch. Das ist kein Problem, solange die Flasche Sog hat.",
+  "richtig": false,
+  "begruendung": {
+   "optionen": [
+    "Der Schlauch kann abknicken (Förderstau) und es droht ein Dekubitus.",
+    "Der Schlauch wird dabei zu warm.",
+    "Die Flasche läuft dann über."
+   ],
+   "richtig": 0
+  },
+  "erklaerung": "Der Schlauch wird sicher fixiert und darf nicht abknicken. Die Patientin soll nicht darauf liegen."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Welches Sekret ist am <b>OP-Tag nach einer Hüft-TEP</b> zu erwarten?",
+  "optionen": [
+   "blutig bis blutig-serös, die Menge nimmt langsam ab",
+   "von Anfang an ganz klar und farblos",
+   "trüb und eitrig (purulent)",
+   "grünlich und übel riechend"
+  ],
+  "richtig": 0,
+  "erklaerung": "Kriterien für das Sekret: Menge, Konsistenz (serös, blutig-serös, blutig, purulent), Farbe und Geruch."
+ }
+];
+const SCHREIBEN = {"auftrag": "<strong>Beschreiben Sie</strong> 4 Beobachtungskriterien bei Frau Kramers Redon-Drainage und <strong>begründen</strong> Sie jeweils kurz, warum Sie darauf achten.", "ort": "in den Kasten „Examens-Training 2“ auf dem Arbeitsblatt", "minSek": 180, "punkte": ["Fördermenge (regelmäßig ablesen) – um eine Nachblutung früh zu erkennen", "Aussehen des Sekrets (Farbe, Konsistenz, Geruch) – Hinweis auf Blutung oder Infektion", "Vakuumindikator – ob noch genug Sog vorhanden ist", "Durchgängigkeit, kein Knick – sonst Förderstau und Hämatom", "Austrittsstelle, Verband und Fixierung – Infektion, Nachblutung, Herausrutschen", "Zustand von Frau Kramer (Schmerzen, Puls, Blutdruck, Hautfarbe) – Schockzeichen erkennen", "Jede Beobachtung mit einer Begründung (Fallbezug: Hüft-TEP, Enoxaparin)"]};
+ILSLern.uebung(Object.assign({"mount": "#app", "ils": "drainage", "schritt": "2", "abschnitt": "Abschnitt 2 „Beobachten und dokumentieren“", "ziehen": 8}, { pool: POOL, schreiben: SCHREIBEN }));
+</script>
+</body>
+</html>

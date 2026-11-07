@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 4: Umgang, Hygiene und Recht</title>
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Wunddrainagen · Übung 4 von 5</div><h1>Übung 4: Umgang, Hygiene und Recht</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
+<script>
+const POOL = [
+ {
+  "typ": "reihe",
+  "fest": true,
+  "frage": "Die Redonflasche ist voll. Bringen Sie den <b>Flaschenwechsel</b> in die richtige Reihenfolge.",
+  "schritte": [
+   "Frau Kramer informieren – beim Öffnen kann kurz ein Schmerz entstehen",
+   "Hände desinfizieren, Einmalhandschuhe anziehen",
+   "erst die patientennahe, dann die patientenferne Klemme schließen",
+   "Ableitung von der alten Flasche lösen, Ansatzstück sprühdesinfizieren",
+   "neue Flasche mit sichtbarem Sog anschließen",
+   "erst die patientennahe, dann die patientenferne Klemme öffnen",
+   "Fördermenge der alten Flasche ablesen und den Wechsel dokumentieren"
+  ],
+  "erklaerung": "Der Sog der neuen Flasche setzt sofort ein und kann einen kurzen Schmerz auslösen – deshalb vorher informieren."
+ },
+ {
+  "typ": "bild",
+  "gruppe": "klemmen",
+  "frage": "Flaschenwechsel am Bild: Tippen Sie auf die gesuchten Stellen.",
+  "svg": "<svg viewBox='0 0 360 560' xmlns='http://www.w3.org/2000/svg' font-family='Arial, Helvetica, sans-serif' role='img' aria-label='Redon-Drainage mit Redonflasche'><rect width='360' height='560' fill='#ffffff'/><rect x='10' y='64' width='300' height='120' fill='#fbe6d6'/><rect x='10' y='44' width='300' height='22' fill='#f1c9ad' stroke='#4a4a4a'/><line x1='30' y1='44' x2='180' y2='44' stroke='#7a3b2e' stroke-width='3'/><line x1='38' y1='36' x2='38' y2='52' stroke='#222' stroke-width='2'/><line x1='56' y1='36' x2='56' y2='52' stroke='#222' stroke-width='2'/><line x1='74' y1='36' x2='74' y2='52' stroke='#222' stroke-width='2'/><line x1='92' y1='36' x2='92' y2='52' stroke='#222' stroke-width='2'/><line x1='110' y1='36' x2='110' y2='52' stroke='#222' stroke-width='2'/><line x1='128' y1='36' x2='128' y2='52' stroke='#222' stroke-width='2'/><line x1='146' y1='36' x2='146' y2='52' stroke='#222' stroke-width='2'/><line x1='164' y1='36' x2='164' y2='52' stroke='#222' stroke-width='2'/><ellipse cx='120' cy='122' rx='105' ry='36' fill='#f3cfc0' stroke='#d9a08d' stroke-dasharray='4 3'/><path d='M30,122 L200,122 Q236,122 240,90 L246,56' fill='none' stroke='#7fa7bf' stroke-width='9' stroke-linecap='round'/><circle cx='40' cy='122' r='2.8' fill='#fff'/><circle cx='56' cy='122' r='2.8' fill='#fff'/><circle cx='72' cy='122' r='2.8' fill='#fff'/><circle cx='88' cy='122' r='2.8' fill='#fff'/><circle cx='104' cy='122' r='2.8' fill='#fff'/><circle cx='120' cy='122' r='2.8' fill='#fff'/><circle cx='136' cy='122' r='2.8' fill='#fff'/><circle cx='152' cy='122' r='2.8' fill='#fff'/><circle cx='168' cy='122' r='2.8' fill='#fff'/><circle cx='184' cy='122' r='2.8' fill='#fff'/><circle cx='246' cy='52' r='13' fill='none' stroke='#7a3b2e' stroke-width='2.5'/><path d='M246,46 C252,8 330,8 330,60 L330,250' fill='none' stroke='#7fa7bf' stroke-width='9' stroke-linecap='round'/><g transform='translate(330,160)'><rect x='-20' y='-13' width='40' height='26' rx='4' fill='#3d6fb6' stroke='#4a4a4a'/><rect x='-10' y='-3' width='20' height='6' rx='2' fill='#ffffff' opacity='.55'/></g><rect x='314' y='250' width='32' height='40' rx='5' fill='#d9dde3' stroke='#4a4a4a'/><path d='M330,290 L330,350' fill='none' stroke='#7fa7bf' stroke-width='9'/><g transform='translate(330,318)'><rect x='-20' y='-13' width='40' height='26' rx='4' fill='#2f8f5b' stroke='#4a4a4a'/><rect x='-10' y='-3' width='20' height='6' rx='2' fill='#ffffff' opacity='.55'/></g><rect x='150' y='350' width='200' height='196' rx='20' fill='#f7fafc' stroke='#4a4a4a' stroke-width='2'/><rect x='154' y='450' width='192' height='92' rx='16' fill='#c96a5a' opacity='.55'/><text x='250' y='420' font-size='20' font-weight='bold' fill='#4a4a4a' text-anchor='middle'>Redon</text><line x1='160' y1='380' x2='182' y2='380' stroke='#4a4a4a' stroke-width='2'/><text x='188' y='385' font-size='12' fill='#4a4a4a'>400</text><line x1='160' y1='420' x2='182' y2='420' stroke='#4a4a4a' stroke-width='2'/><text x='188' y='425' font-size='12' fill='#4a4a4a'>300</text><line x1='160' y1='460' x2='182' y2='460' stroke='#4a4a4a' stroke-width='2'/><text x='188' y='465' font-size='12' fill='#4a4a4a'>200</text><line x1='160' y1='500' x2='182' y2='500' stroke='#4a4a4a' stroke-width='2'/><text x='188' y='505' font-size='12' fill='#4a4a4a'>100</text><path d='M214.0,350 L208.0,345.5 L214.0,341 L266.0,341 L272.0,345.5 L266.0,350 Z' fill='#eef3f7' stroke='#4a4a4a' stroke-width='1.4'/><path d='M214.0,341 L208.0,336.5 L214.0,332 L266.0,332 L272.0,336.5 L266.0,341 Z' fill='#eef3f7' stroke='#4a4a4a' stroke-width='1.4'/><path d='M214.0,332 L208.0,327.5 L214.0,323 L266.0,323 L272.0,327.5 L266.0,332 Z' fill='#eef3f7' stroke='#4a4a4a' stroke-width='1.4'/><path d='M214.0,323 L208.0,318.5 L214.0,314 L266.0,314 L272.0,318.5 L266.0,323 Z' fill='#eef3f7' stroke='#4a4a4a' stroke-width='1.4'/><path d='M214.0,314 L208.0,309.5 L214.0,305 L266.0,305 L272.0,309.5 L266.0,314 Z' fill='#eef3f7' stroke='#4a4a4a' stroke-width='1.4'/><rect x='212.0' y='298' width='56' height='7' rx='2' fill='#9aa9b5' stroke='#4a4a4a'/><g data-ziel='naht'><rect class='feld' x='24' y='26' width='164' height='34' rx='6'/></g><g data-ziel='katheter'><rect class='feld' x='20' y='104' width='196' height='36' rx='8'/></g><g data-ziel='austritt'><circle class='feld' cx='246' cy='52' r='24'/></g><g data-ziel='schlauch'><path class='feld' d='M262,40 C270,0 346,0 346,60 L346,135 L314,135 L314,60 C314,26 276,26 268,52 Z'/></g><g data-ziel='klemme_nah'><rect class='feld' x='300' y='138' width='60' height='44' rx='8'/></g><g data-ziel='konnektor'><rect class='feld' x='300' y='244' width='60' height='52' rx='8'/></g><g data-ziel='klemme_fern'><rect class='feld' x='300' y='298' width='60' height='42' rx='8'/></g><g data-ziel='indikator'><rect class='feld' x='196' y='278' width='92' height='74' rx='8'/></g><g data-ziel='skala'><rect class='feld' x='154' y='362' width='60' height='150' rx='8'/></g><g data-ziel='flasche'><rect class='feld' x='222' y='430' width='124' height='112' rx='10'/></g></svg>",
+  "ziele": [
+   {
+    "id": "klemme_nah",
+    "frage": "Welche Klemme schließen Sie <b>zuerst</b>?",
+    "name": "die patientennahe Klemme"
+   },
+   {
+    "id": "konnektor",
+    "frage": "Was wird nach dem Lösen <b>sprühdesinfiziert</b>?",
+    "name": "das Ansatzstück"
+   },
+   {
+    "id": "indikator",
+    "frage": "Woran sehen Sie, dass die neue Flasche <b>Sog</b> hat?",
+    "name": "der Vakuumindikator"
+   }
+  ],
+  "erklaerung": "Erst patientennah, dann patientenfern schließen – beim Öffnen in derselben Reihenfolge.",
+  "namen": {
+   "katheter": "der Drainagekatheter im Wundgebiet",
+   "austritt": "die Austrittsstelle",
+   "naht": "die OP-Naht",
+   "schlauch": "der Ableitungsschlauch",
+   "klemme_nah": "die patientennahe Klemme",
+   "konnektor": "das Ansatzstück",
+   "klemme_fern": "die patientenferne Klemme",
+   "indikator": "der Vakuumindikator",
+   "skala": "die Skala",
+   "flasche": "die Redonflasche"
+  }
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Wann desinfizieren Sie die Hände? Wählen Sie alle richtigen Antworten (5 Indikationen der WHO).",
+  "optionen": [
+   "vor dem Kontakt mit der Patientin",
+   "vor aseptischen Tätigkeiten, z. B. vor dem Lösen der Verbindung",
+   "nach Kontakt mit potenziell infektiösem Material, z. B. Wundsekret",
+   "nach dem Kontakt mit der Patientin",
+   "nach Kontakt mit der direkten Umgebung der Patientin",
+   "nur, wenn die Hände sichtbar schmutzig sind",
+   "nur am Ende der Schicht"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "erklaerung": "Eine Drainage ist eine Eintrittspforte für Erreger – Händehygiene schützt vor aufsteigenden Infektionen."
+ },
+ {
+  "typ": "dialog",
+  "fest": true,
+  "stil": "chat",
+  "frage": "Frau Kramer informieren – wählen Sie jeweils die beste Antwort.",
+  "knoten": [
+   {
+    "sprecher": "Frau Kramer",
+    "text": "Ich trau mich gar nicht aufzustehen. Was ist, wenn ich den Schlauch herausreiße?",
+    "frage": "Was antworten Sie?",
+    "optionen": [
+     {
+      "t": "Das verstehe ich gut. Der Schlauch ist angenäht und fixiert. Ich zeige Ihnen, wie wir die Flasche beim Gehen befestigen.",
+      "richtig": true,
+      "rueck": "Sorgen ernst nehmen und konkret erklären nimmt die Angst."
+     },
+     {
+      "t": "Da kann nichts passieren – stellen Sie sich nicht so an.",
+      "richtig": false,
+      "rueck": "Das nimmt die Sorge nicht ernst und erklärt nichts."
+     },
+     {
+      "t": "Dann bleiben Sie besser im Bett, bis die Drainage gezogen ist.",
+      "richtig": false,
+      "rueck": "Frühe Mobilisation beugt z. B. Thrombose und Pneumonie vor – die Drainage soll sie nicht verhindern."
+     }
+    ]
+   },
+   {
+    "sprecher": "Frau Kramer",
+    "text": "Und wo soll die Flasche hin, wenn ich im Bett liege?",
+    "frage": "Was antworten Sie?",
+    "optionen": [
+     {
+      "t": "Sie hängt sicher am Bett. Bitte legen Sie sich nicht auf den Schlauch – er darf nicht abknicken.",
+      "richtig": true,
+      "rueck": "Sicher fixieren, nicht abknicken, nicht darauf liegen."
+     },
+     {
+      "t": "Legen Sie sie auf Ihren Bauch, dann haben Sie sie im Blick.",
+      "richtig": false,
+      "rueck": "So kann sie herunterfallen und am Schlauch ziehen."
+     },
+     {
+      "t": "Das ist egal, Hauptsache sie ist da.",
+      "richtig": false,
+      "rueck": "Ein Knick führt zum Förderstau."
+     }
+    ]
+   },
+   {
+    "sprecher": "Frau Kramer",
+    "text": "Und wenn mir etwas komisch vorkommt?",
+    "frage": "Was antworten Sie?",
+    "optionen": [
+     {
+      "t": "Dann klingeln Sie bitte sofort – z. B. wenn der Verband nass wird, Ihnen schwindelig wird oder die Schmerzen zunehmen.",
+      "richtig": true,
+      "rueck": "Klingel in Reichweite – und konkret sagen, worauf sie achten soll."
+     },
+     {
+      "t": "Dann warten Sie bis zur nächsten Runde.",
+      "richtig": false,
+      "rueck": "Veränderungen sollen sofort gemeldet werden."
+     },
+     {
+      "t": "Schauen Sie dann selbst in die Flasche.",
+      "richtig": false,
+      "rueck": "Die Beobachtung ist Ihre Aufgabe – Frau Kramer soll sich melden."
+     }
+    ]
+   }
+  ],
+  "erklaerung": "Information vor und nach der OP gehört dazu: Wer weiß, was die Drainage tut, hat weniger Angst vor der Mobilisation."
+ },
+ {
+  "typ": "wahl",
+  "gruppe": "recht",
+  "frage": "In Ihrem Haus wird das Ziehen von Redon-Drainagen an Pflegefachpersonen delegiert. Die Ärztin hat es für Frau Kramer schriftlich angeordnet. Sie haben das noch nie gemacht. Was ist richtig?",
+  "optionen": [
+   "Ich lehne ab und sage es der Ärztin (Remonstration) – ich führe nur aus, was ich sicher beherrsche.",
+   "Ich muss es machen, weil es angeordnet ist.",
+   "Ich lasse es eine Pflegehelferin machen.",
+   "Ich schaue mir ein Video an und mache es dann sofort."
+  ],
+  "richtig": 0,
+  "erklaerung": "Die Pflegefachperson trägt die Durchführungsverantwortung. Wer sich nicht befähigt fühlt, muss das sagen (Remonstration, möglichst schriftlich). In Pflegias entfernt die Ärztin die Redon."
+ },
+ {
+  "typ": "sortieren",
+  "gruppe": "recht2",
+  "frage": "Wer trägt welche Verantwortung bei einer delegierten Maßnahme? Ordnen Sie zu.",
+  "kategorien": [
+   "Ärztin (Anordnung)",
+   "Pflegefachperson (Durchführung)"
+  ],
+  "elemente": [
+   {
+    "t": "entscheidet, ob und wann die Drainage gezogen wird",
+    "k": 0
+   },
+   {
+    "t": "ordnet klar und eindeutig an, am besten schriftlich",
+    "k": 0
+   },
+   {
+    "t": "wählt eine geeignete, befähigte Person aus",
+    "k": 0
+   },
+   {
+    "t": "führt die Maßnahme fachgerecht durch",
+    "k": 1
+   },
+   {
+    "t": "dokumentiert die Durchführung",
+    "k": 1
+   },
+   {
+    "t": "lehnt ab, wenn sie sich nicht befähigt fühlt (Remonstration)",
+    "k": 1
+   }
+  ],
+  "erklaerung": "Ärztin: Anordnungs-, Auswahl- und Überwachungsverantwortung. Pflegefachperson: Durchführungsverantwortung – mit Recht und Pflicht zur Remonstration."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Vor dem Ziehen einer Drainage bekommt die Patientin nach ärztlicher Anordnung rechtzeitig ein Schmerzmittel.",
+  "richtig": true,
+  "begruendung": {
+   "optionen": [
+    "Das Ziehen kann schmerzhaft sein, und das Mittel braucht Zeit, bis es wirkt.",
+    "Das Schmerzmittel desinfiziert die Austrittsstelle.",
+    "Damit fördert die Drainage noch einmal mehr."
+   ],
+   "richtig": 0
+  },
+  "erklaerung": "Wie beim Verbandwechsel: zeitgerechte Analgetikagabe nach Anordnung."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Die Ärztin hat die Redon gezogen. Was beobachten und dokumentieren Sie danach? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "Datum und Uhrzeit",
+   "letzte Fördermenge und Aussehen des Sekrets",
+   "ob die Drainage vollständig ist (Spitze intakt)",
+   "Austrittsstelle und Verband (Nachblutung, Sekret)",
+   "Schmerzen der Patientin",
+   "Farbe der Bettwäsche",
+   "Name der Mitpatientin"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "erklaerung": "Nach dem Entfernen kann es aus dem Stichkanal noch bluten oder nässen – deshalb weiter beobachten."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Herr Yilmaz' Robinson-Beutel ist halb voll. Wie leeren Sie ihn?",
+  "optionen": [
+   "Mit Handschuhen über den Ablaufstutzen in einen Messbecher entleeren, Stutzen desinfizieren und schließen, Menge dokumentieren.",
+   "Den Beutel abschneiden und einen neuen anschließen.",
+   "Den Beutel über die Wunde heben und ausgießen.",
+   "Gar nicht – der Beutel wird nie geleert."
+  ],
+  "richtig": 0,
+  "erklaerung": "Die Robinson ist ein geschlossenes System: Geleert wird über den Ablaufstutzen, ohne die Verbindung zur Drainage zu öffnen."
+ },
+ {
+  "typ": "luecke",
+  "frage": "Ergänzen Sie den Merksatz zur Robinson-Drainage.",
+  "text": "Der Robinson-Beutel hängt immer {{unterhalb}} des Wundniveaus, weil die Drainage über die {{Schwerkraft}} ableitet. Hängt der Beutel höher, kann Sekret {{zurückfließen}}.",
+  "extra": [
+   "oberhalb",
+   "den Sog"
+  ],
+  "erklaerung": "Zurückfließendes Sekret kann Erreger in die Wunde tragen – auch beim Transport den Beutel tief halten."
+ }
+];
+const SCHREIBEN = {"auftrag": "<strong>Beschreiben Sie</strong> in 6 Schritten den Wechsel einer Redonflasche.", "ort": "in den Kasten „Examens-Training 4“ auf dem Arbeitsblatt", "minSek": 150, "punkte": ["Patientin informieren (kurzer Schmerz durch den Sog möglich)", "Hände desinfizieren, Einmalhandschuhe anziehen", "erst die patientennahe, dann die patientenferne Klemme schließen", "Ableitung lösen, Ansatzstück sprühdesinfizieren", "neue Flasche mit sichtbarem Sog anschließen", "erst die patientennahe, dann die patientenferne Klemme öffnen, Sog prüfen", "Fördermenge der alten Flasche und Wechsel dokumentieren"]};
+ILSLern.uebung(Object.assign({"mount": "#app", "ils": "drainage", "schritt": "4", "abschnitt": "Abschnitt 4 „Sicherer Umgang, Hygiene und Recht“", "ziehen": 7}, { pool: POOL, schreiben: SCHREIBEN }));
+</script>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 3: Komplikationen erkennen</title>
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Wunddrainagen · Übung 3 von 5</div><h1>Übung 3: Komplikationen erkennen</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
+<script>
+const POOL = [
+ {
+  "typ": "dialog",
+  "fest": true,
+  "stil": "fall",
+  "frage": "Fallentscheidung – Stellen Sie sich vor: 2. Tag nach der OP, 6:10 Uhr.",
+  "knoten": [
+   {
+    "sprecher": "Frau Kramer",
+    "text": "„Mir ist so komisch … und das Bett ist ganz nass.“",
+    "frage": "Was tun Sie zuerst?",
+    "optionen": [
+     {
+      "t": "Verband und Redon anschauen, Puls und Blutdruck messen – und bei Frau Kramer bleiben.",
+      "richtig": true,
+      "rueck": "Erst einschätzen – und nicht weggehen."
+     },
+     {
+      "t": "Ihr ein Glas Wasser holen und in 30 Minuten wiederkommen.",
+      "richtig": false,
+      "rueck": "„Komisch“ und „nass“ können eine Nachblutung bedeuten. Sie müssen sofort nachsehen."
+     },
+     {
+      "t": "Die Redon abklemmen, damit kein Blut mehr verloren geht.",
+      "richtig": false,
+      "rueck": "Eigenmächtiges Abklemmen ist nicht erlaubt: Das Blut sammelt sich dann im Gewebe, und die Blutung bleibt unbemerkt."
+     }
+    ]
+   },
+   {
+    "text": "Der Verband ist durchgeblutet. In der Redonflasche sind seit 5:10 Uhr 130 ml hellrotes Blut dazugekommen. Puls 108/min, RR 110/70 mmHg, Haut blass und feucht, Frau Kramer ist unruhig.",
+    "frage": "Wie schätzen Sie die Lage ein?",
+    "optionen": [
+     {
+      "t": "Verdacht auf Nachblutung mit beginnendem Schock (Frühphase)",
+      "richtig": true,
+      "rueck": "Puls über 100, Blutdruck noch normal, blass, feucht, unruhig: typisch für die Frühphase."
+     },
+     {
+      "t": "normaler Verlauf am 2. Tag nach der OP",
+      "richtig": false,
+      "rueck": "130 ml hellrotes Blut in einer Stunde ist nicht normal – siehe Anordnung."
+     },
+     {
+      "t": "Wundinfektion",
+      "richtig": false,
+      "rueck": "Für eine Infektion fehlen Fieber, trübes Sekret und Entzündungszeichen."
+     }
+    ]
+   },
+   {
+    "frage": "Was tun Sie jetzt?",
+    "optionen": [
+     {
+      "t": "Über die Klingel Hilfe holen, die Ärztin sofort informieren lassen und bei Frau Kramer bleiben.",
+      "richtig": true,
+      "rueck": "Die Person nicht allein lassen!"
+     },
+     {
+      "t": "Selbst ins Arztzimmer laufen – Frau Kramer bleibt so lange allein.",
+      "richtig": false,
+      "rueck": "Bei Schockgefahr bleiben Sie bei der Patientin."
+     },
+     {
+      "t": "Erst die Dokumentation vollständig schreiben.",
+      "richtig": false,
+      "rueck": "Dokumentiert wird – aber erst nach den Sofortmaßnahmen."
+     }
+    ]
+   },
+   {
+    "frage": "Bis die Ärztin da ist: Was ist richtig?",
+    "optionen": [
+     {
+      "t": "Vitalzeichen engmaschig messen, Wärme erhalten, beruhigen, Beine ca. 30° hoch (wenn keine Kontraindikation).",
+      "richtig": true,
+      "rueck": "Genau so – und nichts essen oder trinken lassen, bis die Ärztin entschieden hat."
+     },
+     {
+      "t": "Frau Kramer aufsetzen und ihr einen Kaffee geben.",
+      "richtig": false,
+      "rueck": "Aufsetzen verschlechtert den Kreislauf. Kaffee ist keine Schockbehandlung."
+     },
+     {
+      "t": "Die Redonflasche über die Wunde hängen, damit weniger herausläuft.",
+      "richtig": false,
+      "rueck": "Das verdeckt die Blutung nur – das Blut sammelt sich dann im Gewebe."
+     }
+    ]
+   }
+  ],
+  "erklaerung": "Nachblutung + Schockzeichen = Notfall: Hilfe holen, nicht allein lassen, Vitalzeichen, Schocklagerung nach Absprache."
+ },
+ {
+  "typ": "reihe",
+  "gruppe": "sbar",
+  "frage": "Sie melden der Ärztin die Situation nach dem <b>SBAR-Schema</b>. Bringen Sie die Meldung in die richtige Reihenfolge.",
+  "schritte": [
+   "S – Situation: „Frau Kramer, Zimmer 12: Ich vermute eine Nachblutung.“",
+   "B – Hintergrund: „Hüft-TEP rechts vorgestern, sie bekommt Enoxaparin.“",
+   "A – Einschätzung: „130 ml hellrotes Blut in einer Stunde, Puls 108, blass und feucht.“",
+   "R – Empfehlung: „Bitte kommen Sie sofort.“"
+  ],
+  "erklaerung": "SBAR = Situation, Background (Hintergrund), Assessment (Einschätzung), Recommendation (Empfehlung). So ist die Meldung kurz und vollständig."
+ },
+ {
+  "typ": "sortieren",
+  "gruppe": "schock",
+  "frage": "Schock: Frühphase oder Spätphase? Ordnen Sie zu (Erwachsene).",
+  "kategorien": [
+   "Frühphase",
+   "Spätphase"
+  ],
+  "elemente": [
+   {
+    "t": "Puls schnell und schwach, über 100/min",
+    "k": 0
+   },
+   {
+    "t": "Puls über 120/min",
+    "k": 1
+   },
+   {
+    "t": "systolischer Blutdruck noch normal",
+    "k": 0,
+    "warum": "In der Frühphase hält der Körper den Blutdruck noch – deshalb ist er kein frühes Zeichen!"
+   },
+   {
+    "t": "systolischer Blutdruck unter 100 mmHg",
+    "k": 1
+   },
+   {
+    "t": "ängstlich, unruhig",
+    "k": 0
+   },
+   {
+    "t": "teilnahmslos, benommen",
+    "k": 1
+   },
+   {
+    "t": "Urin 20–30 ml pro Stunde",
+    "k": 0
+   },
+   {
+    "t": "kaum oder kein Urin (Oligurie, Anurie)",
+    "k": 1
+   }
+  ],
+  "erklaerung": "Achtung: Ein normaler Blutdruck schließt einen Schock nicht aus – achten Sie früh auf Puls, Haut und Bewusstsein."
+ },
+ {
+  "typ": "mehrfach",
+  "gruppe": "schock",
+  "frage": "Welche Sofortmaßnahmen sind bei Schockzeichen richtig? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "Ärztin bzw. Notruf verständigen",
+   "die Person nicht allein lassen",
+   "Vitalzeichen engmaschig messen",
+   "Wärme erhalten, Ruhe und Zuspruch",
+   "Schocklagerung: Beine ca. 30° hoch (wenn keine Kontraindikation)",
+   "mit einer Wärmflasche aktiv anwärmen",
+   "Kaffee zur Kreislaufanregung geben",
+   "die Drainage abklemmen"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "erklaerung": "Wärmeerhalt ja – aber nicht aktiv anwärmen. Schocklagerung nicht bei Herzinfarkt oder Atemnot."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Die Redon von Frau Kramer hat seit der Übernahme vor 3 Stunden <b>gar nichts</b> gefördert. Der Schlauch ist nicht abgeknickt. Was tun Sie?",
+  "optionen": [
+   "die Ärztin informieren",
+   "nichts – eine trockene Wunde ist gut",
+   "den Schlauch mit Kochsalzlösung anspülen",
+   "die Flasche schütteln"
+  ],
+  "richtig": 0,
+  "erklaerung": "Häufige Ursache: Die Öffnungen des Katheters im Körper sind verklebt. Selten wurde beim Legen etwas verletzt. Die Ärztin entscheidet."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Sie haben die Redonflasche gewechselt. Nach 10 Minuten ist der Vakuumindikator <b>schon wieder entfaltet</b>. Was ist wahrscheinlich?",
+  "optionen": [
+   "Das System ist irgendwo undicht oder die Drainage ist verrutscht – Verbindungen prüfen und die Ärztin informieren.",
+   "Die Drainage fördert besonders gut – alles in Ordnung.",
+   "Die neue Flasche war zu groß.",
+   "Frau Kramer hat Fieber."
+  ],
+  "richtig": 0,
+  "erklaerung": "Zieht das System Luft, z. B. an einer Verbindung oder weil seitliche Öffnungen außerhalb der Haut liegen, geht der Sog sofort verloren."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Wenn die Redon stark blutig fördert, klemmen Sie sie ab, damit die Patientin nicht so viel Blut verliert.",
+  "richtig": false,
+  "begruendung": {
+   "optionen": [
+    "Eigenmächtig abklemmen ist nicht erlaubt: Das Blut sammelt sich im Gewebe (Hämatom) und die Blutung bleibt unbemerkt.",
+    "Abklemmen ist erlaubt, aber erst nach 10 Minuten.",
+    "Abklemmen macht die Flasche kaputt."
+   ],
+   "richtig": 0
+  },
+  "erklaerung": "Sie informieren sofort die Ärztin. Veränderungen an der Drainage nur auf ärztliche Anordnung."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Die Redon ist bei der Mobilisation <b>herausgerutscht</b>. Was tun Sie?",
+  "optionen": [
+   "Austrittsstelle steril abdecken, Ärztin informieren, Drainage zur Kontrolle aufbewahren, dokumentieren",
+   "Die Drainage vorsichtig wieder hineinschieben",
+   "Nichts – sie wäre bald sowieso gezogen worden",
+   "Die Stelle mit einem Pflaster zukleben und nichts sagen"
+  ],
+  "richtig": 0,
+  "erklaerung": "Nie wieder einschieben (Infektion, Verletzung). Die Ärztin prüft, ob die Drainage vollständig ist."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Welche Zeichen sprechen für eine <b>Wundinfektion</b> an der Drainage? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "trübes, eitriges (purulentes) Sekret",
+   "Rötung und Schwellung an der Austrittsstelle",
+   "Überwärmung und Schmerzen",
+   "Fieber",
+   "blutig-seröses Sekret am OP-Tag",
+   "zusammengezogener Vakuumindikator"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "erklaerung": "Das sind die klassischen Entzündungszeichen: Rötung, Schwellung, Überwärmung, Schmerz, Funktionseinschränkung – dazu Eiter."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Neben der Austrittsstelle ist die Haut am 2. Tag <b>rötlich bis blau-violett</b> verfärbt und geschwollen. Woran denken Sie?",
+  "optionen": [
+   "an ein Hämatom (Bluterguss)",
+   "an einen Sonnenbrand",
+   "an eine Allergie gegen die Flasche",
+   "an eine normale Narbe"
+  ],
+  "richtig": 0,
+  "erklaerung": "Ein Hämatom ist eine Ansammlung von Blut im Gewebe. Es färbt sich im Verlauf von rötlich-blau über grün nach gelb."
+ }
+];
+const SCHREIBEN = {"auftrag": "<strong>Beschreiben Sie</strong> 4 Anzeichen, an denen Sie bei Frau Kramer eine Nachblutung mit beginnendem Schock erkennen, und 4 Sofortmaßnahmen.", "ort": "in den Kasten „Examens-Training 3“ auf dem Arbeitsblatt", "minSek": 180, "punkte": ["Anzeichen: plötzlich viel und hellrotes (frisch-blutiges) Sekret in der Redon", "Anzeichen: durchgebluteter Verband, Schwellung im Wundgebiet", "Anzeichen: Puls schnell (über 100/min), Blutdruck zunächst normal, dann fallend", "Anzeichen: Haut blass, kühl, feucht; Unruhe oder Angst", "Maßnahme: Hilfe holen, Ärztin sofort informieren – nicht allein lassen", "Maßnahme: Vitalzeichen engmaschig messen", "Maßnahme: Schocklagerung nach Absprache, Wärme erhalten, beruhigen", "Maßnahme: Drainage nicht abklemmen; danach dokumentieren"]};
+ILSLern.uebung(Object.assign({"mount": "#app", "ils": "drainage", "schritt": "3", "abschnitt": "Abschnitt 3 „Komplikationen erkennen und handeln“", "ziehen": 6}, { pool: POOL, schreiben: SCHREIBEN }));
+</script>
+</body>
+</html>

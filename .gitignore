@@ -12,3 +12,5 @@ tools/build_anleitung/
 node_modules/
 .wrangler/
 .dev.vars
+tools/build_drainage/
+tools/build_me/

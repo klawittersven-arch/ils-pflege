@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 5: Examens-Training Pflegeprozess</title>
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Wunddrainagen · Übung 5 von 5</div><h1>Übung 5: Examens-Training Pflegeprozess</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
+<script>
+const POOL = [
+ {
+  "typ": "sortieren",
+  "fest": true,
+  "frage": "Pflegeproblem nach dem <b>PESR-Schema</b>: Ordnen Sie die Informationen über Frau Kramer zu.",
+  "kategorien": [
+   "P – Problem",
+   "E – Einflussfaktor / Ursache",
+   "S – Symptom / Kennzeichen",
+   "R – Ressource"
+  ],
+  "elemente": [
+   {
+    "t": "Gefahr einer Nachblutung",
+    "k": 0
+   },
+   {
+    "t": "Hüft-TEP rechts gestern, Redon-Drainage im Wundgebiet",
+    "k": 1
+   },
+   {
+    "t": "bekommt Enoxaparin (Heparin) zur Thromboseprophylaxe",
+    "k": 1,
+    "warum": "Das Heparin hemmt die Gerinnung – ein Einflussfaktor für Blutungen."
+   },
+   {
+    "t": "Verband leicht durchgeblutet, Redon fördert blutig-serös",
+    "k": 2
+   },
+   {
+    "t": "ist wach, orientiert und meldet sich bei Veränderungen",
+    "k": 3
+   }
+  ],
+  "erklaerung": "P = Problem, E = Einflussfaktoren/Ursachen, S = Symptome/Kennzeichen, R = Ressourcen. Im Examen gibt es dafür meist je 1 Punkt."
+ },
+ {
+  "typ": "sortieren",
+  "frage": "Zweites Pflegeproblem nach <b>PESR</b>: Ordnen Sie zu.",
+  "kategorien": [
+   "P – Problem",
+   "E – Einflussfaktor / Ursache",
+   "S – Symptom / Kennzeichen",
+   "R – Ressource"
+  ],
+  "elemente": [
+   {
+    "t": "Angst vor der Mobilisation",
+    "k": 0
+   },
+   {
+    "t": "fürchtet, die Redon-Drainage herauszureißen",
+    "k": 1
+   },
+   {
+    "t": "ist noch nicht über den Umgang mit der Drainage informiert",
+    "k": 1
+   },
+   {
+    "t": "bewegt sich kaum, fragt immer wieder nach dem Schlauch",
+    "k": 2
+   },
+   {
+    "t": "möchte morgen mit der Physiotherapie gehen",
+    "k": 3
+   }
+  ],
+  "erklaerung": "Aus E ergeben sich die Maßnahmen: Information und Anleitung zum Umgang mit der Drainage."
+ },
+ {
+  "typ": "rf",
+  "gruppe": "ziel",
+  "aussage": "Dieses Pflegeziel ist überprüfbar: „Frau Kramer geht es nach der OP gut.“",
+  "richtig": false,
+  "begruendung": {
+   "optionen": [
+    "Es fehlen ein messbares Kriterium und ein Zeitpunkt.",
+    "Es ist zu kurz.",
+    "Es nennt keinen Arzt."
+   ],
+   "richtig": 0
+  },
+  "erklaerung": "Überprüfbar wird ein Ziel durch ein Kriterium, das man messen oder beobachten kann, und durch einen Zeitpunkt."
+ },
+ {
+  "typ": "wahl",
+  "gruppe": "ziel",
+  "frage": "Welches Pflegeziel ist <b>überprüfbar</b> formuliert?",
+  "optionen": [
+   "Frau Kramer ist bis zur Entfernung der Redon kreislaufstabil (Puls unter 100/min, RR systolisch über 100 mmHg).",
+   "Die Pflegefachperson misst den Blutdruck.",
+   "Frau Kramer hat weniger Angst.",
+   "Eine Nachblutung soll möglichst vermieden werden."
+  ],
+  "richtig": 0,
+  "erklaerung": "„Die Pflegefachperson misst …“ ist eine Maßnahme, kein Ziel. Ziele beschreiben den gewünschten Zustand der Patientin."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Welche Pflegeinterventionen sind <b>konkret genug</b> formuliert (Wer? Was? Wann/wie oft? Womit?)",
+  "optionen": [
+   "Die Pflegefachperson liest bis 20 Uhr stündlich die Fördermenge der Redon ab und dokumentiert Menge und Aussehen in der Kurve.",
+   "Die Pflegefachperson misst 4-stündlich Puls und Blutdruck und informiert bei Puls über 100/min sofort die Ärztin.",
+   "Drainage beobachten.",
+   "Auf Nachblutung achten."
+  ],
+  "richtig": [
+   0,
+   1
+  ],
+  "erklaerung": "In Erwartungshorizonten heißt es: Interventionen konkretisieren – was soll wann, wie oft, womit getan werden?"
+ },
+ {
+  "typ": "luecke",
+  "frage": "Ergänzen Sie: Woran erkennt man ein gutes Pflegeziel (SMART)?",
+  "text": "Ein Pflegeziel ist {{spezifisch}}, {{messbar}}, akzeptiert, {{realistisch}} und {{terminiert}}.",
+  "extra": [
+   "schnell",
+   "teuer"
+  ],
+  "erklaerung": "In den Prüfungen steht oft „überprüfbar“ oder „z. B. nach SMART“."
+ },
+ {
+  "typ": "reihe",
+  "frage": "Bringen Sie die Schritte des <b>Pflegeprozesses</b> in die richtige Reihenfolge.",
+  "schritte": [
+   "Informationen sammeln",
+   "Pflegeprobleme und Ressourcen erkennen",
+   "Pflegeziele festlegen",
+   "Pflegemaßnahmen planen",
+   "Pflegemaßnahmen durchführen",
+   "Wirkung überprüfen (Evaluation)"
+  ],
+  "erklaerung": "Der Pflegeprozess ist ein Regelkreis: Nach der Evaluation beginnt er von vorn."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Was unterscheidet ein <b>potenzielles</b> von einem aktuellen Pflegeproblem?",
+  "optionen": [
+   "Ein potenzielles Problem kann entstehen (Risiko), ein aktuelles ist schon da.",
+   "Ein potenzielles Problem ist weniger wichtig.",
+   "Ein aktuelles Problem hat keine Ursache.",
+   "Es gibt keinen Unterschied."
+  ],
+  "richtig": 0,
+  "erklaerung": "„Gefahr einer Nachblutung“ ist potenziell, „akute Schmerzen“ sind aktuell. Bei potenziellen Problemen beschreiben Sie statt Symptomen die Risikofaktoren aus dem Fall."
+ }
+];
+const SCHREIBEN = {"auftrag": "<strong>Formulieren Sie</strong> für Frau Kramer das Pflegeproblem „Angst vor der Mobilisation“ nach dem PESR-Schema und <strong>ein</strong> überprüfbares Pflegeziel.", "ort": "in den Kasten „Examens-Training 5“ auf dem Arbeitsblatt", "minSek": 240, "punkte": ["P: Angst vor der Mobilisation (fachlich korrekt benannt)", "E: z. B. fürchtet, die Drainage herauszureißen; nicht informiert; 1. Tag nach Hüft-TEP", "S: z. B. bewegt sich kaum, fragt nach dem Schlauch, äußert Angst", "R: z. B. motiviert, wach und orientiert, möchte mit der Physiotherapie gehen", "Ziel nennt einen beobachtbaren Zustand (z. B. „geht mit Begleitung zum Waschbecken“)", "Ziel hat einen Zeitpunkt (z. B. „bis morgen Mittag“)"]};
+ILSLern.uebung(Object.assign({"mount": "#app", "ils": "drainage", "schritt": "5", "abschnitt": "Abschnitt 5 „Examens-Training: Pflegeprozess“", "ziehen": 6}, { pool: POOL, schreiben: SCHREIBEN }));
+</script>
+</body>
+</html>

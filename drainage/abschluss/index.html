@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Abschlussquiz Wunddrainagen</title>
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Wunddrainagen · Abschluss</div><h1>Abschlussquiz Wunddrainagen</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
+<script>
+const POOL = [
+ {
+  "typ": "wahl",
+  "frage": "Herr Yilmaz (58) hat nach einer Gallenblasen-OP eine Robinson-Drainage. Wodurch fördert sie?",
+  "optionen": [
+   "durch Schwerkraft",
+   "durch Sog aus einer Vakuumflasche",
+   "durch eine Pumpe",
+   "durch den Blutdruck"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "Die Robinson ist eine passive Drainage."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Beim Transport darf der Robinson-Beutel kurz auf den Bauch von Herrn Yilmaz gelegt werden.",
+  "richtig": false,
+  "begruendung": {
+   "optionen": [
+    "Über Wundniveau kann Sekret zurückfließen und Erreger in die Wunde tragen.",
+    "Der Beutel ist zu schwer.",
+    "Der Beutel wird dann warm."
+   ],
+   "richtig": 0
+  },
+  "erklaerung": "Der Beutel bleibt immer unter Wundniveau."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Im Robinson-Beutel von Herrn Yilmaz ist heute <b>grünlich-braunes</b> Sekret. Was tun Sie?",
+  "optionen": [
+   "Die Ärztin informieren – grünliches Sekret kann Galle sein.",
+   "Nichts – das ist nach einer Gallen-OP immer so.",
+   "Den Beutel austauschen, dann ist es weg.",
+   "Herrn Yilmaz mehr trinken lassen."
+  ],
+  "richtig": 0,
+  "erklaerung": "Eine Veränderung von Farbe oder Beschaffenheit melden Sie – die Ärztin klärt die Ursache."
+ },
+ {
+  "typ": "zahl",
+  "frage": "Herr Yilmaz' Beutel zeigte um 7 Uhr 180 ml, um 15 Uhr 260 ml (nicht geleert). Wie viel ml wurden in dieser Zeit gefördert?",
+  "richtig": 80,
+  "einheit": "ml",
+  "erklaerung": "260 ml − 180 ml = 80 ml."
+ },
+ {
+  "typ": "sortieren",
+  "frage": "Redon oder Robinson? Ordnen Sie zu.",
+  "kategorien": [
+   "Redon",
+   "Robinson"
+  ],
+  "elemente": [
+   {
+    "t": "Vakuumindikator",
+    "k": 0
+   },
+   {
+    "t": "Ablaufstutzen am Beutel",
+    "k": 1
+   },
+   {
+    "t": "aktive Drainage",
+    "k": 0
+   },
+   {
+    "t": "passive Drainage",
+    "k": 1
+   }
+  ],
+  "erklaerung": "Redon = Sog, Robinson = Schwerkraft."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Was beobachten Sie an der Austrittsstelle einer Drainage? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "Rötung",
+   "Schwellung",
+   "Sekret neben der Drainage",
+   "Überwärmung",
+   "die Uhrzeit der letzten Mahlzeit"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "erklaerung": "Das sind Hinweise auf eine Infektion oder Undichtigkeit."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Welche Kombination passt zur <b>Frühphase</b> eines Schocks?",
+  "optionen": [
+   "Puls über 100/min, Blutdruck noch normal, Haut blass und feucht, unruhig",
+   "Puls 70/min, Blutdruck normal, Haut rosig",
+   "Puls 60/min, Blutdruck hoch, Haut warm",
+   "teilnahmslos, kein Urin, Blutdruck unter 80 mmHg"
+  ],
+  "richtig": 0,
+  "erklaerung": "Der Blutdruck fällt erst in der Spätphase."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Eine Redon-Drainage bleibt in der Regel 48–72 Stunden liegen und wird dann von der Ärztin entfernt.",
+  "richtig": true,
+  "erklaerung": "Wie lange genau, hängt von der Fördermenge ab."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Flaschenwechsel: Welche Klemme schließen Sie zuerst?",
+  "optionen": [
+   "die patientennahe",
+   "die patientenferne",
+   "egal",
+   "keine – Klemmen sind nicht nötig"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "Erst patientennah, dann patientenfern – beim Öffnen genauso."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Wann wird eine Redonflasche gewechselt?",
+  "optionen": [
+   "wenn sie voll oder der Vakuumindikator entfaltet ist",
+   "jeden Morgen",
+   "nach jeder Mahlzeit",
+   "nur bei Fieber"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "So steht es in Pflegias."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Welche Zeichen gehören zur <b>Spätphase</b> eines Schocks? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "Puls über 120/min",
+   "systolischer Blutdruck unter 100 mmHg",
+   "teilnahmslos, benommen",
+   "Oligurie oder Anurie",
+   "rosige, warme Haut",
+   "ängstlich, aber Blutdruck normal"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "erklaerung": "In der Spätphase versagt die Kompensation."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Vor dem Lösen der Verbindung beim Flaschenwechsel desinfizieren Sie Ihre Hände.",
+  "richtig": true,
+  "begruendung": {
+   "optionen": [
+    "Das ist eine aseptische Tätigkeit – eine der 5 Indikationen der Händedesinfektion.",
+    "Damit die Handschuhe besser rutschen.",
+    "Das ist nur bei Fieber nötig."
+   ],
+   "richtig": 0
+  },
+  "erklaerung": "Die Drainage ist eine Eintrittspforte für Erreger."
+ },
+ {
+  "typ": "dialog",
+  "stil": "chat",
+  "frage": "Herr Yilmaz informieren",
+  "knoten": [
+   {
+    "sprecher": "Herr Yilmaz",
+    "text": "Warum soll ich mit dem Schlauch schon aufstehen? Ich bleib lieber liegen.",
+    "frage": "Was antworten Sie?",
+    "optionen": [
+     {
+      "t": "Bewegung beugt Thrombose und Lungenentzündung vor. Wir sichern den Beutel unterhalb der Wunde, ich begleite Sie.",
+      "richtig": true,
+      "rueck": "Begründen und Sicherheit geben."
+     },
+     {
+      "t": "Das steht so im Plan, also machen wir das.",
+      "richtig": false,
+      "rueck": "Das erklärt nichts und nimmt die Sorge nicht ernst."
+     },
+     {
+      "t": "Dann bleiben Sie liegen, bis die Drainage raus ist.",
+      "richtig": false,
+      "rueck": "Die Drainage soll die Mobilisation nicht verhindern."
+     }
+    ]
+   }
+  ],
+  "erklaerung": "Information und Anleitung gehören zur Prävention."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Pflegeproblem „Gefahr einer Wundinfektion“ bei Herrn Yilmaz: Was ist ein <b>Einflussfaktor (E)</b>?",
+  "optionen": [
+   "liegende Robinson-Drainage als Eintrittspforte",
+   "ist motiviert und selbstständig",
+   "Temperatur 36,8 °C",
+   "möchte bald nach Hause"
+  ],
+  "richtig": 0,
+  "erklaerung": "Motivation ist eine Ressource, die Temperatur ein Kennzeichen."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Welches Pflegeziel für Herrn Yilmaz ist <b>überprüfbar</b>?",
+  "optionen": [
+   "Die Austrittsstelle ist bis zur Entfernung der Drainage reizlos (keine Rötung, Schwellung, Überwärmung).",
+   "Herr Yilmaz fühlt sich wohl.",
+   "Die Pflegefachperson wechselt den Verband.",
+   "Infektionen sollen nicht vorkommen."
+  ],
+  "richtig": 0,
+  "erklaerung": "Beobachtbares Kriterium + Zeitpunkt."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Die Redon einer Patientin hat in den ersten Stunden nach der OP gar nicht gefördert, der Schlauch ist nicht abgeknickt. Was tun Sie?",
+  "optionen": [
+   "die Ärztin informieren",
+   "abwarten bis morgen",
+   "den Schlauch anspülen",
+   "die Flasche tiefer hängen"
+  ],
+  "richtig": 0,
+  "erklaerung": "Häufig sind die Öffnungen im Körper verklebt."
+ },
+ {
+  "typ": "luecke",
+  "frage": "Ergänzen Sie.",
+  "text": "Bei einer {{offenen}} Drainage läuft das Sekret direkt in den Verband. Die Easy-Flow-Drainage ist {{halboffen}}, die Robinson-Drainage ist {{geschlossen}}.",
+  "extra": [
+   "aktiv"
+  ],
+  "erklaerung": "Je geschlossener, desto geringer das Infektionsrisiko."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Eine Wunddrainage ist eine mögliche Eintrittspforte für Erreger.",
+  "richtig": true,
+  "erklaerung": "Besonders bei länger liegenden Drainagen und unhygienischem Umgang."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Was dokumentieren Sie bei einem Flaschenwechsel?",
+  "optionen": [
+   "den Wechsel und die Fördermenge der entfernten Flasche",
+   "nur die Uhrzeit",
+   "nur die neue Flaschennummer",
+   "nichts – das steht ja auf der Flasche"
+  ],
+  "richtig": 0,
+  "erklaerung": "Sonst stimmt die Gesamtmenge nicht."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Wie oft kontrollieren Sie nach der Übernahme aus dem Aufwachraum in der <b>2. und 3. Stunde</b>, wenn nichts anderes angeordnet ist?",
+  "optionen": [
+   "halbstündlich",
+   "alle 15 Minuten",
+   "stündlich",
+   "einmal"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "Erste Stunde alle 15 Minuten, dann zwei Stunden halbstündlich, danach stündlich."
+ },
+ {
+  "typ": "wahl",
+  "frage": "SBAR: Wofür steht das <b>A</b>?",
+  "optionen": [
+   "Assessment – Ihre Einschätzung der Lage",
+   "Anordnung der Ärztin",
+   "Atmung",
+   "Abschluss"
+  ],
+  "richtig": 0,
+  "erklaerung": "S = Situation, B = Hintergrund, A = Einschätzung, R = Empfehlung."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Welche Sofortmaßnahmen sind bei einem Schock richtig? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "Hilfe holen, nicht allein lassen",
+   "Vitalzeichen engmaschig messen",
+   "Wärme erhalten",
+   "aktiv mit Wärmflaschen anwärmen",
+   "Kaffee geben"
+  ],
+  "richtig": [
+   0,
+   1,
+   2
+  ],
+  "erklaerung": "Kein aktives Anwärmen, nichts zu trinken."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Der Redonschlauch liegt abgeknickt unter dem Bein der Patientin. Wozu kann das führen?",
+  "optionen": [
+   "Förderstau – Sekret staut sich im Wundgebiet (Hämatom)",
+   "zu starkem Sog",
+   "Fieber durch den Schlauch",
+   "gar nichts"
+  ],
+  "richtig": 0,
+  "erklaerung": "Knicke sofort beseitigen und weiter beobachten."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Sie sollen eine Drainage ziehen, fühlen sich aber nicht sicher. Wie heißt Ihr Recht (und Ihre Pflicht), die Durchführung abzulehnen?",
+  "optionen": [
+   "Remonstration",
+   "Delegation",
+   "Evaluation",
+   "Dokumentation"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "Möglichst schriftlich – die Ärztin muss dann eine andere Lösung finden."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Bei Schockzeichen und einem Herzinfarkt lagern Sie die Beine ca. 30° hoch.",
+  "richtig": false,
+  "begruendung": {
+   "optionen": [
+    "Bei Herzinfarkt und Atemnot ist die Schocklagerung kontraindiziert.",
+    "Die Beine werden immer 90° hochgelagert.",
+    "Schocklagerung gibt es nicht mehr."
+   ],
+   "richtig": 0
+  },
+  "erklaerung": "Bei Verdacht auf kardiogenen Schock eher den Oberkörper hoch."
+ }
+];
+ILSLern.uebung(Object.assign({"mount": "#app", "ils": "drainage", "schritt": "quiz", "abschluss": true, "abschnitt": "alle Abschnitte des Arbeitsblatts", "ziehen": 10, "fehlerMax": 2, "pauseSek": 180, "intro": "Neuer Fall: <strong>Herr Yilmaz</strong> (58) hat nach einer Gallenblasen-OP eine <strong>Robinson-Drainage</strong>. Dazu kommen Fragen zu allen Abschnitten. Sie dürfen höchstens 2 Fehler machen."}, { pool: POOL }));
+</script>
+</body>
+</html>

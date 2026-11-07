@@ -21,7 +21,7 @@
      sortieren kategorien[], elemente [{ t, k (Index der Kategorie), warum }]
      zahl      richtig (Zahl), toleranz, einheit
      luecke    text mit {{Lösungswort}}, extra [Ablenker]
-     bild      svg (mit data-ziel="…"), ziele [{ id, frage, name }]
+     bild      svg (mit data-ziel="…"), ziele [{ id, frage, name }], namen { id: 'Name' } für weitere Stellen
      dialog    stil 'fall'|'chat', knoten [{ sprecher, text, frage, optionen [{ t, richtig, rueck }] }]
    Zwischenstand (aktuelle Aufgabe, Fehler, Lesepause) bleibt auf dem Gerät gespeichert. */
 const ILSLern = (() => {
@@ -130,7 +130,7 @@ const ILSLern = (() => {
       }
       if (!a.begruendung) { api.antwort(true); return; }
       const bg = a.begruendung;
-      api.karte.append(el('div', { class: 'q-text lern-stufe2' }, 'Stimmt! Und warum? Wählen Sie die passende Begründung:'));
+      api.karte.append(el('div', { class: 'q-text lern-stufe2' }, 'Richtig erkannt! Und warum? Wählen Sie die passende Begründung:'));
       api.neuerText(woerter(bg.optionen), true);
       const reihen = mischen(bg.optionen.map((_, i) => i));
       const z = antwortKnoepfe(reihen.map((i) => bg.optionen[i]), (p2, b2) => {
@@ -304,9 +304,10 @@ const ILSLern = (() => {
         zeigen();
         api.neuerText(woerter(a.ziele[pos].frage), true);
       } else {
-        const getippt = ziel && a.ziele.find((z) => z.id === ziel.getAttribute('data-ziel'));
+        const id = ziel && ziel.getAttribute('data-ziel');
+        const getippt = id && ((a.ziele.find((z) => z.id === id) || {}).name || (a.namen || {})[id]);
         if (ziel) { ziel.classList.remove('daneben'); void ziel.getBoundingClientRect(); ziel.classList.add('daneben'); }
-        api.fehler(getippt ? `Das ist: ${getippt.name}.` : 'Das ist nicht die gesuchte Stelle.');
+        api.fehler(getippt ? `Das ist ${getippt}.` : 'Das ist nicht die gesuchte Stelle.');
       }
     });
     zeigen();
@@ -623,5 +624,5 @@ const ILSLern = (() => {
     return { schritt };
   }
 
-  return { uebung, ziehen, TYPEN };
+  return { uebung, ziehen, signatur, TYPEN };
 })();

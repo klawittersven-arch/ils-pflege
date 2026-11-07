@@ -11,6 +11,21 @@
    Abschlussquiz erst, wenn alle anderen Schritte erledigt sind. */
 (typeof window !== 'undefined' ? window : globalThis).ILS_AUFTRAEGE = [
   {
+    id: 'drainage',
+    titel: 'Wunddrainagen: Redon- und Robinson-Drainage',
+    kurz: 'Drainage',
+    pfad: 'drainage/',
+    betreff: 'ILS Drainage',
+    schritte: [
+      { id: '1', titel: 'Übung 1: Wozu Wunddrainagen?', kurz: 'Ü1', pfad: 'drainage/1/' },
+      { id: '2', titel: 'Übung 2: Beobachten und dokumentieren', kurz: 'Ü2', pfad: 'drainage/2/' },
+      { id: '3', titel: 'Übung 3: Komplikationen erkennen', kurz: 'Ü3', pfad: 'drainage/3/' },
+      { id: '4', titel: 'Übung 4: Umgang, Hygiene und Recht', kurz: 'Ü4', pfad: 'drainage/4/' },
+      { id: '5', titel: 'Übung 5: Examens-Training Pflegeprozess', kurz: 'Ü5', pfad: 'drainage/5/' },
+      { id: 'quiz', titel: 'Abschlussquiz', kurz: 'Quiz', pfad: 'drainage/abschluss/', abschluss: true }
+    ]
+  },
+  {
     id: 'probe',
     titel: 'Probe-Auftrag (zum Testen)',
     kurz: 'Probe',
