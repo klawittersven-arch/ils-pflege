@@ -208,7 +208,7 @@ UEBUNG3 = [
      "erklaerung": "Nachblutung + Schockzeichen = Notfall: Hilfe holen, nicht allein lassen, Vitalzeichen, Schocklagerung nach Absprache."},
     {"typ": "reihe", "gruppe": "sbar", "frage": "Sie melden der Ärztin die Situation nach dem <b>SBAR-Schema</b>. Bringen Sie die Meldung in die richtige Reihenfolge.",
      "schritte": ["S – Situation: „Frau Kramer, Zimmer 12: Ich vermute eine Nachblutung.“",
-                  "B – Hintergrund: „Hüft-TEP rechts vorgestern, sie bekommt Enoxaparin.“",
+                  "B – Hintergrund: „Sie hat eine Hüft-TEP rechts und bekommt Enoxaparin.“",
                   "A – Einschätzung: „130 ml hellrotes Blut in einer Stunde, Puls 108, blass und feucht.“",
                   "R – Empfehlung: „Bitte kommen Sie sofort.“"],
      "erklaerung": "SBAR = Situation, Background (Hintergrund), Assessment (Einschätzung), Recommendation (Empfehlung). So ist die Meldung kurz und vollständig."},

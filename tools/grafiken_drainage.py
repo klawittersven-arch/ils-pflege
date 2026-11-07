@@ -32,9 +32,9 @@ def legende(eintraege, y0, spalten=3, breite=640):
     proz = (breite - 40) / spalten
     for k, (nr, text) in enumerate(eintraege):
         x = 20 + (k % spalten) * proz
-        y = y0 + (k // spalten) * 22
+        y = y0 + (k // spalten) * 24
         out.append(f"<circle cx='{x + 9}' cy='{y}' r='9' fill='#b4572a'/><text x='{x + 9}' y='{y + 4}' font-size='10.5' font-weight='bold' fill='#fff' text-anchor='middle'>{nr}</text>"
-                   f"<text x='{x + 23}' y='{y + 4.5}' font-size='12' fill='#222'>{text}</text>")
+                   f"<text x='{x + 23}' y='{y + 5}' font-size='14' fill='#222'>{text}</text>")
     return "".join(out)
 
 
@@ -88,8 +88,8 @@ def redon(beschriftet=True, ziele=False):
          # Faltenbalg (zusammengezogen = Sog vorhanden)
          faltenbalg(520, 214)]
     if beschriftet:
-        s[0] = s[0].replace("viewBox='0 0 640 400'", "viewBox='0 0 640 520'")
-        s[1] = "<rect width='640' height='520' fill='#ffffff'/>"
+        s[0] = s[0].replace("viewBox='0 0 640 400'", "viewBox='0 0 640 530'")
+        s[1] = "<rect width='640' height='530' fill='#ffffff'/>"
         s += [badge(1, 150, 206), badge(2, 336, 122), badge(3, 340, 46), badge(4, 392, 26), badge(5, 476, 153),
               badge(6, 472, 192), badge(7, 562, 168), badge(8, 606, 286), badge(9, 404, 330)]
         s.append(legende([(1, "Drainagekatheter mit seitlichen Öffnungen"), (2, "Austrittsstelle (mit Naht fixiert)"),
@@ -115,11 +115,11 @@ def vakuum():
     return (f"<svg viewBox='0 0 520 210' xmlns='http://www.w3.org/2000/svg' {SCHRIFT} role='img' aria-label='Vakuumindikator zusammengezogen und entfaltet'>"
             "<rect width='520' height='210' fill='#fff'/>"
             f"{faltenbalg(130, 140, False, 46)}"
-            f"<text x='130' y='170' font-size='14' font-weight='bold' text-anchor='middle' fill='#1d7a46'>zusammengezogen</text>"
-            f"<text x='130' y='190' font-size='13' text-anchor='middle' fill='#222'>Sog vorhanden ✓</text>"
+            f"<text x='130' y='172' font-size='19' font-weight='bold' text-anchor='middle' fill='#1d7a46'>zusammengezogen</text>"
+            f"<text x='130' y='197' font-size='17' text-anchor='middle' fill='#222'>Sog vorhanden ✓</text>"
             f"{faltenbalg(390, 140, True, 46)}"
-            f"<text x='390' y='170' font-size='14' font-weight='bold' text-anchor='middle' fill='#b3261e'>entfaltet</text>"
-            f"<text x='390' y='190' font-size='13' text-anchor='middle' fill='#222'>kein Sog mehr → Flasche wechseln</text>"
+            f"<text x='390' y='172' font-size='19' font-weight='bold' text-anchor='middle' fill='#b3261e'>entfaltet</text>"
+            f"<text x='390' y='197' font-size='17' text-anchor='middle' fill='#222'>kein Sog → Flasche wechseln</text>"
             "</svg>")
 
 
