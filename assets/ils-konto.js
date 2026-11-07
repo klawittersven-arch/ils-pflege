@@ -390,6 +390,8 @@ const ILSKonto = (() => {
         info.append(el('div', { class: 'card erledigt' }, '🎉 Sie haben diesen ILS-Auftrag abgeschlossen.'));
         if (a.challenge) info.append(el('a', { class: 'btn block challenge-knopf', href: link(a.challenge) }, '🏁 ILS-Challenge: Knacken Sie den Highscore! (freiwillig)'));
       }
+      // Highscore ansehen: von Anfang an, auch bevor man selbst mitspielen darf
+      if (a.challenge) info.append(el('a', { class: 'btn secondary block highscore-knopf', href: link(a.challenge) + '#bestenliste' }, '🏆 Highscore Ihrer Klasse ansehen'));
       info.append(el('div', { class: 'links schritte-liste' }, a.schritte.map((s) => {
         const e = meins[s.id];
         const zu = s.abschluss && !alleUebungen && !e;

@@ -391,21 +391,47 @@ const ILSChallenge = (() => {
       return startZeigen();
     }
 
-    K.bereich(oben, async () => {
-      const st = await K.standHolen();
-      if (quiz && !(st[cfg.ils] && st[cfg.ils][quiz.id])) {
-        info.append(el('div', { class: 'card gesperrt' },
-          el('div', { class: 'q-text' }, '🔒 Die ILS-Challenge ist noch gesperrt'),
-          el('p', {}, 'Sie wird freigeschaltet, wenn Sie das Abschlussquiz bestanden haben.'),
-          el('a', { class: 'btn secondary block', href: K.link(a.pfad) }, 'Zur Übersicht')));
-        return;
-      }
+    // Nur die Bestenliste ansehen: Knopf „Highscore“ in der Übersicht (challenge/#bestenliste) –
+    // geht schon vor der Freischaltung; dann mit Hinweis, wann man mitspielen kann.
+    async function highscoreZeigen(frei) {
+      leeren();
+      inhalt.classList.remove('hidden');
+      const karte = el('div', { class: 'card highscore' }, el('div', { class: 'q-text' }, '🏆 Highscore Ihrer Klasse'), el('p', { class: 'small' }, 'wird geladen …'));
+      inhalt.append(karte,
+        frei ? null : el('div', { class: 'card gesperrt' },
+          el('div', { class: 'q-text' }, '🔒 Mitspielen: noch gesperrt'),
+          el('p', {}, 'Die ILS-Challenge wird freigeschaltet, wenn Sie das Abschlussquiz bestanden haben. Ansehen können Sie die Bestenliste schon jetzt.')),
+        el('div', { class: 'links' },
+          frei ? el('button', { type: 'button', class: 'btn block challenge-knopf', id: 'ch-zur-challenge', onclick: () => {
+            history.replaceState(null, '', location.pathname + location.search);
+            normalStarten();
+          } }, '🏁 Zur ILS-Challenge (freiwillig)') : null,
+          a ? el('a', { class: 'btn secondary block', href: K.link(a.pfad) }, 'Zur Übersicht') : null));
+      try {
+        const k = K.konto();
+        const { status, d } = await K.api('/api/challenge/liste?ils=' + encodeURIComponent(cfg.ils), { token: k && k.token });
+        karte.innerHTML = '';
+        karte.append(el('div', { class: 'q-text' }, `🏆 Highscore ${d.klasse || 'Ihrer Klasse'}`));
+        if (status !== 200) { karte.append(el('p', { class: 'small' }, 'Die Bestenliste ist gerade nicht erreichbar.')); return; }
+        karte.append(el('p', { class: 'small' }, `ILS-Challenge „${a ? a.titel : cfg.ils}“ – die besten 10 Ihrer Klasse.`), bestenliste(d.liste, k && k.name));
+        if (d.best) karte.append(el('p', { class: 'small' }, `Ihr bestes Ergebnis: ${d.best.punkte} Punkte (${uhr(d.best.sekunden)}) – Platz ${d.platz} von ${d.von}.`));
+      } catch (e) { karte.querySelector('.small').textContent = 'Keine Verbindung – die Bestenliste ist gerade nicht erreichbar.'; }
+    }
+
+    async function normalStarten() {
       const offen = speicher.lesen(offenSchl());
       if (offen) await wappenSenden(offen);
       S = speicher.lesen(schluessel());
       if (S && S.sig !== sig) S = null;
       inhalt.classList.remove('hidden');
       zeigen();
+    }
+
+    K.bereich(oben, async () => {
+      const st = await K.standHolen();
+      const frei = !quiz || !!(st[cfg.ils] && st[cfg.ils][quiz.id]);
+      if (!frei || location.hash === '#bestenliste') { await highscoreZeigen(frei); return; }
+      await normalStarten();
     });
   }
 

@@ -338,6 +338,7 @@ table.lk td.zelle .selbst { color: var(--muted); font-weight: 600; font-size: 12
 
 /* ---------- ILS-Challenge ---------- */
 .btn.challenge-knopf { background: #1f3a5f; color: #fff; margin-top: 10px; }
+.btn.highscore-knopf { margin-top: 8px; color: #1f3a5f; border-color: #1f3a5f; }
 .ch-kopf .ch-uhr { font-variant-numeric: tabular-nums; color: var(--ink); }
 .ch-kopf .ch-punkte { color: #1f3a5f; }
 .ch-ergebnis { text-align: center; }

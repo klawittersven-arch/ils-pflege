@@ -173,6 +173,8 @@ beliebig oft – wie die Klausur-Challenge der Lernkarten:
   sich trotzdem nicht, weil falsche Antworten 0 Punkte bringen und der Bonus nur anteilig zu den richtigen zählt.
 - **Lösungen erst am Ende**, dazu Punkte je Abschnitt (schwächster oben) mit Verweis aufs Arbeitsblatt.
 - **Bestenliste je ILS-Auftrag und Klasse** mit Vorname + Initial (Top 10, eigener Platz). Es zählt das beste Ergebnis.
+  In der Übersicht steht **von Anfang an** der Knopf „🏆 Highscore Ihrer Klasse ansehen“ (`challenge/#bestenliste`),
+  nach dem Abschluss direkt unter dem Challenge-Knopf. Ansehen geht schon vor der Freischaltung, mitspielen erst danach.
 - **Lehrkraft-Seite:** Spalte „🏁 Challenge“ (auch in der CSV) und **🏆 Siegerehrung** am Beamer: Treppchen 2 – 1 – 3,
   Plätze 4–12, Konfetti. Tasten **F** Vollbild, **R**/Leertaste nochmal, **Esc** schließen. Ohne gewählte Klasse wird sie zuerst abgefragt.
 - „Fortschritt eines Auftrags löschen“, „Person löschen“ und „Alles löschen“ löschen auch die Challenge-Ergebnisse und Siegerwappen.

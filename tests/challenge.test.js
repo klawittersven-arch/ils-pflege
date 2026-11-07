@@ -86,7 +86,7 @@ async function spielen(s, mitFehlern, sofort = false) {
   const browser = await chromium.launch();
   const protokoll = { konsole: [], extern: [] };
   try {
-    await lk(worker, '/api/lehrkraft/import', { text: '3BFP2/1;Lena M.;05.09.2004\n3BFP2/1;Mohamed A.;01.02.2003\n3BFP2/2;Anna S.;31.12.2003' });
+    await lk(worker, '/api/lehrkraft/import', { text: '3BFP2/1;Lena M.;05.09.2004\n3BFP2/1;Mohamed A.;01.02.2003\n3BFP2/1;Paul P.;03.03.2003\n3BFP2/2;Anna S.;31.12.2003' });
     const stand = await lk(worker, '/api/lehrkraft/stand');
     const sid = (n) => stand.schueler.find((x) => x.name === n).sid;
 
@@ -94,9 +94,13 @@ async function spielen(s, mitFehlern, sofort = false) {
     const k1 = await browser.newContext(MOBIL); await k1.clock.install();
     const lena = await k1.newPage(); beobachten(lena, protokoll, 'lena');
     await anmelden(lena, basis, 'Lena', '05', '09', '2004');
+    await lena.waitForSelector('.highscore-knopf');
+    pruefe(!(await lena.$('.challenge-knopf')), 'Übersicht von Anfang an: Knopf „Highscore ansehen“, aber noch kein Challenge-Knopf');
     await lena.goto(basis + 'drainage/challenge/');
     await lena.waitForSelector('.card.gesperrt');
     pruefe(/gesperrt/.test(await lena.textContent('.card.gesperrt')), 'Challenge vor dem Abschlussquiz gesperrt (Seite)');
+    await lena.waitForFunction(() => /Noch niemand/.test(document.querySelector('.card.highscore').textContent));
+    pruefe(!(await lena.$('#ch-start')) && !(await lena.$('#ch-zur-challenge')), 'gesperrt: Bestenliste sichtbar, aber kein Start');
     const token = await lena.evaluate(() => JSON.parse(localStorage.getItem('ils-konto')).token);
     const r0 = await fetch(worker.url + '/api/challenge/start', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: JSON.stringify({ ils: 'drainage' }) });
     pruefe(r0.status === 409, 'Server: Start ohne Abschlussquiz abgelehnt', r0.status);
@@ -107,7 +111,8 @@ async function spielen(s, mitFehlern, sofort = false) {
     }
     await lena.goto(basis + 'drainage/');
     await lena.waitForSelector('.challenge-knopf');
-    pruefe(true, 'Übersicht zeigt nach dem Abschluss den Knopf „ILS-Challenge“');
+    pruefe(await lena.evaluate(() => document.querySelector('.challenge-knopf').nextElementSibling.classList.contains('highscore-knopf')),
+      'Übersicht nach dem Abschluss: „ILS-Challenge“ und direkt darunter „Highscore ansehen“');
 
     console.log('Durchgang Lena (fehlerfrei)');
     await lena.goto(basis + 'drainage/challenge/');
@@ -158,6 +163,27 @@ async function spielen(s, mitFehlern, sofort = false) {
     pruefe(!!(await mo.$('.bestenliste li:first-child img.wappen')) && !!(await mo.$('.bestenliste li:nth-child(2) .wappen.leer')),
       'Ergebnisliste: Lena mit Wappen, Mohamed mit leerem Platzhalter');
     await foto(mo, 'c3_ergebnis_mohamed');
+
+    console.log('Highscore ansehen (über die Übersicht)');
+    await mo.goto(basis + 'drainage/');
+    await mo.click('.highscore-knopf');
+    await mo.waitForSelector('.card.highscore .bestenliste');
+    pruefe(/#bestenliste$/.test(mo.url()) && /Lena M\./.test(await mo.textContent('.card.highscore')) && !(await mo.$('.card.gesperrt')),
+      'Highscore-Knopf öffnet die Bestenliste der Klasse');
+    await mo.click('#ch-zur-challenge');
+    await mo.waitForSelector('#ch-nochmal, #ch-start');
+    pruefe(!/#bestenliste/.test(mo.url()), '„Zur ILS-Challenge“ führt zur Challenge');
+    const k3 = await browser.newContext(MOBIL);
+    const paul = await k3.newPage(); beobachten(paul, protokoll, 'paul');
+    await anmelden(paul, basis, 'Paul', '03', '03', '2003');
+    await paul.waitForSelector('.highscore-knopf');
+    pruefe(!(await paul.$('.challenge-knopf')), 'Paul (noch nichts erledigt): Highscore-Knopf ja, Challenge-Knopf nein');
+    await paul.click('.highscore-knopf');
+    await paul.waitForSelector('.card.highscore .bestenliste');
+    const paulSicht = await paul.textContent('.card.highscore');
+    pruefe(/Lena M\./.test(paulSicht) && /Mohamed A\./.test(paulSicht) && !!(await paul.$('.card.gesperrt')) && !(await paul.$('#ch-zur-challenge')),
+      'Paul sieht die Bestenliste schon vor dem Abschlussquiz – Mitspielen noch gesperrt');
+    await foto(paul, 'c3b_highscore_gesperrt');
 
     console.log('Server-Prüfungen');
     const tok2 = await mo.evaluate(() => JSON.parse(localStorage.getItem('ils-konto')).token);
