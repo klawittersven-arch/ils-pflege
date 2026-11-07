@@ -57,7 +57,7 @@ def main():
     uebung(5, "Übung 5: Examens-Training Pflegeprozess", I.UEBUNG5, I.SCHREIBEN5, 6)
     # Abschlussquiz
     cfg = {"mount": "#app", "ils": "drainage", "schritt": "quiz", "abschluss": True,
-           "abschnitt": "alle Abschnitte des Arbeitsblatts", "ziehen": 10, "fehlerMax": 2, "pauseSek": 180,
+           "abschnitt": "alle Abschnitte des Arbeitsblatts", "ziehen": 10, "fehlerMax": 2, "pauseSek": 30,
            "intro": "Neuer Fall: <strong>Herr Yilmaz</strong> (58) hat nach einer Gallenblasen-OP eine <strong>Robinson-Drainage</strong>. "
                     "Dazu kommen Fragen zu allen Abschnitten. Sie dürfen höchstens 2 Fehler machen."}
     js = "const POOL = " + pool_js(I.ABSCHLUSS) + ";\nILSLern.uebung(Object.assign(" + json.dumps(cfg, ensure_ascii=False) + ", { pool: POOL }));"

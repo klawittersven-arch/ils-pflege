@@ -70,7 +70,7 @@ seite(ROOT / "probe/abschluss/index.html", "Abschlussquiz", "Probe-Auftrag · Ab
 ILSLern.uebung({
   mount: '#app', ils: 'probe', schritt: 'quiz', abschluss: true,
   abschnitt: 'alle Probe-Abschnitte',
-  ziehen: 4, fehlerMax: 1, pauseSek: 180,
+  ziehen: 4, fehlerMax: 1, pauseSek: 30,
   pool: [
     { typ: 'rf', aussage: 'Die Lehrkraft sieht, welche Übungen Sie erledigt haben.', richtig: true, erklaerung: 'Ja – auf ihrer Übersichtsseite.' },
     { typ: 'rf', aussage: 'Ihre einzelnen Antworten werden an die Lehrkraft geschickt.', richtig: false, erklaerung: 'Nein – nur, ob Sie die Übung geschafft haben.' },

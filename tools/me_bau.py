@@ -55,7 +55,7 @@ def main():
     uebung(4, "Übung 4: Schmerz und Mobilisation", I.UEBUNG4, I.SCHREIBEN4, 7)
     uebung(5, "Übung 5: Information, Schulung und Entlassung", I.UEBUNG5, I.SCHREIBEN5, 6)
     cfg = {"mount": "#app", "ils": "me", "schritt": "quiz", "abschluss": True,
-           "abschnitt": "alle Abschnitte des Arbeitsblatts", "ziehen": 10, "fehlerMax": 2, "pauseSek": 180,
+           "abschnitt": "alle Abschnitte des Arbeitsblatts", "ziehen": 10, "fehlerMax": 2, "pauseSek": 30,
            "intro": "Neuer Fall: <strong>Frau Schäfer</strong> (52) wurde eine Platte am rechten <strong>Unterarm</strong> entfernt. "
                     "Dazu kommen Fragen zu allen Abschnitten. Sie dürfen höchstens 2 Fehler machen."}
     js = "const POOL = " + pool_js(I.ABSCHLUSS) + ";\nILSLern.uebung(Object.assign(" + json.dumps(cfg, ensure_ascii=False) + ", { pool: POOL }));"

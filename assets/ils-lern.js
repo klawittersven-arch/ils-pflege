@@ -6,7 +6,7 @@
      abschnitt: 'Abschnitt 1 „Wozu Drainagen?“ (S. 2–3)',   // worauf sich die Übung bezieht
      ziehen: 8,             // so viele Aufgaben pro Durchgang (aus dem Pool)
      fehlerMax: 4,          // erlaubte Fehler (Abschlussquiz: 2); beim nächsten Fehler → Lesepause + Neustart
-     pauseSek: 30,          // Lesepause (Abschlussquiz: 180)
+     pauseSek: 30,          // Lesepause nach zu vielen Fehlern (auch im Abschlussquiz)
      zuSchnellMax: 3,       // so oft zu schnell getippt → kurze Lesepause, danach weiter mit derselben Aufgabe
      tempoPauseSek: 15,     // Länge dieser Lesepause (auch im Abschlussquiz)
      abschluss: false,      // true = Abschlussquiz (erst nach allen Übungen)
