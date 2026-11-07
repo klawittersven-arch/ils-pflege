@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Abschlussquiz Materialentfernung</title>
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Abschluss</div><h1>Abschlussquiz Materialentfernung</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
+<script>
+const POOL = [
+ {
+  "typ": "wahl",
+  "frage": "Frau Schäfer (52) wurde eine Platte am rechten Unterarm entfernt. Wo prüfen Sie die DMS?",
+  "optionen": [
+   "an den Fingern der rechten Hand: Farbe, Temperatur, Bewegung, Gefühl",
+   "an den Zehen",
+   "an der linken Hand",
+   "am Oberarm oberhalb der OP"
+  ],
+  "richtig": 0,
+  "erklaerung": "Immer körperfern (distal) der OP-Stelle prüfen."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Nach Pflegias werden Fäden an der <b>oberen Extremität</b> meist nach … entfernt.",
+  "optionen": [
+   "10–12 Tagen",
+   "2 Tagen",
+   "21 Tagen",
+   "6 Wochen"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "Untere Extremität 12–14 Tage, Gelenknähe 21 Tage und später – die Ärztin legt den Zeitpunkt fest."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Osteosynthesematerial wird nach Abschluss der Knochenheilung entfernt, meist nach 1,5 bis 2 Jahren.",
+  "richtig": true,
+  "erklaerung": "Dann ist die Stabilität am besten."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Was spricht <b>für</b> eine Materialentfernung? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "Lockerung des Materials",
+   "Entzündung am Material",
+   "Schmerzen durch das Material",
+   "Der Bruch ist noch nicht verheilt.",
+   "Das Material stört nicht."
+  ],
+  "richtig": [
+   0,
+   1,
+   2
+  ],
+  "erklaerung": "Bei nicht verheiltem Knochen wird nichts entfernt."
+ },
+ {
+  "typ": "sortieren",
+  "frage": "Virchow-Trias: Ordnen Sie zu.",
+  "kategorien": [
+   "Endothelläsion",
+   "Hypozirkulation",
+   "Hyperkoagulabilität"
+  ],
+  "elemente": [
+   {
+    "t": "Gefäßverletzung bei der OP",
+    "k": 0
+   },
+   {
+    "t": "Immobilität, verlangsamter Blutfluss",
+    "k": 1
+   },
+   {
+    "t": "erhöhte Gerinnbarkeit nach einer OP",
+    "k": 2
+   }
+  ],
+  "erklaerung": "Gefäßwand – Blutfluss – Gerinnung."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Welche Kombination spricht für eine <b>Thrombose</b>?",
+  "optionen": [
+   "Wade geschwollen, warm, ziehende Schmerzen, Spannungsgefühl",
+   "Zehen blass, kalt, pulslos",
+   "Wundränder klaffen auseinander",
+   "Haut juckt unter dem Pflaster"
+  ],
+  "richtig": 0,
+  "erklaerung": "Leitsymptome der tiefen Beinvenenthrombose."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Herr Brandt bekommt zu Hause plötzlich Atemnot und Schmerzen in der Brust. Was ist zu tun?",
+  "optionen": [
+   "sofort die 112 rufen – Verdacht auf Lungenembolie",
+   "bis morgen abwarten",
+   "ein Schmerzmittel nehmen und hinlegen",
+   "die Wade massieren"
+  ],
+  "richtig": 0,
+  "erklaerung": "Die Lungenembolie ist die gefährlichste Komplikation einer Thrombose."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Zunehmende Schmerzen trotz Schmerzmittel und Hochlagern, prall gespannte Muskulatur, Kribbeln: Was tun Sie?",
+  "optionen": [
+   "sofort die Ärztin informieren",
+   "stärker kühlen und abwarten",
+   "den Verband fester wickeln",
+   "mehr trinken lassen"
+  ],
+  "richtig": 0,
+  "erklaerung": "Alarmzeichen – hier darf man nicht abwarten."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Eine Schwellung neben der Wunde ist nach 4–5 Tagen <b>dunkelgrün</b> verfärbt. Was ist das wahrscheinlich?",
+  "optionen": [
+   "ein Hämatom im Abbau",
+   "eine Wundinfektion",
+   "ein Keloid",
+   "eine Thrombose"
+  ],
+  "richtig": 0,
+  "erklaerung": "Hämatom: rötlich-blau → grün → gelblich."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Das operierte Bein wird hochgelagert.",
+  "richtig": true,
+  "begruendung": {
+   "optionen": [
+    "Das fördert den Ödemabfluss und vermindert Schwellung und Schmerz.",
+    "Damit die Fäden halten.",
+    "Damit der Patient nicht aufsteht."
+   ],
+   "richtig": 0
+  },
+  "erklaerung": "Dazu kommt Kühlen – mit Schutz vor Kälteschäden."
+ },
+ {
+  "typ": "zahl",
+  "frage": "Spätestens wie viele Stunden nach der OP sollte die erste Urinausscheidung erfolgt sein?",
+  "richtig": 8,
+  "einheit": "Stunden",
+  "erklaerung": "Sonst an einen Harnverhalt denken."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Über welche Seite lassen Sie einen Patienten nach einer OP am Bein aufstehen?",
+  "optionen": [
+   "über die operierte Seite",
+   "über die gesunde Seite",
+   "über das Fußende",
+   "egal"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "So steht es in Pflegias."
+ },
+ {
+  "typ": "reihe",
+  "frage": "Treppe <b>hinunter</b> mit zwei Unterarmgehstützen: Bringen Sie die Schritte in die richtige Reihenfolge.",
+  "schritte": [
+   "beide Stützen auf die untere Stufe setzen",
+   "das operierte Bein auf die untere Stufe setzen",
+   "das gesunde Bein nachziehen"
+  ],
+  "erklaerung": "Hinunter gehen Stützen und operiertes Bein voran."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Wo liegt der Handgriff der Unterarmgehstütze richtig?",
+  "optionen": [
+   "etwa auf Höhe des Oberschenkelknochens (Hüfte), Ellenbogen leicht gebeugt",
+   "auf Schulterhöhe",
+   "auf Kniehöhe",
+   "auf Höhe der Taille, Arme gestreckt"
+  ],
+  "richtig": 0,
+  "erklaerung": "Schultern nicht hochziehen."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Was gehört zum Expertenstandard „Schmerzmanagement in der Pflege“? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "Schmerzen regelmäßig einschätzen",
+   "Wirkung der Schmerzmittel überprüfen",
+   "nicht-medikamentöse Maßnahmen",
+   "Schmerzmittel nur nachts geben"
+  ],
+  "richtig": [
+   0,
+   1,
+   2
+  ],
+  "erklaerung": "Einschätzen, behandeln, informieren, überprüfen."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Warum geben Sie das Schmerzmittel (nach Anordnung) <b>vor</b> der Mobilisation?",
+  "optionen": [
+   "damit es wirkt, wenn die Bewegung Schmerzen auslöst",
+   "damit der Patient müde wird",
+   "weil es sonst abläuft",
+   "damit er schneller entlassen wird"
+  ],
+  "richtig": 0,
+  "erklaerung": "Präventive Analgetikagabe vor schmerzauslösenden Maßnahmen."
+ },
+ {
+  "typ": "sortieren",
+  "frage": "Information, Schulung oder Beratung?",
+  "kategorien": [
+   "Information",
+   "Schulung",
+   "Beratung"
+  ],
+  "elemente": [
+   {
+    "t": "Merkblatt zu Warnzeichen mitgeben",
+    "k": 0
+   },
+   {
+    "t": "Selbstinjektion üben, bis sie sicher klappt",
+    "k": 1
+   },
+   {
+    "t": "gemeinsam abwägen, wie Arbeit und Sport organisiert werden",
+    "k": 2
+   }
+  ],
+  "erklaerung": "Wissen – Fertigkeit – gemeinsame Lösung."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Wer legt den Zeitpunkt der Fadenentfernung fest?",
+  "optionen": [
+   "die Ärztin",
+   "die Pflegefachperson allein",
+   "der Patient",
+   "die Physiotherapie"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "Die Durchführung kann delegiert werden."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Welches Ziel ist <b>überprüfbar</b>?",
+  "optionen": [
+   "Frau Schäfer bewegt bis heute Abend alle Finger der rechten Hand ohne Kribbeln.",
+   "Frau Schäfer geht es gut.",
+   "Die Pflegefachperson prüft die DMS.",
+   "Frau Schäfer soll keine Probleme haben."
+  ],
+  "richtig": 0,
+  "erklaerung": "Beobachtbar + Zeitpunkt."
+ },
+ {
+  "typ": "wahl",
+  "frage": "PESR: Was ist bei Herrn Brandt eine <b>Ressource</b>?",
+  "optionen": [
+   "ist motiviert und stellt gezielte Fragen",
+   "erste OP dieser Art",
+   "fragt, wann er duschen darf",
+   "Wissensdefizit"
+  ],
+  "richtig": 0,
+  "erklaerung": "„Erste OP“ ist ein Einflussfaktor, die Frage ein Kennzeichen, das Wissensdefizit das Problem."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Entlassungsmanagement beginnt schon bei der Aufnahme.",
+  "richtig": true,
+  "erklaerung": "Früh einschätzen, welche Unterstützung nach der Entlassung nötig ist."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Warum soll Herr Brandt nach der Materialentfernung einige Wochen keinen Fußball spielen?",
+  "optionen": [
+   "Die Schraubenlöcher sind anfangs Schwachstellen – Gefahr eines erneuten Bruchs.",
+   "Damit die Fäden nicht reißen.",
+   "Weil Fußball immer verboten ist.",
+   "Wegen der Narkose."
+  ],
+  "richtig": 0,
+  "erklaerung": "Die Sportpause legt die Ärztin fest – bei Herrn Brandt 6 Wochen."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Welche Übungen fördern die Muskelpumpe? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "Füße kreisen",
+   "Zehen anziehen und spreizen",
+   "Waden anspannen",
+   "Beine übereinanderschlagen"
+  ],
+  "richtig": [
+   0,
+   1,
+   2
+  ],
+  "erklaerung": "Übereinandergeschlagene Beine behindern den Rückfluss."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Eine kleine Stelle am Fußrücken ist nach der OP taub. Was tun Sie?",
+  "optionen": [
+   "der Äußerung nachgehen, Ärztin informieren, dokumentieren",
+   "ignorieren",
+   "kräftig massieren",
+   "kühlen, bis es weggeht"
+  ],
+  "richtig": 0,
+  "erklaerung": "Sensibilitätsstörungen immer ernst nehmen."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Was ist eine <b>Wunddehiszenz</b>?",
+  "optionen": [
+   "Auseinanderklaffen der Wundränder nach einer Naht",
+   "überschießende Narbe",
+   "Bluterguss",
+   "Wundstarrkrampf"
+  ],
+  "richtig": 0,
+  "erklaerung": "Ursachen: Infektion, Manipulation, übermäßige Belastung."
+ }
+];
+ILSLern.uebung(Object.assign({"mount": "#app", "ils": "me", "schritt": "quiz", "abschluss": true, "abschnitt": "alle Abschnitte des Arbeitsblatts", "ziehen": 10, "fehlerMax": 2, "pauseSek": 180, "intro": "Neuer Fall: <strong>Frau Schäfer</strong> (52) wurde eine Platte am rechten <strong>Unterarm</strong> entfernt. Dazu kommen Fragen zu allen Abschnitten. Sie dürfen höchstens 2 Fehler machen."}, { pool: POOL }));
+</script>
+</body>
+</html>

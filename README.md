@@ -5,7 +5,10 @@ Die Seiten werden über GitHub Pages veröffentlicht und über QR-Codes auf den 
 
 - `dk/`, `spk/` – ILS-Aufträge „Transurethraler Dauerkatheter“ und „Suprapubischer Katheter“ (2026, mit Bausteinen
   und persönlicher ID per E-Mail; **ohne** Server – daran hat sich nichts geändert)
-- `probe/` – Probe-Auftrag zum Testen der Anmeldung (ILS mit Anmeldung, siehe unten)
+- `drainage/` – ILS-Auftrag „Wunddrainagen: Redon- und Robinson-Drainage“ (Lernmodus, 5 Übungen + Abschlussquiz)
+- `me/` – ILS-Auftrag „Materialentfernung und pflegerische Nachsorge“ (Lernmodus, 5 Übungen + Abschlussquiz)
+- `arbeitsblatt/` – Arbeitsblätter (Word + PDF) und Lehrkraft-Informationen zu den beiden neuen Aufträgen
+- `probe/` – Probe-Auftrag zum Testen der Anmeldung (zeigt alle Aufgabentypen)
 - `lehrkraft/` – Lehrkraft-Übersicht: Wer hat welche Übung erledigt? (mit Passwort, nirgends verlinkt)
 - `assets/` – gemeinsames Design, Quiz-Logik (`ils.js`), Anmeldung (`ils-konto.js`), Auftragsliste (`auftraege.js`)
 - `worker/`, `wrangler.jsonc` – Cloudflare-Worker (Server) für die Anmeldung und den Fortschritt
@@ -136,3 +139,17 @@ Neue ILS-Übungen laufen im Lernmodus (`ILSLern.uebung({...})`, Beispiel: `probe
 Aufgabentypen: `wahl`, `rf` (mit Begründung), `mehrfach`, `reihe`, `sortieren` (auch PESR, Ampel), `zahl`,
 `luecke`, `bild` (Stellen im SVG antippen), `dialog` (Fallentscheidung oder Gespräch) – Felder siehe Kopf von
 `assets/ils-lern.js`.
+
+### Neu erzeugen (Wunddrainagen und Materialentfernung)
+
+```
+python3 tools/grafiken_drainage.py && python3 tools/drainage_bau.py <version>   # Smartphone-Seiten drainage/
+python3 tools/ab_drainage.py && python3 tools/lehrkraft_drainage.py             # Arbeitsblatt + Lehrkraft-Info
+python3 tools/grafiken_me.py && python3 tools/me_bau.py <version>               # Smartphone-Seiten me/
+python3 tools/ab_me.py && python3 tools/lehrkraft_me.py
+node tests/inhalt.test.js            # spielt jede Aufgabe aller Pools einmal durch
+```
+
+Die Inhalte stehen in `tools/drainage_inhalt.py` und `tools/me_inhalt.py`. Mit (⚑) markierte Stellen stammen nicht aus
+Pflegias (Standardwissen) – die Markierung ist für die SuS unsichtbar und in den Lehrkraft-Informationen aufgelistet.
+`<version>` ist ein beliebiger kurzer Text (Cache-Bremse für die Browser), z. B. das Datum.

@@ -334,3 +334,4 @@ table.lk tr.st-nie th { color: var(--muted); }
 table.lk td.zelle .neustarts { color: var(--hint); font-weight: 800; }
 table.lk td.zelle.warn button { background: var(--hint-soft); color: #4d3a00; }
 table.lk td.zelle .selbst { color: var(--muted); font-weight: 600; font-size: 12px; }
+.antwort, .chip, .order-item { min-width: 0; overflow-wrap: anywhere; hyphens: auto; }

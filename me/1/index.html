@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 1: Osteosynthese und Materialentfernung</title>
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Übung 1 von 5</div><h1>Übung 1: Osteosynthese und Materialentfernung</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
+<script>
+const POOL = [
+ {
+  "typ": "bild",
+  "fest": true,
+  "frage": "Osteosyntheseverfahren: Tippen Sie im Bild auf das gesuchte Material.",
+  "svg": "<svg viewBox='0 0 360 600' xmlns='http://www.w3.org/2000/svg' font-family='Arial, Helvetica, sans-serif' role='img' aria-label='Osteosyntheseverfahren'><rect width='360' height='600' fill='#fff'/><line x1='180' y1='10' x2='180' y2='590' stroke='#eee'/><line x1='10' y1='300' x2='350' y2='300' stroke='#eee'/><rect x='60' y='30' width='48' height='240' rx='24.0' fill='#f4ecd8' stroke='#4a4a4a' stroke-width='1.6'/><rect x='74.4' y='48' width='19.200000000000003' height='204' rx='9.600000000000001' fill='#e9dcbc'/><path d='M58,144.0 L74.4,156.0 L88.8,142.0 L110,154.0' fill='none' stroke='#b3261e' stroke-width='2.2' stroke-dasharray='5 3'/><rect x='108' y='60' width='16' height='180' rx='4' fill='#8e9aa6' stroke='#4a4a4a'/><line x1='66' y1='78' x2='126' y2='78' stroke='#8e9aa6' stroke-width='5' stroke-linecap='round'/><rect x='124' y='71' width='9' height='14' rx='2' fill='#8e9aa6' stroke='#4a4a4a'/><line x1='66' y1='108' x2='126' y2='108' stroke='#8e9aa6' stroke-width='5' stroke-linecap='round'/><rect x='124' y='101' width='9' height='14' rx='2' fill='#8e9aa6' stroke='#4a4a4a'/><line x1='66' y1='192' x2='126' y2='192' stroke='#8e9aa6' stroke-width='5' stroke-linecap='round'/><rect x='124' y='185' width='9' height='14' rx='2' fill='#8e9aa6' stroke='#4a4a4a'/><line x1='66' y1='222' x2='126' y2='222' stroke='#8e9aa6' stroke-width='5' stroke-linecap='round'/><rect x='124' y='215' width='9' height='14' rx='2' fill='#8e9aa6' stroke='#4a4a4a'/><rect x='246' y='30' width='48' height='240' rx='24.0' fill='#f4ecd8' stroke='#4a4a4a' stroke-width='1.6'/><rect x='260.4' y='48' width='19.200000000000003' height='204' rx='9.600000000000001' fill='#e9dcbc'/><path d='M244,144.0 L260.4,156.0 L274.8,142.0 L296,154.0' fill='none' stroke='#b3261e' stroke-width='2.2' stroke-dasharray='5 3'/><rect x='264' y='22' width='13' height='240' rx='5' fill='#8e9aa6' stroke='#4a4a4a'/><line x1='238' y1='60' x2='298' y2='60' stroke='#8e9aa6' stroke-width='5' stroke-linecap='round'/><rect x='296' y='53' width='9' height='14' rx='2' fill='#8e9aa6' stroke='#4a4a4a'/><line x1='238' y1='236' x2='298' y2='236' stroke='#8e9aa6' stroke-width='5' stroke-linecap='round'/><rect x='296' y='229' width='9' height='14' rx='2' fill='#8e9aa6' stroke='#4a4a4a'/><rect x='70' y='360' width='48' height='180' rx='24.0' fill='#f4ecd8' stroke='#4a4a4a' stroke-width='1.6'/><rect x='84.4' y='378' width='19.200000000000003' height='144' rx='9.600000000000001' fill='#e9dcbc'/><path d='M68,444.0 L84.4,456.0 L98.8,442.0 L120,454.0' fill='none' stroke='#b3261e' stroke-width='2.2' stroke-dasharray='5 3'/><line x1='46' y1='400' x2='138' y2='510' stroke='#8e9aa6' stroke-width='4'/><line x1='140' y1='400' x2='48' y2='510' stroke='#8e9aa6' stroke-width='4'/><rect x='220' y='330' width='44' height='240' rx='22.0' fill='#f4ecd8' stroke='#4a4a4a' stroke-width='1.6'/><rect x='233.2' y='348' width='17.6' height='204' rx='8.8' fill='#e9dcbc'/><path d='M218,444.0 L233.2,456.0 L246.4,442.0 L266,454.0' fill='none' stroke='#b3261e' stroke-width='2.2' stroke-dasharray='5 3'/><line x1='230' y1='360' x2='318' y2='360' stroke='#8e9aa6' stroke-width='5'/><rect x='304' y='351' width='16' height='18' rx='3' fill='#5c6b78'/><line x1='230' y1='400' x2='318' y2='400' stroke='#8e9aa6' stroke-width='5'/><rect x='304' y='391' width='16' height='18' rx='3' fill='#5c6b78'/><line x1='230' y1='500' x2='318' y2='500' stroke='#8e9aa6' stroke-width='5'/><rect x='304' y='491' width='16' height='18' rx='3' fill='#5c6b78'/><line x1='230' y1='540' x2='318' y2='540' stroke='#8e9aa6' stroke-width='5'/><rect x='304' y='531' width='16' height='18' rx='3' fill='#5c6b78'/><rect x='320' y='346' width='12' height='208' rx='4' fill='#5c6b78' stroke='#4a4a4a'/><g data-ziel='platte'><rect class='feld' x='102' y='50' width='38' height='200' rx='8'/></g><g data-ziel='schraube'><rect class='feld' x='50' y='180' width='52' height='56' rx='8'/></g><g data-ziel='nagel'><rect class='feld' x='252' y='80' width='36' height='140' rx='8'/></g><g data-ziel='draht'><rect class='feld' x='36' y='384' width='112' height='140' rx='10'/></g><g data-ziel='fixateur'><rect class='feld' x='296' y='336' width='52' height='228' rx='10'/></g></svg>",
+  "ziele": [
+   {
+    "id": "nagel",
+    "frage": "Wo ist der <b>Marknagel</b>?",
+    "name": "der Marknagel"
+   },
+   {
+    "id": "platte",
+    "frage": "Wo ist die <b>Platte</b>? (So wurde Herr Brandt versorgt.)",
+    "name": "die Platte"
+   },
+   {
+    "id": "fixateur",
+    "frage": "Was liegt <b>außerhalb des Körpers</b>?",
+    "name": "der Fixateur externe"
+   },
+   {
+    "id": "draht",
+    "frage": "Wo sind <b>Spickdrähte</b>?",
+    "name": "die Spickdrähte"
+   }
+  ],
+  "erklaerung": "Platte, Schrauben, Marknagel und Spickdrähte liegen im Körper, der Fixateur externe außerhalb.",
+  "namen": {
+   "platte": "die Platte",
+   "schraube": "eine Schraube",
+   "nagel": "der Marknagel",
+   "draht": "die Spickdrähte",
+   "fixateur": "der Fixateur externe"
+  }
+ },
+ {
+  "typ": "luecke",
+  "frage": "Ergänzen Sie die drei Schritte der Frakturbehandlung.",
+  "text": "Ein Bruch wird zuerst eingerichtet ({{Reposition}}), dann in der richtigen Stellung gehalten ({{Fixation}}) und schließlich {{ruhiggestellt}}.",
+  "extra": [
+   "amputiert",
+   "Extension"
+  ],
+  "erklaerung": "Reposition – Fixation – Ruhigstellung. Die Reposition erfolgt unter Narkose, weil sie sehr schmerzhaft ist."
+ },
+ {
+  "typ": "wahl",
+  "gruppe": "begriff",
+  "frage": "Was ist eine <b>Osteosynthese</b>?",
+  "optionen": [
+   "die operative Verbindung von Knochenbruchstücken mit Material wie Platten, Schrauben, Nagel oder Drähten",
+   "ein Gipsverband",
+   "eine Knochenentzündung",
+   "ein Röntgenbild des Knochens"
+  ],
+  "richtig": 0,
+  "erklaerung": "Ziel ist eine möglichst schonende (biologische) Osteosynthese."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Wann wird das Osteosynthesematerial in der Regel entfernt?",
+  "optionen": [
+   "nach Abschluss der Knochenheilung, meist nach 1,5 bis 2 Jahren",
+   "nach einer Woche",
+   "vor Abschluss der Knochenheilung",
+   "nie"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "Es wird entfernt, wenn der Knochen ausgeheilt ist und die Stabilität am besten ist."
+ },
+ {
+  "typ": "sortieren",
+  "fest": true,
+  "frage": "Spricht das <b>für</b> oder <b>gegen</b> eine Materialentfernung?",
+  "kategorien": [
+   "spricht dafür",
+   "spricht dagegen"
+  ],
+  "elemente": [
+   {
+    "t": "Das Material hat sich gelockert.",
+    "k": 0
+   },
+   {
+    "t": "Am Material ist eine Entzündung entstanden.",
+    "k": 0
+   },
+   {
+    "t": "Die Platte drückt und schmerzt (wie bei Herrn Brandt).",
+    "k": 0
+   },
+   {
+    "t": "Das Material schränkt die Beweglichkeit ein.",
+    "k": 0
+   },
+   {
+    "t": "Eine zweite OP wäre ein sehr großes Risiko (z. B. hohes Alter, schwere Vorerkrankungen).",
+    "k": 1
+   },
+   {
+    "t": "Das Material stört nicht und schmerzt nicht.",
+    "k": 1
+   }
+  ],
+  "erklaerung": "Das Material kann im Körper bleiben, wenn eine zweite OP ein großes Risiko wäre und es weder stört noch schmerzt."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Nach jeder Osteosynthese muss das Material wieder entfernt werden.",
+  "richtig": false,
+  "begruendung": {
+   "optionen": [
+    "Es kann bleiben, wenn eine zweite OP ein großes Risiko wäre und es weder stört noch schmerzt.",
+    "Metall im Körper ist immer gefährlich.",
+    "Es löst sich nach einem Jahr von selbst auf."
+   ],
+   "richtig": 0
+  },
+  "erklaerung": "Gründe für die Entfernung sind z. B. Lockerung, Entzündung oder Beschwerden durch das Material."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Was beeinflusst die <b>Knochenheilung</b>? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "exakte Ruhigstellung",
+   "Asepsis (keimfreies Arbeiten)",
+   "Blutversorgung",
+   "Stabilität der Osteosynthese",
+   "Umfang der Weichteilverletzung",
+   "Medikamente wie Kortison oder Chemotherapie (wirken negativ)",
+   "die Haarfarbe",
+   "die Jahreszeit"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "erklaerung": "Kortikoide und Chemotherapeutika wirken sich negativ auf die Knochenheilung aus."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Wann wird typischerweise ein <b>Fixateur externe</b> verwendet?",
+  "optionen": [
+   "bei offenen Brüchen 2. und 3. Grades mit Weichteilverletzung",
+   "bei jeder Fingerfraktur",
+   "nur bei Kindern",
+   "bei Bänderrissen"
+  ],
+  "richtig": 0,
+  "erklaerung": "Der Fixateur ist übungsstabil, aber nicht belastbar. Seine Eintrittsstellen werden täglich aseptisch versorgt."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Eine Osteosynthese ermöglicht eine primäre Knochenheilung, ein Gipsverband führt zu einer sekundären Knochenheilung mit Kallusbildung.",
+  "richtig": true,
+  "erklaerung": "Bei der sekundären Heilung bildet sich zuerst ein Kallus (Knochenschwiele)."
+ },
+ {
+  "typ": "wahl",
+  "gruppe": "begriff",
+  "frage": "Wie heißt die Entfernung von Platten, Schrauben oder Nägeln im Lehrbuch Pflegias?",
+  "optionen": [
+   "Materialentfernung (oft auch „Metallentfernung“ genannt)",
+   "Reposition",
+   "Osteosynthese",
+   "Fixation"
+  ],
+  "richtig": 0,
+  "erklaerung": "In Kliniken hört man meist „ME“ oder „Metallentfernung“."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Schauen Sie in die Fallsituation (Seite 1): Warum möchte Herr Brandt die Platte entfernen lassen?",
+  "optionen": [
+   "Die Platte drückt und schmerzt, vor allem in Fußballschuhen.",
+   "Der Bruch ist noch nicht verheilt.",
+   "Die Platte hat sich entzündet.",
+   "Er möchte ein neues Röntgenbild."
+  ],
+  "richtig": 0,
+  "erklaerung": "Beschwerden durch das Material sind ein häufiger Grund – bei jungen Menschen wird das Material oft entfernt."
+ }
+];
+const SCHREIBEN = {"auftrag": "<strong>Erläutern Sie</strong> je 2 Gründe, die für und die gegen eine Materialentfernung sprechen. Beziehen Sie sich auf Herrn Brandt.", "ort": "in den Kasten „Examens-Training 1“ auf dem Arbeitsblatt", "minSek": 150, "punkte": ["dafür: Lockerung oder Entzündung am Material", "dafür: Beschwerden durch das Material (Druck, Schmerz) oder eingeschränkte Beweglichkeit", "dagegen: eine zweite OP wäre ein sehr großes Risiko (Alter, Vorerkrankungen)", "dagegen: das Material stört nicht und schmerzt nicht", "Fallbezug: Herr Brandt ist jung, hat Druckschmerzen, der Bruch ist nach 18 Monaten verheilt → Entfernung sinnvoll", "Gründe jeweils erläutert (nicht nur genannt)"]};
+ILSLern.uebung(Object.assign({"mount": "#app", "ils": "me", "schritt": "1", "abschnitt": "Abschnitt 1 „Osteosynthese und Materialentfernung“", "ziehen": 7}, { pool: POOL, schreiben: SCHREIBEN }));
+</script>
+</body>
+</html>

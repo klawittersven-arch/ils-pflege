@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 4: Schmerz und Mobilisation</title>
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Übung 4 von 5</div><h1>Übung 4: Schmerz und Mobilisation</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
+<script>
+const POOL = [
+ {
+  "typ": "reihe",
+  "fest": true,
+  "frage": "Herr Brandt geht mit zwei Unterarmgehstützen die <b>Treppe hinauf</b>. Bringen Sie die Schritte in die richtige Reihenfolge.",
+  "schritte": [
+   "Nah an die Stufe stellen, Stützen neben die Füße setzen",
+   "das gesunde (linke) Bein auf die Stufe stellen",
+   "das operierte Bein und beide Stützen nachziehen",
+   "sicher stehen – dann die nächste Stufe"
+  ],
+  "erklaerung": "Merksatz: Treppe hinauf geht das gesunde Bein voran, hinunter gehen Stützen und operiertes Bein voran."
+ },
+ {
+  "typ": "luecke",
+  "frage": "Ergänzen Sie den Merksatz zum Treppensteigen mit Unterarmgehstützen.",
+  "text": "Treppe hinauf: Das {{gesunde}} Bein geht zuerst. Treppe hinunter: Die {{Stützen}} und das {{operierte}} Bein gehen zuerst.",
+  "extra": [
+   "linke",
+   "Arme"
+  ],
+  "erklaerung": "So muss das gesunde Bein das Körpergewicht heben und abbremsen – nicht das operierte."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Wie werden Unterarmgehstützen richtig eingestellt?",
+  "optionen": [
+   "Handgriff etwa auf Höhe des Oberschenkelknochens (Hüfte), Ellenbogen leicht gebeugt, Schultern nicht hochgezogen",
+   "Handgriff auf Höhe der Schultern, Arme ganz gestreckt",
+   "Handgriff auf Kniehöhe",
+   "So kurz wie möglich, damit man sich gut aufstützt"
+  ],
+  "richtig": 0,
+  "erklaerung": "Die Stützen werden mit dem physiotherapeutischen Team angepasst – möglichst schon vor der OP, damit der Patient üben kann."
+ },
+ {
+  "typ": "sortieren",
+  "frage": "Schmerzmanagement: medikamentös oder nicht-medikamentös?",
+  "kategorien": [
+   "medikamentös",
+   "nicht-medikamentös"
+  ],
+  "elemente": [
+   {
+    "t": "Schmerzmittel nach ärztlicher Anordnung",
+    "k": 0
+   },
+   {
+    "t": "Bedarfsmedikation ab NRS 4 (laut Anordnung)",
+    "k": 0
+   },
+   {
+    "t": "Schmerzmittel rechtzeitig vor der Mobilisation",
+    "k": 0
+   },
+   {
+    "t": "Bein hochlagern",
+    "k": 1
+   },
+   {
+    "t": "kühlen",
+    "k": 1
+   },
+   {
+    "t": "Ablenkung und Entspannung",
+    "k": 1
+   }
+  ],
+  "erklaerung": "Der Expertenstandard fordert beides: medikamentöse und nicht-medikamentöse Maßnahmen."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Wann geben Sie das Schmerzmittel (nach Anordnung) vor der Mobilisation?",
+  "optionen": [
+   "rechtzeitig vorher, z. B. 30–45 Minuten, damit es wirkt, wenn es weh tut",
+   "erst wenn er beim Gehen schreit",
+   "nach der Mobilisation",
+   "gar nicht – Schmerz gehört dazu"
+  ],
+  "richtig": 0,
+  "erklaerung": "In Erwartungshorizonten heißt das: „präventive Analgetikagabe vor schmerzauslösenden Interventionen“."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Was fordert der Expertenstandard „Schmerzmanagement in der Pflege“? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "regelmäßige Schmerzeinschätzung, z. B. mit der NRS",
+   "Wirkung und Nebenwirkungen der Schmerzmittel überprüfen",
+   "nicht-medikamentöse Maßnahmen einsetzen",
+   "den Patienten informieren, schulen und beraten",
+   "Schmerzmittel nur geben, wenn der Patient weint",
+   "Schmerzen erst am Entlassungstag erfragen"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "erklaerung": "Einschätzen, behandeln, informieren und schulen, Wirkung überprüfen – und alles dokumentieren."
+ },
+ {
+  "typ": "dialog",
+  "fest": true,
+  "stil": "chat",
+  "frage": "Gespräch mit Herrn Brandt",
+  "knoten": [
+   {
+    "sprecher": "Herr Brandt",
+    "text": "Die Krücken brauch ich nicht, ich bin doch jung.",
+    "frage": "Was antworten Sie?",
+    "optionen": [
+     {
+      "t": "Die Stützen geben Ihnen Sicherheit und entlasten das Bein. Heute ist durch die Narkose auch die Sturzgefahr höher.",
+      "richtig": true,
+      "rueck": "Begründen statt befehlen."
+     },
+     {
+      "t": "Dann gehen Sie halt ohne.",
+      "richtig": false,
+      "rueck": "Das gefährdet ihn – Sturz und Überlastung."
+     },
+     {
+      "t": "Sie müssen, sonst gibt es Ärger.",
+      "richtig": false,
+      "rueck": "Drohen hilft nicht – erklären Sie den Sinn."
+     }
+    ]
+   },
+   {
+    "sprecher": "Herr Brandt",
+    "text": "Darf ich heute Abend allein zur Toilette?",
+    "frage": "Was antworten Sie?",
+    "optionen": [
+     {
+      "t": "Heute nach der Narkose begleite ich Sie – klingeln Sie bitte vorher. Wenn Sie morgen sicher gehen, auch allein.",
+      "richtig": true,
+      "rueck": "Das Sturzrisiko nach der Narkose besteht oft nur kurz – am OP-Tag reicht meist die Begleitung zur Toilette."
+     },
+     {
+      "t": "Klar, Sie sind ja fit.",
+      "richtig": false,
+      "rueck": "Am OP-Tag besteht durch die Narkose eine Sturzgefahr."
+     },
+     {
+      "t": "Nein, Sie bleiben drei Tage im Bett.",
+      "richtig": false,
+      "rueck": "Frühe Mobilisation ist erwünscht."
+     }
+    ]
+   }
+  ],
+  "erklaerung": "Information und Begleitung sind Teil der Sturzprophylaxe."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Welche Maßnahmen helfen, einen <b>Sturz</b> zu vermeiden? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "festes, geschlossenes Schuhwerk",
+   "Klingel in Reichweite",
+   "Bremsen feststellen, Betthöhe anpassen",
+   "Nachtlicht",
+   "Stolperfallen beseitigen",
+   "mit Socken auf glattem Boden gehen",
+   "Stützen an die Wand lehnen, wo sie umfallen können"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "erklaerung": "Die Maßnahmen stammen aus dem Expertenstandard Sturzprophylaxe."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Die beste Thromboseprophylaxe ist Bewegung.",
+  "richtig": true,
+  "begruendung": {
+   "optionen": [
+    "Beim Gehen pumpt die Wadenmuskulatur das Blut in den Venen zum Herzen (Muskelpumpe).",
+    "Bewegung verdünnt das Blut wie ein Medikament.",
+    "Durch Bewegung wird die Wunde kleiner."
+   ],
+   "richtig": 0
+  },
+  "erklaerung": "Mehrmals täglich kurze Strecken gehen. Nur stehen oder lange sitzen aktiviert die Muskelpumpe nicht."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Welche Übungen aktivieren die <b>Muskelpumpe</b>? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "Füße kreisen",
+   "Zehen anziehen und spreizen",
+   "Füße kopfwärts ziehen und strecken",
+   "Waden- und Oberschenkelmuskeln anspannen",
+   "Beine übereinanderschlagen",
+   "lange still sitzen"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "erklaerung": "Weitere Übungen: Bettfahrrad, Zehenspitzenstand, Fußsohle gegen eine Hand drücken."
+ },
+ {
+  "typ": "zahl",
+  "frage": "Wie viel <b>Liter</b> sollte Herr Brandt pro Tag mindestens trinken, wenn nichts dagegen spricht? (Thromboseprophylaxe)",
+  "richtig": 1.5,
+  "toleranz": 0.01,
+  "einheit": "Liter",
+  "erklaerung": "Mindestens 1,5 Liter pro Tag – falls nicht kontraindiziert."
+ }
+];
+const SCHREIBEN = {"auftrag": "<strong>Leiten Sie</strong> aus dem Expertenstandard „Schmerzmanagement in der Pflege“ 3 Maßnahmen für Herrn Brandt <strong>ab</strong> und <strong>erläutern</strong> Sie diese.", "ort": "in den Kasten „Examens-Training 4“ auf dem Arbeitsblatt", "minSek": 180, "punkte": ["regelmäßige Schmerzeinschätzung mit der NRS, in Ruhe und bei Bewegung (laut Anordnung 2-stündlich, später 3× täglich)", "Schmerzmittel nach Anordnung, Bedarfsmedikation ab NRS 4, rechtzeitig vor der Mobilisation", "Wirkung und Nebenwirkungen überprüfen und dokumentieren", "nicht-medikamentöse Maßnahmen: Hochlagern, Kühlen, Ablenkung", "Information/Schulung: Schmerzmittel und Verhalten zu Hause", "jede Maßnahme erläutert und auf Herrn Brandt bezogen"]};
+ILSLern.uebung(Object.assign({"mount": "#app", "ils": "me", "schritt": "4", "abschnitt": "Abschnitt 4 „Schmerz und Mobilisation“", "ziehen": 7}, { pool: POOL, schreiben: SCHREIBEN }));
+</script>
+</body>
+</html>

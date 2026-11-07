@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 2: Nach der OP überwachen</title>
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Übung 2 von 5</div><h1>Übung 2: Nach der OP überwachen</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
+<script>
+const POOL = [
+ {
+  "typ": "bild",
+  "fest": true,
+  "frage": "DMS-Kontrolle am rechten Fuß: Tippen Sie auf die richtige Stelle.",
+  "svg": "<svg viewBox='0 0 360 400' xmlns='http://www.w3.org/2000/svg' font-family='Arial, Helvetica, sans-serif' role='img' aria-label='Rechter Fuß von oben mit Verband am Sprunggelenk'><rect width='360' height='400' fill='#fff'/><path d='M130,10 L230,10 L232,150 Q250,190 262,250 Q275,320 250,350 L110,350 Q92,320 100,250 Q110,190 128,150 Z' fill='#f6d9c4' stroke='#4a4a4a' stroke-width='1.6'/><path d='M126,100 L236,100 L238,175 L122,175 Z' fill='#ffffff' stroke='#9aa9b5' stroke-width='2'/><line x1='124' y1='112' x2='238' y2='112' stroke='#d6dde4' stroke-width='1.5'/><line x1='124' y1='124' x2='238' y2='124' stroke='#d6dde4' stroke-width='1.5'/><line x1='124' y1='136' x2='238' y2='136' stroke='#d6dde4' stroke-width='1.5'/><line x1='124' y1='148' x2='238' y2='148' stroke='#d6dde4' stroke-width='1.5'/><line x1='124' y1='160' x2='238' y2='160' stroke='#d6dde4' stroke-width='1.5'/><line x1='124' y1='172' x2='238' y2='172' stroke='#d6dde4' stroke-width='1.5'/><ellipse cx='128' cy='362' rx='22' ry='30' fill='#f6d9c4' stroke='#4a4a4a' stroke-width='1.4'/><ellipse cx='170' cy='370' rx='15' ry='22' fill='#f6d9c4' stroke='#4a4a4a' stroke-width='1.4'/><ellipse cx='204' cy='368' rx='13' ry='20' fill='#f6d9c4' stroke='#4a4a4a' stroke-width='1.4'/><ellipse cx='234' cy='362' rx='12' ry='18' fill='#f6d9c4' stroke='#4a4a4a' stroke-width='1.4'/><ellipse cx='258' cy='350' rx='11' ry='15' fill='#f6d9c4' stroke='#4a4a4a' stroke-width='1.4'/><rect x='118' y='342' width='20' height='18' rx='6' fill='#fbeee6' stroke='#b08a78'/><circle cx='196' cy='245' r='7' fill='#c0392b'/><circle cx='196' cy='245' r='13' fill='none' stroke='#c0392b' stroke-dasharray='3 3'/><g data-ziel='verband'><rect class='feld' x='118' y='96' width='124' height='84' rx='8'/></g><g data-ziel='puls'><circle class='feld' cx='196' cy='245' r='24'/></g><g data-ziel='nagel'><rect class='feld' x='106' y='332' width='44' height='38' rx='8'/></g><g data-ziel='zehen'><rect class='feld' x='152' y='336' width='126' height='60' rx='10'/></g><g data-ziel='haut'><rect class='feld' x='104' y='190' width='70' height='130' rx='10'/></g></svg>",
+  "ziele": [
+   {
+    "id": "puls",
+    "frage": "Wo tasten Sie den <b>Fußpuls</b>?",
+    "name": "der Fußpuls"
+   },
+   {
+    "id": "nagel",
+    "frage": "Wo machen Sie die <b>Nagelbettprobe</b> (Rekapillarisierung)?",
+    "name": "der Zehennagel"
+   },
+   {
+    "id": "zehen",
+    "frage": "Was soll Herr Brandt bewegen, damit Sie die <b>Motorik</b> prüfen?",
+    "name": "die Zehen"
+   },
+   {
+    "id": "verband",
+    "frage": "Wo erkennen Sie eine <b>Nachblutung nach außen</b>?",
+    "name": "der Verband"
+   }
+  ],
+  "erklaerung": "DMS = Durchblutung, Motorik, Sensibilität. Prüfen Sie immer unterhalb (körperfern) der OP-Stelle.",
+  "namen": {
+   "verband": "der Verband",
+   "puls": "der Fußpuls am Fußrücken",
+   "nagel": "der Zehennagel (Nagelbettprobe)",
+   "zehen": "die Zehen",
+   "haut": "die Haut am Fußrücken"
+  }
+ },
+ {
+  "typ": "sortieren",
+  "fest": true,
+  "frage": "D, M oder S? Ordnen Sie zu.",
+  "kategorien": [
+   "Durchblutung",
+   "Motorik",
+   "Sensibilität"
+  ],
+  "elemente": [
+   {
+    "t": "Hautfarbe und Temperatur der Zehen",
+    "k": 0
+   },
+   {
+    "t": "Fußpuls tasten",
+    "k": 0
+   },
+   {
+    "t": "Nagelbettprobe: die Farbe kehrt in weniger als 2 Sekunden zurück",
+    "k": 0
+   },
+   {
+    "t": "Zehen bewegen lassen",
+    "k": 1
+   },
+   {
+    "t": "Fuß heben und senken lassen",
+    "k": 1
+   },
+   {
+    "t": "nach Kribbeln oder Taubheit fragen",
+    "k": 2
+   },
+   {
+    "t": "spürt er eine Berührung an Zehen und Fußrücken?",
+    "k": 2
+   }
+  ],
+  "erklaerung": "In Pflegias steht statt „Sensibilität“ manchmal auch „Sensorik“ – gemeint ist dasselbe."
+ },
+ {
+  "typ": "sortieren",
+  "frage": "Normal oder sofort melden? Ordnen Sie die Befunde bei Herrn Brandt zu.",
+  "kategorien": [
+   "✅ normal",
+   "🚨 Ärztin sofort informieren"
+  ],
+  "elemente": [
+   {
+    "t": "Zehen rosig und warm",
+    "k": 0
+   },
+   {
+    "t": "Zehen gut beweglich, kein Kribbeln",
+    "k": 0
+   },
+   {
+    "t": "Zehen blass und kalt, kein Fußpuls tastbar",
+    "k": 1
+   },
+   {
+    "t": "neu aufgetretenes Kribbeln und Taubheit an den Zehen",
+    "k": 1
+   },
+   {
+    "t": "kann die Zehen nicht mehr bewegen",
+    "k": 1
+   },
+   {
+    "t": "Schmerzen nehmen trotz Schmerzmittel und Hochlagern stark zu",
+    "k": 1
+   }
+  ],
+  "erklaerung": "Durchblutungs-, Sensibilitäts- oder Bewegungsstörungen müssen unverzüglich der Ärztin gemeldet werden."
+ },
+ {
+  "typ": "zahl",
+  "frage": "Wie viele Stunden nach der OP sollte die erste Urinausscheidung <b>spätestens</b> erfolgt sein?",
+  "richtig": 8,
+  "einheit": "Stunden",
+  "erklaerung": "Spätestens 8 Stunden nach der OP – sonst an einen Harnverhalt denken und die Ärztin informieren."
+ },
+ {
+  "typ": "zahl",
+  "gruppe": "anordnung",
+  "frage": "Schauen Sie in die <b>ärztliche Anordnung</b> (Seite 1): Ab welchem Wert auf der Schmerzskala (NRS) bekommt Herr Brandt die Bedarfsmedikation?",
+  "richtig": 4,
+  "einheit": "(NRS)",
+  "erklaerung": "Laut Anordnung ab NRS 4. Die Schmerzskala reicht von 0 (kein Schmerz) bis 10 (stärkster vorstellbarer Schmerz)."
+ },
+ {
+  "typ": "wahl",
+  "gruppe": "anordnung",
+  "frage": "Wie oft kontrollieren Sie laut <b>ärztlicher Anordnung</b> (Seite 1) in den ersten 6 Stunden Vitalzeichen, Schmerz und DMS?",
+  "optionen": [
+   "alle 2 Stunden",
+   "einmal pro Schicht",
+   "nur am Abend",
+   "nur wenn er klingelt"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "Danach 3-mal täglich. Bei Auffälligkeiten natürlich öfter."
+ },
+ {
+  "typ": "dialog",
+  "fest": true,
+  "stil": "fall",
+  "frage": "Fallentscheidung: Erste Mobilisation am OP-Tag, 15 Uhr",
+  "knoten": [
+   {
+    "sprecher": "Herr Brandt",
+    "text": "„Ich muss mal zur Toilette. Ich geh einfach schnell.“",
+    "frage": "Was tun Sie vor dem Aufstehen?",
+    "optionen": [
+     {
+      "t": "Puls und Blutdruck messen, nach Schwindel und Schmerzen fragen, feste Schuhe, Stützen bereitstellen – und ihn begleiten.",
+      "richtig": true,
+      "rueck": "Kreislauf kontrollieren und begleiten – am OP-Tag ist das Sturzrisiko durch die Narkose erhöht."
+     },
+     {
+      "t": "Ihn allein gehen lassen – er ist ja jung und fit.",
+      "richtig": false,
+      "rueck": "Auch junge Menschen können nach der Narkose kollabieren und stürzen."
+     },
+     {
+      "t": "Ihm die Bettpfanne geben – aufstehen erst nächste Woche.",
+      "richtig": false,
+      "rueck": "Frühmobilisation am OP-Tag oder Folgetag beugt Komplikationen vor."
+     }
+    ]
+   },
+   {
+    "text": "Beim Aufsetzen an der Bettkante wird Herrn Brandt schwindelig, er wird blass und schwitzt.",
+    "frage": "Was tun Sie?",
+    "optionen": [
+     {
+      "t": "Ihn wieder hinlegen, Beine hochlagern, Puls und Blutdruck messen und bei ihm bleiben.",
+      "richtig": true,
+      "rueck": "Erst stabilisieren, nicht weiter mobilisieren."
+     },
+     {
+      "t": "Schnell aufstellen – im Stehen geht der Schwindel vorbei.",
+      "richtig": false,
+      "rueck": "Gefahr eines Kollapses und Sturzes."
+     },
+     {
+      "t": "Ihn kurz allein lassen und einen Kaffee holen.",
+      "richtig": false,
+      "rueck": "Nicht allein lassen!"
+     }
+    ]
+   },
+   {
+    "text": "Nach einigen Minuten ist der Kreislauf stabil, Herr Brandt fühlt sich besser.",
+    "frage": "Wie geht es weiter?",
+    "optionen": [
+     {
+      "t": "Langsam erneut aufsetzen, über die operierte Seite aufstehen und mit Unterarmgehstützen und Begleitung zur Toilette gehen.",
+      "richtig": true,
+      "rueck": "So steht es in Pflegias: über die operierte Seite aufstehen lassen und den Kreislauf kontrollieren."
+     },
+     {
+      "t": "Auf dem gesunden Bein zur Toilette hüpfen lassen.",
+      "richtig": false,
+      "rueck": "Hüpfen ist unsicher – Sturzgefahr!"
+     },
+     {
+      "t": "Ohne Stützen gehen lassen, damit er schneller wieder fit wird.",
+      "richtig": false,
+      "rueck": "Die Stützen geben Sicherheit, solange die Ärztin nichts anderes anordnet."
+     }
+    ]
+   }
+  ],
+  "erklaerung": "Vor jeder Mobilisation: Kreislauf, Schmerz und Sicherheit prüfen – und bei Kreislaufproblemen sofort abbrechen."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Was erfahren Sie bei der <b>Übergabe aus dem Aufwachraum</b>? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "Operation, Verlauf und Komplikationen",
+   "Anästhesieverfahren",
+   "Infusionen und Transfusionen",
+   "Ableitungen (z. B. Redon) und Fördermengen",
+   "Bewusstseinszustand",
+   "Maßnahmen und Anweisungen aus dem Aufwachraum",
+   "den Lieblingsverein des Patienten"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "erklaerung": "Die Übernahme aus dem Aufwachraum darf nur durch Pflegefachpersonen erfolgen."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Das operierte Bein wird hochgelagert und gekühlt.",
+  "richtig": true,
+  "begruendung": {
+   "optionen": [
+    "Das fördert den Abfluss von Blut und Lymphe (Ödemabfluss) und vermindert Schwellung und Schmerz.",
+    "Damit die Wunde schneller trocknet.",
+    "Damit das Bein nicht einschläft."
+   ],
+   "richtig": 0
+  },
+  "erklaerung": "Hochlagern und Kühlen sind wichtige nicht-medikamentöse Maßnahmen nach Eingriffen am Bein."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Worauf achten Sie beim <b>Kühlen</b>?",
+  "optionen": [
+   "Kühlpack nicht direkt auf die Haut, Dauer und Temperatur beachten, Haut kontrollieren – Kälteschäden vermeiden",
+   "So lange und so kalt wie möglich kühlen",
+   "Eis direkt auf die Wunde legen",
+   "Nur kühlen, wenn der Patient friert"
+  ],
+  "richtig": 0,
+  "erklaerung": "Zu langes oder zu kaltes Kühlen kann die Haut schädigen."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Über welche Seite soll Herr Brandt nach der OP aus dem Bett aufstehen?",
+  "optionen": [
+   "über die operierte Seite (rechts)",
+   "über die gesunde Seite (links)",
+   "egal",
+   "über das Fußende"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "So steht es in Pflegias für Operationen am Bewegungsapparat: über die operierte Seite drehen bzw. aufstehen lassen."
+ }
+];
+const SCHREIBEN = {"auftrag": "<strong>Beschreiben Sie</strong>, wie Sie bei Herrn Brandt die DMS-Kontrolle am rechten Fuß durchführen (je mindestens ein Kriterium für Durchblutung, Motorik und Sensibilität), und <strong>nennen Sie</strong>, wann Sie die Ärztin informieren.", "ort": "in den Kasten „Examens-Training 2“ auf dem Arbeitsblatt", "minSek": 180, "punkte": ["Durchblutung: Hautfarbe und Temperatur der Zehen", "Durchblutung: Fußpuls tasten und/oder Nagelbettprobe (Farbe kehrt in unter 2 s zurück)", "Motorik: Zehen und Fuß bewegen lassen", "Sensibilität: nach Kribbeln/Taubheit fragen, Berührung prüfen", "Vergleich mit dem gesunden Fuß", "Ärztin sofort bei: blass/kalt, kein Puls, Taubheit, Bewegungsstörung oder stark zunehmenden Schmerzen", "Befund dokumentieren"]};
+ILSLern.uebung(Object.assign({"mount": "#app", "ils": "me", "schritt": "2", "abschnitt": "Abschnitt 2 „Nach der OP überwachen“", "ziehen": 7}, { pool: POOL, schreiben: SCHREIBEN }));
+</script>
+</body>
+</html>

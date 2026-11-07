@@ -26,6 +26,21 @@
     ]
   },
   {
+    id: 'me',
+    titel: 'Materialentfernung und pflegerische Nachsorge',
+    kurz: 'Materialentf.',
+    pfad: 'me/',
+    betreff: 'ILS Metallentfernung',
+    schritte: [
+      { id: '1', titel: 'Übung 1: Osteosynthese und Materialentfernung', kurz: 'Ü1', pfad: 'me/1/' },
+      { id: '2', titel: 'Übung 2: Nach der OP überwachen', kurz: 'Ü2', pfad: 'me/2/' },
+      { id: '3', titel: 'Übung 3: Komplikationen erkennen', kurz: 'Ü3', pfad: 'me/3/' },
+      { id: '4', titel: 'Übung 4: Schmerz und Mobilisation', kurz: 'Ü4', pfad: 'me/4/' },
+      { id: '5', titel: 'Übung 5: Information, Schulung und Entlassung', kurz: 'Ü5', pfad: 'me/5/' },
+      { id: 'quiz', titel: 'Abschlussquiz', kurz: 'Quiz', pfad: 'me/abschluss/', abschluss: true }
+    ]
+  },
+  {
     id: 'probe',
     titel: 'Probe-Auftrag (zum Testen)',
     kurz: 'Probe',

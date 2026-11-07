@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 3: Komplikationen erkennen</title>
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Übung 3 von 5</div><h1>Übung 3: Komplikationen erkennen</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
+<script>
+const POOL = [
+ {
+  "typ": "dialog",
+  "fest": true,
+  "stil": "chat",
+  "frage": "Telefonat: Herr Brandt ist seit 3 Tagen zu Hause und ruft auf Station an.",
+  "knoten": [
+   {
+    "sprecher": "Herr Brandt",
+    "text": "Meine rechte Wade ist seit heute dick, warm und spannt. Es zieht beim Gehen.",
+    "frage": "Woran denken Sie?",
+    "optionen": [
+     {
+      "t": "an eine tiefe Beinvenenthrombose",
+      "richtig": true,
+      "rueck": "Schwellung, ziehende Schmerzen, Überwärmung und Spannungsgefühl sind Leitsymptome."
+     },
+     {
+      "t": "an einen Muskelkater",
+      "richtig": false,
+      "rueck": "Ein Muskelkater macht die Wade nicht dick und warm – nach einer OP am Bein immer an eine Thrombose denken."
+     },
+     {
+      "t": "an eine Allergie gegen das Pflaster",
+      "richtig": false,
+      "rueck": "Das erklärt Schwellung und Wärme der Wade nicht."
+     }
+    ]
+   },
+   {
+    "sprecher": "Herr Brandt",
+    "text": "Was soll ich jetzt machen?",
+    "frage": "Was raten Sie?",
+    "optionen": [
+     {
+      "t": "Heute noch ärztlich abklären lassen. Bekommen Sie Atemnot oder Brustschmerzen, rufen Sie sofort die 112.",
+      "richtig": true,
+      "rueck": "Die gefährlichste Komplikation einer Thrombose ist die Lungenembolie."
+     },
+     {
+      "t": "Massieren Sie die Wade kräftig.",
+      "richtig": false,
+      "rueck": "Bei Verdacht auf Thrombose nicht massieren – ein Gerinnsel könnte sich lösen."
+     },
+     {
+      "t": "Warten Sie bis zum Fadenziehen in 11 Tagen.",
+      "richtig": false,
+      "rueck": "Ein Thromboseverdacht muss sofort abgeklärt werden."
+     }
+    ]
+   }
+  ],
+  "erklaerung": "Leitsymptome einer Thrombose: Schwellung mit ziehenden Schmerzen, Überwärmung, Spannungs- oder Schweregefühl."
+ },
+ {
+  "typ": "wahl",
+  "gruppe": "detektiv1",
+  "frage": "Symptom-Detektiv: Am 2. Tag ist die Wunde gerötet, geschwollen und überwärmt, es tritt trübes Sekret aus, Temperatur 38,4 °C. Was liegt vor?",
+  "optionen": [
+   "eine Wundinfektion",
+   "ein Hämatom",
+   "eine Thrombose",
+   "ein normaler Heilungsverlauf"
+  ],
+  "richtig": 0,
+  "erklaerung": "Entzündungszeichen: Rötung, Schwellung, Überwärmung, Schmerz, Funktionseinschränkung – dazu Eiter und Fieber."
+ },
+ {
+  "typ": "wahl",
+  "gruppe": "detektiv2",
+  "frage": "Symptom-Detektiv: Neben der Wunde ist die Haut geschwollen, schmerzhaft und rötlich bis blau-violett verfärbt. Was liegt vor?",
+  "optionen": [
+   "ein Hämatom (Bluterguss)",
+   "eine Wunddehiszenz",
+   "ein Keloid",
+   "eine Thrombose"
+  ],
+  "richtig": 0,
+  "erklaerung": "Ein Hämatom ist eine Ansammlung von Blut im Gewebe – z. B. nach einer OP."
+ },
+ {
+  "typ": "wahl",
+  "gruppe": "detektiv2",
+  "frage": "Symptom-Detektiv: Die Wundränder klaffen auseinander, Wundexsudat tritt aus, die Umgebung ist gerötet. Was liegt vor?",
+  "optionen": [
+   "eine Wunddehiszenz",
+   "ein Keloid",
+   "ein Hämatom",
+   "eine normale Narbe"
+  ],
+  "richtig": 0,
+  "erklaerung": "Wunddehiszenz = Auseinanderklaffen der Wundränder nach einer Naht, z. B. durch Infektion oder übermäßige Belastung."
+ },
+ {
+  "typ": "sortieren",
+  "fest": true,
+  "frage": "<b>Virchow-Trias</b>: Ordnen Sie die Risikofaktoren von Herrn Brandt zu.",
+  "kategorien": [
+   "Endothelläsion (Gefäßwand)",
+   "Hypozirkulation (Blutfluss)",
+   "Hyperkoagulabilität (Gerinnung)"
+  ],
+  "elemente": [
+   {
+    "t": "Operation am Bein – Gefäße werden verletzt",
+    "k": 0
+   },
+   {
+    "t": "schont das Bein und bewegt sich weniger",
+    "k": 1
+   },
+   {
+    "t": "liegt nach der OP viel im Bett",
+    "k": 1
+   },
+   {
+    "t": "während und nach einer OP gerinnt das Blut leichter",
+    "k": 2
+   },
+   {
+    "t": "trinkt wenig – das Blut wird dickflüssiger",
+    "k": 2,
+    "warum": "Zu wenig Flüssigkeit erhöht die Gerinnbarkeit."
+   }
+  ],
+  "erklaerung": "Virchow-Trias: Endothelläsion, Hypozirkulation, Hyperkoagulabilität. Im Examen heißt die Aufgabe z. B.: „Erklären Sie die Entstehung einer Thrombose bei …“"
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Was sind <b>Leitsymptome</b> einer tiefen Beinvenenthrombose? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "Schwellung",
+   "ziehende Schmerzen",
+   "Überwärmung",
+   "Spannungs- oder Schweregefühl",
+   "blasse, kalte Zehen ohne Puls",
+   "Juckreiz an der Narbe"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "erklaerung": "Blasse, kalte Zehen ohne Puls sprechen für eine arterielle Durchblutungsstörung – auch ein Notfall, aber keine Thrombose."
+ },
+ {
+  "typ": "luecke",
+  "frage": "Ergänzen Sie: Wie verändert sich ein Hämatom?",
+  "text": "Ein Hämatom ist in den ersten 24 Stunden {{rötlich}} bis blau-violett, nach 4–5 Tagen dunkel{{grün}} und nach etwa 8 Tagen {{gelblich}}. Danach verblasst es.",
+  "extra": [
+   "schwarz",
+   "weiß"
+  ],
+  "erklaerung": "Die gelbliche Farbe entsteht durch den Abbau des Blutfarbstoffs zu Bilirubin."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Nach der Materialentfernung ist der Knochen sofort wieder voll belastbar – auch für Fußball.",
+  "richtig": false,
+  "begruendung": {
+   "optionen": [
+    "Die leeren Schraubenlöcher sind anfangs Schwachstellen – es droht ein erneuter Bruch (Refraktur). Deshalb Sportpause nach Anordnung.",
+    "Der Knochen ist danach weich wie Gummi.",
+    "Fußball ist nach einer OP immer verboten."
+   ],
+   "richtig": 0
+  },
+  "erklaerung": "Bei Herrn Brandt hat die Ärztin 6 Wochen Sportpause angeordnet."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Am Abend hat Herr Brandt trotz Schmerzmittel und Hochlagern <b>immer stärkere</b> Schmerzen, der Unterschenkel ist prall gespannt und die Zehen kribbeln. Was tun Sie?",
+  "optionen": [
+   "Sofort die Ärztin informieren – Verdacht auf eine gefährliche Druckerhöhung im Gewebe (Kompartmentsyndrom)",
+   "Stärker kühlen und bis morgen abwarten",
+   "Den Verband fester wickeln",
+   "Eine Schlaftablette anbieten"
+  ],
+  "richtig": 0,
+  "erklaerung": "Zunehmende Schmerzen, die sich nicht bessern, plus Kribbeln sind ein Alarmzeichen. Hier zählt jede Stunde."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Nach der OP ist ein kleines Hautareal am rechten Fußrücken taub. Was tun Sie?",
+  "optionen": [
+   "Der Äußerung nachgehen, die Ärztin informieren und den Befund dokumentieren",
+   "Nichts – das ist nach jeder OP so",
+   "Die Stelle kräftig massieren",
+   "Erst nach der Entlassung erwähnen"
+  ],
+  "richtig": 0,
+  "erklaerung": "Die Sensibilität kann nach einer OP vorübergehend gestört sein. Äußerungen zu Sensibilitätsstörungen gehen Sie immer nach."
+ }
+];
+const SCHREIBEN = {"auftrag": "<strong>Erklären Sie</strong> die Entstehung einer Thrombose bei Herrn Brandt anhand der Virchow-Trias.", "ort": "in den Kasten „Examens-Training 3“ auf dem Arbeitsblatt", "minSek": 180, "punkte": ["die drei Faktoren der Virchow-Trias genannt", "Endothelläsion: OP am Bein, Gefäßwand verletzt", "Hypozirkulation: Bein wird geschont, weniger Bewegung, viel Liegen → Muskelpumpe fehlt, Blut fließt langsamer", "Hyperkoagulabilität: Gerinnbarkeit während und nach der OP erhöht (ggf. wenig Trinken)", "jeweils mit Bezug auf Herrn Brandt", "Folge: Ein Gerinnsel kann sich lösen → Lungenembolie"]};
+ILSLern.uebung(Object.assign({"mount": "#app", "ils": "me", "schritt": "3", "abschnitt": "Abschnitt 3 „Komplikationen erkennen“", "ziehen": 6}, { pool: POOL, schreiben: SCHREIBEN }));
+</script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 5: Information, Schulung und Entlassung</title>
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Übung 5 von 5</div><h1>Übung 5: Information, Schulung und Entlassung</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
+<script>
+const POOL = [
+ {
+  "typ": "sortieren",
+  "fest": true,
+  "frage": "Information, Schulung oder Beratung? Ordnen Sie zu.",
+  "kategorien": [
+   "Information",
+   "Schulung",
+   "Beratung"
+  ],
+  "elemente": [
+   {
+    "t": "Sie erklären, wann und wo die Fäden gezogen werden.",
+    "k": 0
+   },
+   {
+    "t": "Sie geben ihm ein Merkblatt mit Warnzeichen.",
+    "k": 0
+   },
+   {
+    "t": "Sie üben mit ihm die Selbstinjektion des Heparins, bis er sie sicher kann.",
+    "k": 1
+   },
+   {
+    "t": "Sie zeigen das Treppensteigen mit Stützen und lassen ihn üben.",
+    "k": 1
+   },
+   {
+    "t": "Er überlegt, wie er Arbeit und Sport in den nächsten Wochen organisiert – Sie suchen gemeinsam Lösungen.",
+    "k": 2
+   },
+   {
+    "t": "Er ist unsicher, ob er die Spritzen nehmen will – Sie wägen gemeinsam Vor- und Nachteile ab.",
+    "k": 2
+   }
+  ],
+  "erklaerung": "Information = Wissen weitergeben. Schulung = Fertigkeiten gezielt vermitteln und üben. Beratung = ergebnisoffen gemeinsam eine Lösung finden."
+ },
+ {
+  "typ": "dialog",
+  "fest": true,
+  "stil": "chat",
+  "frage": "Entlassungsgespräch: Herr Brandt hat Fragen.",
+  "knoten": [
+   {
+    "sprecher": "Herr Brandt",
+    "text": "Wann darf ich wieder Fußball spielen?",
+    "frage": "Was antworten Sie?",
+    "optionen": [
+     {
+      "t": "Laut Ihrer Ärztin frühestens nach 6 Wochen – vorher ist der Knochen an den Schraubenlöchern noch geschwächt.",
+      "richtig": true,
+      "rueck": "Anordnung nennen und begründen."
+     },
+     {
+      "t": "Sobald es nicht mehr weh tut.",
+      "richtig": false,
+      "rueck": "Schmerzfreiheit heißt nicht, dass der Knochen belastbar ist – Refrakturgefahr."
+     },
+     {
+      "t": "Nie wieder.",
+      "richtig": false,
+      "rueck": "Das stimmt nicht und macht unnötig Angst."
+     }
+    ]
+   },
+   {
+    "sprecher": "Herr Brandt",
+    "text": "Darf ich duschen?",
+    "frage": "Was antworten Sie?",
+    "optionen": [
+     {
+      "t": "Ja, wenn die Wunde wasserdicht abgedeckt ist, z. B. mit einem Duschpflaster. Die Wunde soll sauber und trocken bleiben.",
+      "richtig": true,
+      "rueck": "Verständlich, konkret, mit Begründung."
+     },
+     {
+      "t": "Baden Sie ruhig lange, das ist gut für die Wunde.",
+      "richtig": false,
+      "rueck": "Eine aufgeweichte Wunde ist anfälliger für Infektionen."
+     },
+     {
+      "t": "Nein, drei Wochen gar nicht waschen.",
+      "richtig": false,
+      "rueck": "Körperpflege ist möglich – die Wunde wird geschützt."
+     }
+    ]
+   },
+   {
+    "sprecher": "Herr Brandt",
+    "text": "Woran merke ich, dass etwas nicht stimmt?",
+    "frage": "Was antworten Sie?",
+    "optionen": [
+     {
+      "t": "Wenn die Wunde rot, warm und dick wird oder nässt, Sie Fieber bekommen oder die Wade dick wird und schmerzt: zum Arzt. Bei Atemnot oder Brustschmerz sofort 112.",
+      "richtig": true,
+      "rueck": "Konkrete Warnzeichen und was dann zu tun ist."
+     },
+     {
+      "t": "Das merken Sie schon.",
+      "richtig": false,
+      "rueck": "Zu ungenau – er braucht konkrete Warnzeichen."
+     },
+     {
+      "t": "Warten Sie einfach bis zum Fadenziehen.",
+      "richtig": false,
+      "rueck": "Warnzeichen müssen sofort abgeklärt werden."
+     }
+    ]
+   }
+  ],
+  "erklaerung": "Im Examen heißt die Aufgabe z. B.: „Nennen Sie (x) Verhaltensweisen, die Herr X nach dem Eingriff berücksichtigen sollte.“"
+ },
+ {
+  "typ": "reihe",
+  "frage": "Wie bauen Sie das <b>Informationsgespräch</b> mit Herrn Brandt auf? Bringen Sie die Schritte in eine sinnvolle Reihenfolge.",
+  "schritte": [
+   "Gespräch vorbereiten: Inhalte, Merkblatt, ruhiger Raum und genug Zeit",
+   "Begrüßen, Ziel des Gesprächs nennen, Vorwissen und Sorgen erfragen",
+   "Informationen verständlich und in kleinen Schritten geben, Fachwörter erklären",
+   "Fragen zulassen und wiederholen lassen (Verständnis prüfen)",
+   "Zusammenfassen, Merkblatt mitgeben, Gespräch dokumentieren"
+  ],
+  "erklaerung": "Im Erwartungshorizont zählen u. a.: Vorbereitung, Rahmen, Empathie, verständliche Sprache, Fragen zulassen."
+ },
+ {
+  "typ": "mehrfach",
+  "frage": "Bei welchen <b>Warnzeichen</b> soll Herr Brandt zu Hause ärztliche Hilfe holen? Wählen Sie alle richtigen Antworten.",
+  "optionen": [
+   "Wunde wird rot, warm und dick",
+   "Fieber",
+   "Wunde nässt oder eitert",
+   "Wade dick, warm und schmerzhaft",
+   "Atemnot oder Brustschmerz (sofort 112)",
+   "leichte Müdigkeit am Abend",
+   "der Verband ist trocken und sauber"
+  ],
+  "richtig": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "erklaerung": "Zeichen einer Wundinfektion, einer Thrombose und einer Lungenembolie."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Herr Brandt soll sich das Enoxaparin zu Hause selbst spritzen. Wie vermitteln Sie das?",
+  "optionen": [
+   "Schulung: zeigen, erklären, selbst üben lassen und kontrollieren, bis er es sicher kann",
+   "Ihm das Merkblatt in die Hand drücken",
+   "Seiner Freundin sagen, sie soll es irgendwie machen",
+   "Gar nicht – das macht der Hausarzt"
+  ],
+  "richtig": 0,
+  "erklaerung": "Eine Fertigkeit lernt man durch Üben unter Anleitung – das ist Schulung."
+ },
+ {
+  "typ": "sortieren",
+  "frage": "Pflegeproblem nach <b>PESR</b>: Ordnen Sie die Informationen über Herrn Brandt zu.",
+  "kategorien": [
+   "P – Problem",
+   "E – Einflussfaktor / Ursache",
+   "S – Symptom / Kennzeichen",
+   "R – Ressource"
+  ],
+  "elemente": [
+   {
+    "t": "Wissensdefizit zum Verhalten nach der Entlassung",
+    "k": 0
+   },
+   {
+    "t": "erste OP dieser Art, morgen schon Entlassung",
+    "k": 1
+   },
+   {
+    "t": "kennt die Selbstinjektion noch nicht",
+    "k": 1
+   },
+   {
+    "t": "fragt, wann er duschen und Fußball spielen darf",
+    "k": 2
+   },
+   {
+    "t": "ist motiviert und stellt gezielte Fragen",
+    "k": 3
+   }
+  ],
+  "erklaerung": "Aus E und S ergibt sich der Informations- und Schulungsbedarf."
+ },
+ {
+  "typ": "wahl",
+  "gruppe": "faeden",
+  "frage": "Wer legt fest, wann die Fäden gezogen werden?",
+  "optionen": [
+   "die Ärztin – die Durchführung kann an Pflegefachpersonen delegiert werden",
+   "der Patient selbst",
+   "die Physiotherapie",
+   "die Krankenkasse"
+  ],
+  "richtig": 0,
+  "erklaerung": "Nahtmaterial darf nur entfernt werden, wenn die Wundränder auch ohne Fäden zusammenbleiben. Oft wird zuerst jeder zweite Faden entfernt."
+ },
+ {
+  "typ": "wahl",
+  "gruppe": "faeden",
+  "frage": "Nach Pflegias werden Fäden an der <b>unteren Extremität</b> meist nach … entfernt (in Gelenknähe nach 21 Tagen oder später).",
+  "optionen": [
+   "12–14 Tagen",
+   "2–3 Tagen",
+   "5–7 Tagen",
+   "6 Wochen"
+  ],
+  "richtig": 0,
+  "behalten": true,
+  "erklaerung": "Im Fall steht der Termin im Arztbrief – die Ärztin entscheidet im Einzelfall."
+ },
+ {
+  "typ": "rf",
+  "aussage": "Ein gutes Entlassungsmanagement beginnt erst am Entlassungstag.",
+  "richtig": false,
+  "begruendung": {
+   "optionen": [
+    "Es beginnt schon bei der Aufnahme mit der Einschätzung, welche Unterstützung nach der Entlassung nötig ist.",
+    "Es beginnt erst beim Hausarzt.",
+    "Entlassungsmanagement ist nur für alte Menschen."
+   ],
+   "richtig": 0
+  },
+  "erklaerung": "Expertenstandard „Entlassungsmanagement in der Pflege“: einschätzen, planen, informieren/schulen/beraten, abstimmen, überprüfen."
+ },
+ {
+  "typ": "wahl",
+  "frage": "Welches Pflegeziel für Herrn Brandt ist <b>überprüfbar</b>?",
+  "optionen": [
+   "Herr Brandt spritzt sich das Enoxaparin bis zur Entlassung morgen selbstständig und korrekt.",
+   "Herr Brandt weiß Bescheid.",
+   "Die Pflegefachperson schult Herrn Brandt.",
+   "Herr Brandt hat keine Fragen mehr."
+  ],
+  "richtig": 0,
+  "erklaerung": "Beobachtbares Verhalten + Zeitpunkt. „Die Pflegefachperson schult …“ ist eine Maßnahme."
+ }
+];
+const SCHREIBEN = {"auftrag": "<strong>Beschreiben Sie</strong> 4 Verhaltensweisen, über die Sie Herrn Brandt vor der Entlassung informieren, und <strong>begründen</strong> Sie diese.", "ort": "in den Kasten „Examens-Training 5“ auf dem Arbeitsblatt", "minSek": 240, "punkte": ["Wunde sauber und trocken halten, nur mit Schutz duschen – Infektionsschutz", "Fäden laut Arztbrief am 14. Tag beim Hausarzt ziehen lassen – Wundkontrolle", "Warnzeichen kennen (Infektion, Thrombose; Atemnot/Brustschmerz → 112) – schnelle Hilfe", "Enoxaparin täglich selbst spritzen bis zum angeordneten Tag, viel bewegen und trinken – Thromboseprophylaxe", "Belastung mit Stützen nach Anordnung, 6 Wochen kein Fußball – Refraktur vermeiden", "bei Schwellung hochlagern und kühlen, Schmerzmittel nach Plan", "jede Verhaltensweise begründet"]};
+ILSLern.uebung(Object.assign({"mount": "#app", "ils": "me", "schritt": "5", "abschnitt": "Abschnitt 5 „Information, Schulung und Entlassung“", "ziehen": 6}, { pool: POOL, schreiben: SCHREIBEN }));
+</script>
+</body>
+</html>
