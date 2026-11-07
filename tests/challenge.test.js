@@ -27,6 +27,8 @@ const pngMachen = (s, g) => s.evaluate((g) => {
 
 // malt mit der Maus ein Zeichen auf die Malfläche
 async function malen(s) {
+  await s.$eval('#wappen-flaeche', (e) => e.scrollIntoView({ block: 'center', behavior: 'instant' }));
+  await warte(300);   // Seite muss ruhig stehen, bevor gemalt wird
   const box = await (await s.$('#wappen-flaeche')).boundingBox();
   const p = (x, y) => [box.x + box.width * x, box.y + box.height * y];
   await s.mouse.move(...p(0.2, 0.2)); await s.mouse.down();
@@ -130,6 +132,13 @@ async function spielen(s, mitFehlern, sofort = false) {
 
     console.log('Siegerwappen malen (Lena)');
     pruefe(/Siegerwappen malen/.test(await lena.textContent('#wappen-malen')), 'Ergebnisseite: Knopf „Siegerwappen malen“');
+    pruefe(/gespeichert/.test(await lena.textContent('.ch-ergebnis .gespeichert')), 'Ergebnisseite: „Ihr Ergebnis ist in der Bestenliste gespeichert“ – ohne Wappen');
+    pruefe(/freiwillig/.test(await lena.textContent('#wappen-malen')) && /auch ohne Wappen gespeichert/.test(await lena.textContent('#wappen-box')), 'Wappen als freiwillig gekennzeichnet');
+    await lena.click('#wappen-malen');
+    await lena.waitForSelector('#wappen-abbrechen');
+    pruefe(/Ohne Wappen weiter/.test(await lena.textContent('#wappen-abbrechen')), 'Malfläche: Knopf „Ohne Wappen weiter“');
+    await lena.click('#wappen-abbrechen');
+    await lena.waitForSelector('#wappen-malen');
     await lena.click('#wappen-malen');
     await lena.waitForSelector('#wappen-flaeche');
     await lena.click('#wappen-speichern');

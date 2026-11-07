@@ -55,7 +55,7 @@ const ILSChallenge = (() => {
   const FARBEN = ['#1f1d1b', '#c0392b', '#e67e22', '#f1c40f', '#27ae60', '#2471a3', '#8e44ad', '#7b4a2a', '#ffffff'];
   const DICKEN = [['dünn', 5], ['mittel', 11], ['dick', 22]];
 
-  function wappenEditor(speichern, abbrechen) {
+  function wappenEditor(speichern, abbrechen, abbrechenText) {
     const G = 256;
     let farbe = FARBEN[1];
     let dicke = DICKEN[1][1];
@@ -98,7 +98,7 @@ const ILSChallenge = (() => {
       return b;
     });
     const meldung = el('div', { class: 'fb' });
-    const speichernKnopf = el('button', { type: 'button', class: 'btn', id: 'wappen-speichern' }, 'Siegerwappen speichern');
+    const speichernKnopf = el('button', { type: 'button', class: 'btn', id: 'wappen-speichern' }, 'Wappen speichern');
     speichernKnopf.addEventListener('click', async () => {
       if (!striche.length) { meldung.className = 'fb show hint'; meldung.textContent = 'Malen Sie zuerst etwas.'; return; }
       let bild = '';
@@ -117,14 +117,14 @@ const ILSChallenge = (() => {
       if (fehler) { meldung.className = 'fb show bad'; meldung.textContent = fehler; }
     });
     return el('div', { class: 'wappen-editor' },
-      el('div', { class: 'q-text' }, '🛡️ Ihr Siegerwappen'),
+      el('div', { class: 'q-text' }, '🛡️ Ihr Siegerwappen (freiwillig)'),
       el('p', { class: 'small' }, 'Malen Sie mit dem Finger ein kleines Bild. Es erscheint neben Ihrem Namen in der Bestenliste Ihrer Klasse – alle können es sehen.'),
       el('div', { class: 'wappen-flaeche-rahmen' }, cv),
       el('div', { class: 'farben' }, farbKnoepfe),
       el('div', { class: 'dicken' }, dickKnoepfe,
         el('button', { type: 'button', class: 'dicke', onclick: () => { striche.pop(); zeichnen(); } }, '↶ Rückgängig'),
         el('button', { type: 'button', class: 'dicke', onclick: () => { striche.length = 0; zeichnen(); } }, 'Neu')),
-      el('div', { class: 'lk-knoepfe' }, speichernKnopf, el('button', { type: 'button', class: 'btn secondary', onclick: abbrechen }, 'Abbrechen')),
+      el('div', { class: 'lk-knoepfe' }, speichernKnopf, el('button', { type: 'button', class: 'btn secondary', id: 'wappen-abbrechen', onclick: abbrechen }, abbrechenText || 'Abbrechen')),
       meldung);
   }
 
@@ -176,8 +176,9 @@ const ILSChallenge = (() => {
           return;
         }
         box.append(el('div', { class: 'wappen-zeile' }, wappenBild(bild, 'Ihnen', 'wappen gross'),
-          el('div', {}, el('div', { class: 'q-text' }, '🛡️ Ihr Siegerwappen'),
-            el('p', { class: 'small' }, bild ? 'So sehen die anderen Ihr Wappen in der Bestenliste.' : 'Malen Sie ein kleines Bild – es erscheint neben Ihrem Namen in der Bestenliste.'))),
+          el('div', {}, el('div', { class: 'q-text' }, bild ? '🛡️ Ihr Siegerwappen' : '🛡️ Siegerwappen (freiwillig)'),
+            el('p', { class: 'small' }, bild ? 'So sehen die anderen Ihr Wappen in der Bestenliste.'
+              : 'Ihr Ergebnis ist auch ohne Wappen gespeichert. Wenn Sie möchten, malen Sie ein kleines Bild – es erscheint dann neben Ihrem Namen in der Bestenliste.'))),
         el('button', { type: 'button', class: 'btn block', id: 'wappen-malen', onclick: () => {
           box.innerHTML = '';
           box.append(wappenEditor(async (neu) => {
@@ -193,9 +194,9 @@ const ILSChallenge = (() => {
               return '';
             }
             return fehler;
-          }, () => zeigen(info.meinWappen)));
+          }, () => zeigen(info.meinWappen), info.meinWappen ? 'Abbrechen' : 'Ohne Wappen weiter'));
           box.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } }, bild ? 'Siegerwappen neu malen' : 'Siegerwappen malen'));
+        } }, bild ? 'Siegerwappen neu malen' : 'Siegerwappen malen (freiwillig)'));
       };
       zeigen(info.meinWappen);
       return box;
@@ -343,7 +344,8 @@ const ILSChallenge = (() => {
         el('div', { class: 'ch-gesamt' }, `${r.punkte} Punkte`),
         el('p', {}, `Aufgaben: ${r.aufgabenPunkte} von ${S.karten.length * PUNKTE} · Zeitbonus: ${r.bonus} · Zeit: ${uhr(r.sekunden)}`),
         r.neuerRekord ? el('p', { class: 'geschafft' }, '🎉 Neuer persönlicher Rekord!') : el('p', { class: 'small' }, `Ihr Rekord: ${r.best.punkte} Punkte`),
-        el('p', { class: 'q-text' }, `Platz ${r.platz} von ${r.von} in Ihrer Klasse`));
+        el('p', { class: 'q-text' }, `Platz ${r.platz} von ${r.von} in Ihrer Klasse`),
+        el('p', { class: 'gespeichert' }, '✓ Ihr Ergebnis ist in der Bestenliste gespeichert.'));
       const listeKarte = () => el('div', { class: 'card' }, el('div', { class: 'q-text' }, 'Bestenliste Ihrer Klasse'), bestenliste(r.liste, k && k.name));
       let liste = listeKarte();
       let wappenBox = wappenBereich(r);

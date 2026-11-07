@@ -425,3 +425,4 @@ table.lk td.challenge-zelle { font-weight: 700; color: #1f3a5f; white-space: now
 .muster-text ul { margin: 6px 0; padding-left: 1.2em; }
 .muster-text li { margin: 5px 0; }
 .checkliste-titel { margin-top: 14px; font-size: 16px; }
+.ch-ergebnis .gespeichert { color: var(--ok, #1d7a46); font-weight: 700; margin: 4px 0 0; }
