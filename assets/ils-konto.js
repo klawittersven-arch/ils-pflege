@@ -84,10 +84,11 @@ const ILSKonto = (() => {
   }
 
   /* ---------- Melden (mit Warteschlange für unterwegs) ---------- */
-  function melden(ils, schritt, punkte, max) {
+  // extra (optional): { neustarts, zuSchnell, selbst, selbstMax } – nur Zahlen, keine Antworten
+  function melden(ils, schritt, punkte, max, extra) {
     const wer = werIst(konto());
     const offen = (lesen(SCHL.offen) || []).filter((e) => !(e.ils === ils && e.schritt === schritt && e.wer === wer));
-    offen.push({ ils, schritt, punkte, max, wer, um: Date.now() });
+    offen.push({ ils, schritt, punkte, max, extra: extra || null, wer, um: Date.now() });
     schreiben(SCHL.offen, offen);
     return nachreichen();
   }
@@ -113,7 +114,7 @@ const ILSKonto = (() => {
     for (const e of meine()) {
       let r;
       try {
-        r = await api('/api/melden', { methode: 'POST', token: k.token, daten: { ils: e.ils, schritt: e.schritt, punkte: e.punkte, max: e.max } });
+        r = await api('/api/melden', { methode: 'POST', token: k.token, daten: { ...(e.extra || {}), ils: e.ils, schritt: e.schritt, punkte: e.punkte, max: e.max } });
       } catch (err) { return 'offline'; }
       if (r.status === 401) { serverHatAbgemeldet(); return 'nicht-angemeldet'; }
       if (r.status >= 500) return 'offline';
@@ -385,5 +386,14 @@ const ILSKonto = (() => {
 
   if (konto()) nachreichen();
 
-  return { uebersicht, uebung, abschluss, konto, melden, nachreichen, standHolen, bekannterStand };
+  // für ils-lern.js
+  function meldungsZeile(zeile, versprechen) {
+    meldungsZeilen.push(zeile);
+    versprechen.then((e) => meldungZeigen(zeile, e));
+  }
+
+  return {
+    uebersicht, uebung, abschluss, konto, melden, nachreichen, standHolen, bekannterStand,
+    bereich, rahmen, auftrag, link, datum, weiterKnopf, werIst, meldungsZeile
+  };
 })();
