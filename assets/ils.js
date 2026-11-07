@@ -295,14 +295,14 @@ const ILS = (() => {
             el('div', { class: 'baustein' }, code),
             el('p', { class: 'small' }, '✍️ Schreiben Sie den Baustein mit den Ziffern jetzt in das Kästchen auf Ihrem Arbeitsblatt. Er gilt nur für Ihren Namen. Lesen Sie oben die Erklärungen zu allen Aufgaben.'));
         }
-        if (cfg.onPass) cfg.onPass(result);
+        if (cfg.onPass) cfg.onPass(result, { total, max });
       } else {
         result.append(
           el('p', {}, (cfg.pass ?? 0.8) >= 1
-            ? `Für den Baustein müssen alle Aufgaben richtig sein (${max} von ${max} Punkten).`
-            : `Für den Baustein brauchen Sie mindestens ${Math.ceil((cfg.pass ?? 0.8) * max)} Punkte.`),
+            ? `${cfg.baustein ? 'Für den Baustein' : 'Zum Bestehen'} müssen alle Aufgaben richtig sein (${max} von ${max} Punkten).`
+            : `${cfg.baustein ? 'Für den Baustein' : 'Zum Bestehen'} brauchen Sie mindestens ${Math.ceil((cfg.pass ?? 0.8) * max)} Punkte.`),
           el('p', { class: 'small' }, cfg.hint || 'Lesen Sie die rot markierten Themen im Infotext noch einmal. Ändern Sie dann Ihre Antworten und tippen Sie erneut auf „Auswerten“.'));
-        if (cfg.onFail) cfg.onFail(result);
+        if (cfg.onFail) cfg.onFail(result, { total, max });
         const firstBad = qs.find((r, i) => scores[i] < r.max);
         if (firstBad) setTimeout(() => firstBad.card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
       }

@@ -1,0 +1,12 @@
+{
+  "name": "ils-pflege-server",
+  "private": true,
+  "description": "Cloudflare-Worker für den ILS-Fortschritt (Anmeldung der SuS, Übersicht für Lehrkräfte)",
+  "scripts": {
+    "dev": "wrangler dev --config ../wrangler.jsonc",
+    "deploy": "wrangler deploy --config ../wrangler.jsonc"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

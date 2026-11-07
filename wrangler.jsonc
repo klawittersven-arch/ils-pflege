@@ -1,0 +1,20 @@
+// Cloudflare-Konfiguration: Server für den ILS-Fortschritt (wer hat welche Übung erledigt?).
+// Das Cloudflare-Projekt „ils-pflege“ wird – wie bei Tetris und kb1-diabetes – direkt mit
+// diesem GitHub-Repository verknüpft: Jede Änderung geht nach ca. einer Minute automatisch online.
+// Die Übungsseiten selbst laufen weiter über GitHub Pages.
+{
+  "$schema": "worker/node_modules/wrangler/config-schema.json",
+  "name": "ils-pflege",
+  "main": "worker/src/index.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  "durable_objects": {
+    "bindings": [{ "name": "DATEN", "class_name": "Daten" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Daten"] }],
+  // Das Passwort für die Lehrkraft-Seite steht NICHT hier, sondern als „Secret“
+  // LEHRKRAFT_PASSWORT im Cloudflare-Dashboard (siehe README).
+  // Keine Protokolle bei Cloudflare speichern (enthielten sonst Namen).
+  "observability": { "enabled": false }
+}

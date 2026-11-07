@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Abschlussquiz</title>
+<link rel="stylesheet" href="../../assets/ils.css?v=ef6856eb">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">Probe-Auftrag · Abschluss</div><h1>Abschlussquiz</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../../assets/ils.js?v=ef6856eb"></script>
+<script src="../../assets/ils-server.js?v=ef6856eb"></script>
+<script src="../../assets/auftraege.js?v=ef6856eb"></script>
+<script src="../../assets/ils-konto.js?v=ef6856eb"></script>
+<script>
+const POOL = [
+  { type: 'tf', q: 'Die Lehrkraft sieht, welche Übungen Sie erledigt haben.', correct: true, explain: 'Ja – auf ihrer Übersichtsseite.' },
+  { type: 'tf', q: 'Ihre einzelnen Antworten werden an die Lehrkraft geschickt.', correct: false, explain: 'Nein – nur, ob Sie die Übung bestanden haben.' },
+  { type: 'tf', q: 'Ohne Internet geht Ihr Ergebnis verloren.', correct: false, explain: 'Nein – es wird später automatisch nachgereicht.' },
+  { type: 'tf', q: 'Sie müssen sich auf jedem Gerät einmal anmelden.', correct: true, explain: 'Ja – mit Klasse, Vorname und Geburtstag.' }
+];
+ILSKonto.abschluss({
+  mount: '#app', ils: 'probe', schritt: 'quiz',
+  intro: '<strong>Abschlussquiz:</strong> Mindestens 3 von 4 Punkten zum Bestehen.',
+  pass: 0.75,
+  fragen: () => ILS.shuffle(POOL)
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+/* Lehrkraft-Übersicht: Wer hat welche Übung eines ILS-Auftrags erledigt?
+   Braucht vorher: ils.js (ILS.el), ils-server.js, auftraege.js.
+   Das Passwort (Secret LEHRKRAFT_PASSWORT beim Cloudflare-Worker) bleibt nur für diese
+   Browser-Sitzung gespeichert (sessionStorage) und wird bei jeder Anfrage mitgeschickt. */
+(() => {
+  'use strict';
+  const el = ILS.el;
+  const SERVER = String(window.ILS_SERVER || '').replace(/\/+$/, '');
+  const AUFTRAEGE = window.ILS_AUFTRAEGE || [];
+  const app = document.getElementById('app');
+
+  const sitzung = {
+    get: (k) => { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+    set: (k, v) => { try { if (v == null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) { /* egal */ } }
+  };
+  const merken = {
+    get: (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* egal */ } }
+  };
+
+  let passwort = sitzung.get('ils-lk-pw') || '';
+  let stand = null;
+  const wahl = {
+    ils: AUFTRAEGE.some((a) => a.id === merken.get('ils-lk-ils')) ? merken.get('ils-lk-ils') : (AUFTRAEGE[AUFTRAEGE.length - 1] || {}).id,
+    klasse: merken.get('ils-lk-klasse') || ''
+  };
+
+  const datum = (ms) => new Date(ms).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const zeit = (ms) => new Date(ms).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const kurzDatum = (ms) => new Date(ms).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+  const auftrag = () => AUFTRAEGE.find((a) => a.id === wahl.ils) || null;
+  const vergleich = (a, b) => a.klasse.localeCompare(b.klasse, 'de') || a.name.localeCompare(b.name, 'de');
+
+  async function api(weg, daten) {
+    const kopf = { 'X-Passwort': encodeURIComponent(passwort) };
+    if (daten) kopf['Content-Type'] = 'application/json';
+    const r = await fetch(SERVER + weg, {
+      method: daten ? 'POST' : 'GET', headers: kopf, body: daten ? JSON.stringify(daten) : undefined,
+      mode: 'cors', credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer'
+    });
+    let d = {};
+    try { d = await r.json(); } catch (e) { /* leer */ }
+    return { status: r.status, d };
+  }
+
+  /* ---------- Auswertung je Person ---------- */
+  function auswerten(s, a) {
+    const p = (s.fortschritt || {})[a.id] || {};
+    const erledigt = a.schritte.filter((x) => p[x.id]).length;
+    const fertig = erledigt === a.schritte.length;
+    let status = 'offen';
+    if (fertig) status = 'fertig';
+    else if (erledigt) status = 'arbeitet';
+    else if (!s.ersteAnmeldung) status = 'nie';
+    return { p, erledigt, fertig, status };
+  }
+
+  /* ---------- Anmeldung der Lehrkraft ---------- */
+  function anmeldung(hinweis) {
+    app.innerHTML = '';
+    if (!SERVER) {
+      app.append(el('div', { class: 'card' }, 'In assets/ils-server.js ist keine Server-Adresse eingetragen.'));
+      return;
+    }
+    const pw = el('input', { type: 'password', id: 'lk-pw', autocomplete: 'current-password' });
+    const fb = el('div', { class: 'fb' + (hinweis ? ' show bad' : '') }, hinweis || '');
+    const knopf = el('button', { type: 'submit', class: 'btn block' }, 'Anmelden');
+    const form = el('form', { class: 'card lk-login' },
+      el('div', { class: 'q-text' }, 'Lehrkraft-Übersicht'),
+      el('p', { class: 'small' }, 'Hier sehen Sie, welche SuS welche Übungen der ILS-Aufträge erledigt haben.'),
+      el('div', { class: 'field' }, el('label', { for: 'lk-pw' }, 'Passwort'), pw),
+      knopf, fb);
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      passwort = pw.value;
+      laden(true);
+    });
+    app.append(form);
+    pw.focus();
+  }
+
+  async function laden(ersteAnmeldung) {
+    let r;
+    try { r = await api('/api/lehrkraft/stand'); } catch (e) {
+      if (stand) { statusZeile('⚠️ Server gerade nicht erreichbar – angezeigt wird der letzte Stand.'); return; }
+      anmeldung('Server nicht erreichbar. Prüfen Sie die Internetverbindung.');
+      return;
+    }
+    if (r.status === 200) {
+      stand = r.d;
+      sitzung.set('ils-lk-pw', passwort);
+      if (ersteAnmeldung || !document.getElementById('lk-haupt')) aufbauen();
+      zeichnen();
+      return;
+    }
+    if (r.status === 503 && r.d.grund === 'passwort-fehlt') {
+      app.innerHTML = '';
+      app.append(el('div', { class: 'card gesperrt' },
+        el('div', { class: 'q-text' }, 'Noch kein Passwort eingerichtet'),
+        el('p', {}, 'Bitte im Cloudflare-Dashboard beim Worker „ils-pflege“ unter Settings → Variables and Secrets ein Secret mit dem Namen LEHRKRAFT_PASSWORT anlegen (siehe README).')));
+      return;
+    }
+    sitzung.set('ils-lk-pw', null);
+    stand = null;
+    if (r.status === 429) anmeldung(`Zu viele falsche Passwörter. Bitte warten Sie ${r.d.minuten || 15} Minuten.`);
+    else if (r.status === 401) anmeldung(ersteAnmeldung ? 'Das Passwort ist falsch.' : null);
+    else anmeldung('Unerwartete Antwort vom Server (' + r.status + ').');
+  }
+
+  /* ---------- Hauptansicht ---------- */
+  let teile = {};
+  function aufbauen() {
+    app.innerHTML = '';
+    const ilsWahl = el('select', { id: 'lk-ils', 'aria-label': 'ILS-Auftrag' }, AUFTRAEGE.map((a) => el('option', { value: a.id }, a.titel)));
+    ilsWahl.value = wahl.ils || '';
+    ilsWahl.addEventListener('change', () => { wahl.ils = ilsWahl.value; merken.set('ils-lk-ils', wahl.ils); zeichnen(); });
+    const klassenWahl = el('select', { id: 'lk-klasse', 'aria-label': 'Klasse' });
+    klassenWahl.addEventListener('change', () => { wahl.klasse = klassenWahl.value; merken.set('ils-lk-klasse', wahl.klasse); zeichnen(); });
+
+    const fehltBox = el('div', { class: 'card hidden', id: 'lk-fehlt' });
+    teile = {
+      ilsWahl, klassenWahl, fehltBox,
+      status: el('p', { class: 'small', id: 'lk-status', 'aria-live': 'polite' }),
+      zusammenfassung: el('div', { id: 'lk-zusammenfassung' }),
+      tabelle: el('div', { class: 'lk-tabelle', id: 'lk-tabelle' }),
+      personWahl: el('select', { id: 'lk-person', 'aria-label': 'Person' }),
+      auftragWahl: el('select', { id: 'lk-auftrag-loeschen', 'aria-label': 'ILS-Auftrag' }, AUFTRAEGE.map((a) => el('option', { value: a.id }, a.titel)))
+    };
+
+    const leiste = el('div', { class: 'lk-leiste' },
+      el('div', { class: 'field' }, el('label', { for: 'lk-ils' }, 'ILS-Auftrag'), ilsWahl),
+      el('div', { class: 'field' }, el('label', { for: 'lk-klasse' }, 'Klasse'), klassenWahl),
+      el('div', { class: 'lk-knoepfe' },
+        el('button', { type: 'button', class: 'btn secondary', onclick: () => laden(false) }, '↻ Aktualisieren'),
+        el('button', { type: 'button', class: 'btn secondary', id: 'lk-wer-fehlt', onclick: werFehlt }, 'Wer fehlt noch?'),
+        el('button', { type: 'button', class: 'btn secondary', id: 'lk-csv', onclick: csv }, 'Excel-Datei (CSV)')));
+
+    app.append(el('div', { id: 'lk-haupt' },
+      leiste, teile.status, fehltBox, teile.zusammenfassung, teile.tabelle,
+      el('p', { class: 'small' }, 'Tipp: Ein Klick auf ein Feld der Tabelle trägt eine Übung von Hand ein oder entfernt den Haken – z. B. wenn jemand die Übung analog vorgezeigt hat.'),
+      verwaltung()));
+  }
+
+  function statusZeile(text) { if (teile.status) teile.status.textContent = text; }
+
+  function zeichnen() {
+    if (!stand || !teile.tabelle) return;
+    const a = auftrag();
+    const alle = stand.schueler.slice().sort(vergleich);
+    const klassen = [...new Set(alle.map((s) => s.klasse))].sort();
+    if (wahl.klasse && !klassen.includes(wahl.klasse)) wahl.klasse = '';
+
+    // Klassenauswahl
+    const kw = teile.klassenWahl;
+    kw.innerHTML = '';
+    kw.append(el('option', { value: '' }, 'Alle Klassen'), ...klassen.map((k) => el('option', { value: k }, k)));
+    kw.value = wahl.klasse;
+
+    // Personenauswahl (Verwaltung) – Auswahl behalten
+    const alt = teile.personWahl.value;
+    teile.personWahl.innerHTML = '';
+    teile.personWahl.append(el('option', { value: '' }, '– Person wählen –'), ...alle.map((s) => el('option', { value: s.sid }, `${s.klasse} – ${s.name}`)));
+    teile.personWahl.value = alle.some((s) => s.sid === alt) ? alt : '';
+
+    statusZeile(`Stand: ${zeit(stand.jetzt || Date.now())} · aktualisiert sich alle 30 Sekunden`);
+    teile.zusammenfassung.innerHTML = '';
+    teile.tabelle.innerHTML = '';
+    if (!alle.length) {
+      teile.tabelle.append(el('div', { class: 'card gesperrt' }, 'Noch keine Klassenliste eingetragen. Öffnen Sie unten „Verwaltung“ → „Klassenliste einfügen“.'));
+      return;
+    }
+    if (!a) { teile.tabelle.append(el('div', { class: 'card' }, 'Kein ILS-Auftrag ausgewählt.')); return; }
+
+    const liste = alle.filter((s) => !wahl.klasse || s.klasse === wahl.klasse);
+
+    // Zusammenfassung je Klasse
+    for (const k of klassen.filter((x) => !wahl.klasse || x === wahl.klasse)) {
+      const ks = liste.filter((s) => s.klasse === k).map((s) => auswerten(s, a));
+      const n = (st) => ks.filter((x) => x.status === st).length;
+      teile.zusammenfassung.append(el('div', { class: 'lk-zahlen' },
+        el('strong', {}, k + ': '),
+        el('span', { class: 'z fertig' }, `${n('fertig')} von ${ks.length} abgeschlossen`), ' · ',
+        el('span', { class: 'z arbeitet' }, `${n('arbeitet')} in Arbeit`), ' · ',
+        el('span', { class: 'z offen' }, `${n('offen') + n('nie')} noch nicht angefangen`),
+        n('nie') ? el('span', { class: 'small' }, ` (davon ${n('nie')} noch nie angemeldet)`) : null));
+    }
+
+    // Tabelle
+    const mitKlasse = !wahl.klasse;
+    const kopf = el('tr', {},
+      el('th', { scope: 'col' }, 'Name'),
+      mitKlasse ? el('th', { scope: 'col' }, 'Klasse') : null,
+      a.schritte.map((x) => el('th', { scope: 'col', title: x.titel }, x.kurz || x.titel)),
+      el('th', { scope: 'col' }, 'Stand'));
+    const zeilen = liste.map((s) => {
+      const w = auswerten(s, a);
+      const zellen = a.schritte.map((x) => {
+        const e = w.p[x.id];
+        let inhalt = '–', titel = `${x.titel}: noch nicht erledigt – klicken, um von Hand einzutragen`;
+        if (e) {
+          inhalt = e.quelle === 'lehrkraft' ? '✓ Hand' : `✓ ${kurzDatum(e.um)}` + (x.abschluss && e.max ? ` · ${e.punkte}/${e.max}` : '');
+          titel = `${x.titel}: erledigt am ${zeit(e.um)}${e.quelle === 'lehrkraft' ? ' (von Hand eingetragen)' : ''}${e.max ? ` – ${e.punkte} von ${e.max} Punkten` : ''} – klicken, um den Haken zu entfernen`;
+        }
+        return el('td', { class: 'zelle' + (e ? ' ja' : '') },
+          el('button', { type: 'button', title: titel, onclick: () => haken(s, a, x, !e) }, inhalt));
+      });
+      const statusText = { fertig: '✓ abgeschlossen', arbeitet: `${w.erledigt} von ${a.schritte.length}`, offen: `0 von ${a.schritte.length}`, nie: 'nie angemeldet' }[w.status];
+      return el('tr', { class: 'st-' + w.status },
+        el('th', { scope: 'row' }, s.name),
+        mitKlasse ? el('td', {}, s.klasse) : null,
+        zellen,
+        el('td', { class: 'stand' }, statusText));
+    });
+    teile.tabelle.append(el('table', { class: 'lk' }, el('thead', {}, kopf), el('tbody', {}, zeilen)));
+  }
+
+  async function haken(s, a, x, setzen) {
+    const frage = setzen
+      ? `„${x.titel}“ für ${s.name} von Hand als erledigt eintragen?`
+      : `Haken bei „${x.titel}“ für ${s.name} entfernen?`;
+    if (!window.confirm(frage)) return;
+    const r = await api('/api/lehrkraft/haken', { sid: s.sid, ils: a.id, schritt: x.id, setzen }).catch(() => null);
+    if (!r || r.status !== 200) window.alert('Das hat nicht geklappt. Bitte erneut versuchen.');
+    laden(false);
+  }
+
+  /* ---------- Wer fehlt noch? ---------- */
+  function fehltText() {
+    const a = auftrag();
+    if (!a || !stand) return '';
+    const liste = stand.schueler.filter((s) => !wahl.klasse || s.klasse === wahl.klasse).sort(vergleich);
+    const klassen = [...new Set(liste.map((s) => s.klasse))];
+    const bloecke = klassen.map((k) => {
+      const offen = liste.filter((s) => s.klasse === k && !auswerten(s, a).fertig).map((s) => s.name);
+      return offen.length ? `${k}:\n${offen.join('\n')}` : `${k}: alle abgeschlossen ✓`;
+    });
+    return `ILS „${a.titel}“ – noch nicht abgeschlossen\n\n${bloecke.join('\n\n')}`;
+  }
+
+  function werFehlt() {
+    const box = teile.fehltBox;
+    const text = fehltText();
+    const feld = el('textarea', { rows: String(Math.min(18, text.split('\n').length + 1)), id: 'lk-fehlt-text' });
+    feld.value = text;
+    const hinweis = el('span', { class: 'small' });
+    box.innerHTML = '';
+    box.append(
+      el('div', { class: 'q-text' }, 'Wer fehlt noch? (z. B. für die PPT)'), feld,
+      el('div', { class: 'lk-knoepfe' },
+        el('button', { type: 'button', class: 'btn', onclick: () => {
+          const fertig = () => { hinweis.textContent = ' ✓ Kopiert'; };
+          if (navigator.clipboard) navigator.clipboard.writeText(feld.value).then(fertig, () => { feld.select(); document.execCommand('copy'); fertig(); });
+          else { feld.select(); document.execCommand('copy'); fertig(); }
+        } }, 'Kopieren'),
+        el('button', { type: 'button', class: 'btn secondary', onclick: () => box.classList.add('hidden') }, 'Schließen'),
+        hinweis));
+    box.classList.remove('hidden');
+    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /* ---------- CSV für Excel ---------- */
+  function csv() {
+    const a = auftrag();
+    if (!a || !stand) return;
+    const feld = (v) => { const t = String(v ?? ''); return /[;"\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+    const zeilen = [['Klasse', 'Name', ...a.schritte.map((x) => x.titel), 'Abgeschlossen'].map(feld).join(';')];
+    stand.schueler.filter((s) => !wahl.klasse || s.klasse === wahl.klasse).sort(vergleich).forEach((s) => {
+      const w = auswerten(s, a);
+      zeilen.push([s.klasse, s.name, ...a.schritte.map((x) => {
+        const e = w.p[x.id];
+        if (!e) return '';
+        return datum(e.um) + (e.quelle === 'lehrkraft' ? ' (von Hand)' : '') + (x.abschluss && e.max ? ` (${e.punkte}/${e.max})` : '');
+      }), w.fertig ? 'ja' : 'nein'].map(feld).join(';'));
+    });
+    const blob = new Blob(['﻿' + zeilen.join('\r\n') + '\r\n'], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const heute = new Date().toISOString().slice(0, 10);
+    const link = el('a', { href: url, download: `ILS_${a.id}_${(wahl.klasse || 'alle').replace(/[^A-Za-z0-9]+/g, '-')}_${heute}.csv` });
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+
+  /* ---------- Verwaltung ---------- */
+  function verwaltung() {
+    const meldung = (ziel, text, art) => { ziel.className = 'fb show ' + (art || 'ok'); ziel.textContent = text; };
+    const fehlerText = (r) => (!r ? 'Server nicht erreichbar.' : `Das hat nicht geklappt (${r.status}${r.d && r.d.grund ? ', ' + r.d.grund : ''}).`);
+
+    // Klassenliste
+    const importFeld = el('textarea', { id: 'lk-import', rows: '6', placeholder: '3BFP2/1;Lena M.;05.09.2004\n3BFP2/1;Mohamed A.;01.02.2003' });
+    const importFb = el('div', { class: 'fb' });
+    const importKnopf = el('button', { type: 'button', class: 'btn', id: 'lk-import-knopf' }, 'Übernehmen');
+    importKnopf.addEventListener('click', async () => {
+      if (!importFeld.value.trim()) return meldung(importFb, 'Bitte zuerst die Liste einfügen.', 'hint');
+      importKnopf.disabled = true;
+      const r = await api('/api/lehrkraft/import', { text: importFeld.value }).catch(() => null);
+      importKnopf.disabled = false;
+      if (!r || r.status !== 200) return meldung(importFb, fehlerText(r), 'bad');
+      const f = r.d.fehler || [];
+      meldung(importFb, `${r.d.neu} neu eingetragen, ${r.d.aktualisiert} aktualisiert.` +
+        (f.length ? ` Nicht übernommen: ${f.map((x) => `Zeile ${x.zeile} (${x.text})`).join(', ')}.` : ''), f.length ? 'hint' : 'ok');
+      if (!f.length) importFeld.value = '';   // Geburtsdaten nicht unnötig stehen lassen
+      laden(false);
+    });
+
+    // Person
+    const personFb = el('div', { class: 'fb' });
+    const person = () => stand && stand.schueler.find((s) => s.sid === teile.personWahl.value);
+    const personAktion = async (weg, frage, erfolg) => {
+      const s = person();
+      if (!s) return meldung(personFb, 'Bitte zuerst eine Person wählen.', 'hint');
+      if (!window.confirm(frage(s))) return;
+      const r = await api(weg, { sid: s.sid }).catch(() => null);
+      if (!r || r.status !== 200) return meldung(personFb, fehlerText(r), 'bad');
+      meldung(personFb, erfolg(s, r.d));
+      laden(false);
+    };
+
+    // Auftrag
+    const auftragFb = el('div', { class: 'fb' });
+    // Alles
+    const allesFeld = el('input', { id: 'lk-alles', placeholder: 'ALLES LÖSCHEN', autocomplete: 'off' });
+    const allesFb = el('div', { class: 'fb' });
+
+    return el('details', { class: 'card lk-verwaltung', id: 'lk-verwaltung' },
+      el('summary', {}, 'Verwaltung (Klassenliste, Personen, Löschen)'),
+
+      el('h3', {}, 'Klassenliste einfügen'),
+      el('p', { class: 'small' }, 'Eine Zeile pro Person: Klasse; Vorname + 1. Buchstabe Nachname; Geburtsdatum. Spalten aus Excel (mit Tabulator) gehen auch. ' +
+        'Bekannte Personen (gleiche Klasse und gleicher Name) werden aktualisiert, ihr Fortschritt bleibt erhalten. Geburtsdaten werden nicht gespeichert, nur ein Prüfwert.'),
+      importFeld, importKnopf, importFb,
+
+      el('h3', {}, 'Einzelne Person'),
+      teile.personWahl,
+      el('div', { class: 'lk-knoepfe' },
+        el('button', { type: 'button', class: 'btn secondary', onclick: () => personAktion('/api/lehrkraft/abmelden',
+          (s) => `Alle Geräte von ${s.name} abmelden? (z. B. bei verlorenem Handy – die Person meldet sich einfach neu an.)`,
+          (s, d) => `${s.name}: ${d.abgemeldet} Gerät(e) abgemeldet.`) }, 'Alle Geräte abmelden'),
+        el('button', { type: 'button', class: 'btn secondary gefahr', onclick: () => personAktion('/api/lehrkraft/schueler-loeschen',
+          (s) => `${s.name} (${s.klasse}) mit dem gesamten Fortschritt löschen? Das lässt sich nicht rückgängig machen.`,
+          (s) => `${s.name} wurde gelöscht.`) }, 'Person löschen')),
+      personFb,
+
+      el('h3', {}, 'Fortschritt eines ILS-Auftrags löschen'),
+      el('p', { class: 'small' }, 'Löscht die Haken aller Personen für diesen Auftrag. Die Klassenliste bleibt.'),
+      teile.auftragWahl,
+      el('button', { type: 'button', class: 'btn secondary gefahr', onclick: async () => {
+        const a = AUFTRAEGE.find((x) => x.id === teile.auftragWahl.value);
+        if (!a || !window.confirm(`Den gesamten Fortschritt für „${a.titel}“ löschen? Das lässt sich nicht rückgängig machen.`)) return;
+        const r = await api('/api/lehrkraft/auftrag-loeschen', { ils: a.id }).catch(() => null);
+        if (!r || r.status !== 200) return meldung(auftragFb, fehlerText(r), 'bad');
+        meldung(auftragFb, `Fortschritt für „${a.titel}“ gelöscht (${r.d.betroffen} Personen betroffen).`);
+        laden(false);
+      } }, 'Fortschritt löschen'),
+      auftragFb,
+
+      el('h3', {}, 'Alles löschen'),
+      el('p', { class: 'small' }, 'Löscht Klassenlisten, Anmeldungen und den gesamten Fortschritt aller ILS-Aufträge – z. B. am Schuljahresende. Tippen Sie zur Bestätigung ALLES LÖSCHEN ein.'),
+      allesFeld,
+      el('button', { type: 'button', class: 'btn secondary gefahr', onclick: async () => {
+        if (allesFeld.value.trim() !== 'ALLES LÖSCHEN') return meldung(allesFb, 'Bitte genau ALLES LÖSCHEN eintippen.', 'hint');
+        const r = await api('/api/lehrkraft/alles-loeschen', { bestaetigung: 'ALLES LÖSCHEN' }).catch(() => null);
+        if (!r || r.status !== 200) return meldung(allesFb, fehlerText(r), 'bad');
+        allesFeld.value = '';
+        meldung(allesFb, 'Alle Daten wurden gelöscht.');
+        laden(false);
+      } }, 'Alles löschen'),
+      allesFb,
+
+      el('h3', {}, 'Abmelden'),
+      el('button', { type: 'button', class: 'btn secondary', onclick: () => { sitzung.set('ils-lk-pw', null); passwort = ''; stand = null; anmeldung(); } }, 'Von der Lehrkraft-Seite abmelden'));
+  }
+
+  setInterval(() => {
+    if (stand && document.visibilityState === 'visible') laden(false);
+  }, 30000);
+
+  if (passwort) laden(false); else anmeldung();
+})();

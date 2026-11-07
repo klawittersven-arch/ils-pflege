@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Übung 1: Erste Probe</title>
+<link rel="stylesheet" href="../../assets/ils.css?v=ef6856eb">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">Probe-Auftrag · Übung 1 von 2</div><h1>Übung 1: Erste Probe</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../../assets/ils.js?v=ef6856eb"></script>
+<script src="../../assets/ils-server.js?v=ef6856eb"></script>
+<script src="../../assets/auftraege.js?v=ef6856eb"></script>
+<script src="../../assets/ils-konto.js?v=ef6856eb"></script>
+<script>
+ILSKonto.uebung({
+  mount: '#app', ils: 'probe', schritt: '1',
+  intro: '<strong>So geht\'s:</strong> Beantworten Sie beide Aufgaben und tippen Sie auf „Auswerten“. Diese Probe-Übung dient nur zum Testen der Anmeldung.',
+  pass: 1.0,
+  questions: [
+    { type: 'tf', q: 'Eine Redon-Drainage arbeitet mit Sog (Unterdruck).', correct: true, explain: 'Die Redon-Flasche erzeugt einen Unterdruck.' },
+    { type: 'mc', q: 'Wie viele Übungen hat dieser Probe-Auftrag?', options: ['Eine', 'Zwei', 'Fünf'], correct: 1, keep: true, explain: 'Zwei Übungen und ein Abschlussquiz.' }
+  ]
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Probe-Auftrag</title>
+<link rel="stylesheet" href="../assets/ils.css?v=ef6856eb">
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="kicker">ILS mit Anmeldung · zum Testen</div><h1>Probe-Auftrag</h1></div></header>
+<main>
+<div id="app"></div>
+<footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
+</main>
+<script src="../assets/ils.js?v=ef6856eb"></script>
+<script src="../assets/ils-server.js?v=ef6856eb"></script>
+<script src="../assets/auftraege.js?v=ef6856eb"></script>
+<script src="../assets/ils-konto.js?v=ef6856eb"></script>
+<script>
+ILSKonto.uebersicht({ mount: '#app', ils: 'probe' });
+</script>
+</body>
+</html>
