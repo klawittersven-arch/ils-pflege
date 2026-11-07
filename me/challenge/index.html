@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>ILS-Challenge: Materialentfernung</title>
-<link rel="stylesheet" href="../../assets/ils.css?v=v202611071739">
+<link rel="stylesheet" href="../../assets/ils.css?v=v202611071742">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Highscore</div><h1>ILS-Challenge: Materialentfernung</h1></div></header>
@@ -13,12 +13,12 @@
 <div id="app"></div>
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
 </main>
-<script src="../../assets/ils.js?v=v202611071739"></script>
-<script src="../../assets/ils-server.js?v=v202611071739"></script>
-<script src="../../assets/auftraege.js?v=v202611071739"></script>
-<script src="../../assets/ils-konto.js?v=v202611071739"></script>
-<script src="../../assets/ils-lern.js?v=v202611071739"></script>
-<script src="../../assets/ils-challenge.js?v=v202611071739"></script>
+<script src="../../assets/ils.js?v=v202611071742"></script>
+<script src="../../assets/ils-server.js?v=v202611071742"></script>
+<script src="../../assets/auftraege.js?v=v202611071742"></script>
+<script src="../../assets/ils-konto.js?v=v202611071742"></script>
+<script src="../../assets/ils-lern.js?v=v202611071742"></script>
+<script src="../../assets/ils-challenge.js?v=v202611071742"></script>
 <script>
 const POOLS = [
 { name: "Abschnitt 1 „Osteosynthese und Materialentfernung“", ziehen: 3, aufgaben: [
@@ -866,13 +866,14 @@ const POOLS = [
   "erklaerung": "Mindestens 1,5 Liter pro Tag – falls nicht kontraindiziert."
  }
 ] },
-{ name: "Abschnitt 5 „Information, Schulung und Entlassung“", ziehen: 3, aufgaben: [
+{ name: "Abschnitt 5 „Information, Anleitung und Entlassung“", ziehen: 3, aufgaben: [
  {
   "typ": "sortieren",
   "fest": true,
-  "frage": "Information, Schulung oder Beratung? Ordnen Sie zu.",
+  "frage": "Information, Anleitung, Schulung oder Beratung? Ordnen Sie zu.",
   "kategorien": [
    "Information",
+   "Anleitung",
    "Schulung",
    "Beratung"
   ],
@@ -886,23 +887,30 @@ const POOLS = [
     "k": 0
    },
    {
-    "t": "Sie üben mit ihm die Selbstinjektion des Heparins, bis er sie sicher kann.",
-    "k": 1
+    "t": "Sie zeigen ihm die Selbstinjektion des Enoxaparins und lassen ihn üben, bis er sie sicher kann.",
+    "k": 1,
+    "warum": "Zeigen und üben = Anleitung (Kernziel: Können)."
    },
    {
     "t": "Sie zeigen das Treppensteigen mit Stützen und lassen ihn üben.",
-    "k": 1
+    "k": 1,
+    "warum": "Zeigen und üben = Anleitung (Kernziel: Können)."
+   },
+   {
+    "t": "Die Physiotherapie bietet einen geplanten Kurs mit mehreren Terminen und festen Lernzielen zum Gehen mit Stützen an.",
+    "k": 2,
+    "warum": "Geplant, mehrere Einheiten, festes Lernziel = Schulung (systematisches Lernen)."
    },
    {
     "t": "Er überlegt, wie er Arbeit und Sport in den nächsten Wochen organisiert – Sie suchen gemeinsam Lösungen.",
-    "k": 2
+    "k": 3
    },
    {
     "t": "Er ist unsicher, ob er die Spritzen nehmen will – Sie wägen gemeinsam Vor- und Nachteile ab.",
-    "k": 2
+    "k": 3
    }
   ],
-  "erklaerung": "Information = Wissen weitergeben. Schulung = Fertigkeiten gezielt vermitteln und üben. Beratung = ergebnisoffen gemeinsam eine Lösung finden."
+  "erklaerung": "Information = erklären (Wissen). Anleitung = zeigen und üben (Können). Schulung = geplant und strukturiert mit Lernziel vermitteln, oft in mehreren Einheiten (systematisches Lernen). Beratung = gemeinsam klären – die Person findet ihre eigene Lösung."
  },
  {
   "typ": "dialog",
@@ -1016,13 +1024,13 @@ const POOLS = [
   "typ": "wahl",
   "frage": "Herr Brandt soll sich das Enoxaparin zu Hause selbst spritzen. Wie vermitteln Sie das?",
   "optionen": [
-   "Schulung: zeigen, erklären, üben lassen und kontrollieren, bis er es sicher kann",
+   "Anleitung: zeigen, erklären, üben lassen und kontrollieren, bis er es sicher kann",
    "Information: ihm ein Merkblatt geben und erklären, wo und wie oft er spritzen soll",
    "Einmal vorspritzen und ihm sagen, er soll es zu Hause genauso machen",
-   "Gar nicht – das übernimmt nach der Entlassung der Hausarzt jeden Tag"
+   "Schulung: ihn für einen mehrteiligen Kurs zur Thromboseprophylaxe anmelden"
   ],
   "richtig": 0,
-  "erklaerung": "Eine Fertigkeit lernt man durch Üben unter Anleitung – das ist Schulung."
+  "erklaerung": "Eine Fertigkeit lernt man durch Zeigen und Üben – das ist Anleitung (Kernziel: Können). Eine Schulung wäre ein geplantes Programm mit mehreren Einheiten – für eine Spritze vor der Entlassung morgen zu viel."
  },
  {
   "typ": "sortieren",
@@ -1055,11 +1063,11 @@ const POOLS = [
     "k": 3
    }
   ],
-  "erklaerung": "Aus E und S ergibt sich der Informations- und Schulungsbedarf."
+  "erklaerung": "Aus E und S ergibt sich der Informations- und Anleitungsbedarf."
  },
  {
   "typ": "wahl",
-  "gruppe": "Abschnitt 5 „Information, Schulung und Entlassung“:faeden",
+  "gruppe": "Abschnitt 5 „Information, Anleitung und Entlassung“:faeden",
   "frage": "Wer legt fest, wann die Fäden gezogen werden?",
   "optionen": [
    "die Ärztin – das Fadenziehen selbst kann sie delegieren",
@@ -1072,7 +1080,7 @@ const POOLS = [
  },
  {
   "typ": "wahl",
-  "gruppe": "Abschnitt 5 „Information, Schulung und Entlassung“:faeden",
+  "gruppe": "Abschnitt 5 „Information, Anleitung und Entlassung“:faeden",
   "frage": "Nach Pflegias werden Fäden an der <b>unteren Extremität</b> meist nach … entfernt (in Gelenknähe nach 21 Tagen oder später).",
   "optionen": [
    "12–14 Tagen",
@@ -1318,9 +1326,10 @@ const POOLS = [
  },
  {
   "typ": "sortieren",
-  "frage": "Information, Schulung oder Beratung?",
+  "frage": "Information, Anleitung, Schulung oder Beratung?",
   "kategorien": [
    "Information",
+   "Anleitung",
    "Schulung",
    "Beratung"
   ],
@@ -1330,15 +1339,23 @@ const POOLS = [
     "k": 0
    },
    {
-    "t": "Selbstinjektion üben, bis sie sicher klappt",
+    "t": "erklären, warum er 6 Wochen keinen Fußball spielen darf",
+    "k": 0
+   },
+   {
+    "t": "Selbstinjektion zeigen und üben, bis sie sicher klappt",
     "k": 1
    },
    {
-    "t": "gemeinsam abwägen, wie Arbeit und Sport organisiert werden",
+    "t": "geplanter Kurs mit mehreren Einheiten und Lernzielen zur Sturzprävention",
     "k": 2
+   },
+   {
+    "t": "gemeinsam abwägen, wie Arbeit und Sport organisiert werden",
+    "k": 3
    }
   ],
-  "erklaerung": "Wissen – Fertigkeit – gemeinsame Lösung."
+  "erklaerung": "Information = Wissen, Anleitung = Können, Schulung = systematisches Lernen nach Plan, Beratung = gemeinsame, individuelle Lösung."
  },
  {
   "typ": "wahl",

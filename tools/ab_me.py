@@ -77,7 +77,7 @@ def build():
             ["Abschnitt 2", "Nach der OP überwachen  →  Übung 2  →  Examens-Training 2", "20 Min.", "☐"],
             ["Abschnitt 3", "Komplikationen erkennen  →  Übung 3  →  Examens-Training 3", "15 Min.", "☐"],
             ["Abschnitt 4", "Schmerz und Mobilisation  →  Übung 4  →  Examens-Training 4", "15 Min.", "☐"],
-            ["Abschnitt 5", "Information, Schulung und Entlassung  →  Übung 5  →  Examens-Training 5", "15 Min.", "☐"],
+            ["Abschnitt 5", "Information, Anleitung und Entlassung  →  Übung 5  →  Examens-Training 5", "15 Min.", "☐"],
             ["Abschluss", "Abschlussquiz", "5 Min.", "☐"],
         ],
         [1500, 5560, 1000, 1000], size=10,
@@ -88,7 +88,7 @@ def build():
         "einen Menschen nach einer Operation am Bein überwachen – mit Vitalzeichen, Schmerzskala und DMS-Kontrolle,",
         "Komplikationen wie Thrombose, Wundinfektion, Hämatom oder Refraktur erkennen und die Thromboseentstehung erklären,",
         "Schmerzmanagement nach dem Expertenstandard ableiten und sicher mit Unterarmgehstützen mobilisieren,",
-        "Information, Schulung und Beratung unterscheiden und ein Entlassungsgespräch fachgerecht gestalten.",
+        "Information, Anleitung, Schulung und Beratung unterscheiden und ein Entlassungsgespräch fachgerecht gestalten.",
     ], after_last=80)
 
     fall = (d.p_xml("Fallsituation", bold=True, size=12, after=60, keep=True)
@@ -104,7 +104,7 @@ def build():
                      "Vitalzeichen, Schmerz (NRS) und **DMS rechts** in den ersten 6 Stunden **alle 2 Stunden**, danach 3-mal täglich.",
                      "Bein hochlagern, kühlen. Schmerzmittel nach Schmerzschema; **Bedarfsmedikation ab NRS 4**.",
                      "Mobilisation heute Nachmittag; Belastung **schmerzadaptiert** (so viel, wie die Schmerzen zulassen) mit **2 Unterarmgehstützen**.",
-                     "**Enoxaparin** 1-mal täglich s.c. für 7 Tage – Herr Brandt spritzt sich zu Hause selbst (Schulung vor der Entlassung).",
+                     "**Enoxaparin** 1-mal täglich s.c. für 7 Tage – Herr Brandt spritzt sich zu Hause selbst (Anleitung vor der Entlassung).",
                      "Redon-Entfernung morgen früh durch die Ärztin, danach Entlassung. **Fäden am 14. Tag** beim Hausarzt. **Kein Fußball für 6 Wochen.**",
                  ], "bullet"))
     d.add(d.table_xml([d.cell(anordnung, TABLE_W, "FFFFFF")], [TABLE_W], "000000", 12))
@@ -209,12 +209,23 @@ def build():
     examens_training(d, 4, I.SCHREIBEN4, 7)
 
     # ================================================================ Abschnitt 5
-    d.h2("Abschnitt 5: Information, Schulung und Entlassung", before=280)
-    d.table(["", "Was passiert?", "Beispiel Herr Brandt"], [
-        ["Information", "Wissen wird verständlich weitergegeben.", "wann die Fäden gezogen werden; Merkblatt mit Warnzeichen"],
-        ["Schulung", "Fertigkeiten werden gezielt vermittelt, geübt und überprüft.", "Selbstinjektion des Enoxaparins; Treppensteigen mit Stützen"],
-        ["Beratung", "Gemeinsam und ergebnisoffen wird eine Lösung für ein Problem gesucht.", "Wie organisiert er Arbeit und Sport in den nächsten Wochen?"],
-    ], [1700, 3600, 3760], size=10, first_col_bold=True)
+    d.h2("Abschnitt 5: Information, Anleitung und Entlassung", before=280)
+    d.p("Pflegefachpersonen informieren, leiten an, schulen oder beraten – vier Formen mit unterschiedlichem Ziel "
+        "(wie im KB-II-Unterricht):", after=40, keep=True)
+    d.table(["Form", "Was passiert? (Kernziel)", "Beispiel Herr Brandt"], [
+        ["Information (erklären)", "Eine Person erhält Wissen oder Sachinformationen. (Wissen)",
+         "erklären, wann die Fäden gezogen werden; Merkblatt mit Warnzeichen"],
+        ["Anleitung/Instruktion (zeigen, üben)", "Eine konkrete Handlung oder Fertigkeit wird erklärt, gezeigt und eingeübt. (Können)",
+         "Selbstinjektion des Enoxaparins zeigen und üben; Treppensteigen mit Stützen"],
+        ["Schulung (geplant vermitteln)", "Wissen und/oder Fertigkeiten werden geplant und strukturiert mit einem Lernziel vermittelt, "
+         "oft in mehreren Einheiten. (systematisches Lernen)",
+         "bei Herrn Brandt nicht nötig – z. B. ein mehrteiliges Programm für Menschen mit neu entdecktem Diabetes"],
+        ["Beratung (fragen, zuhören, gemeinsam klären)", "Die Person wird bei einer eigenen Frage oder Entscheidung unterstützt; ihre Situation, "
+         "Bedürfnisse und Ressourcen stehen im Mittelpunkt. (individuelle Lösung)",
+         "Wie organisiert er Arbeit und Sport in den nächsten Wochen?"],
+    ], [2100, 3700, 3260], size=10, first_col_bold=True)
+    d.p("**Wichtig:** „Einen Rat geben“ ist nicht dasselbe wie beraten – bei einer Beratung wird die Lösung gemeinsam gesucht.",
+        size=10, before=40, after=60)
     d.p("**Verhaltensweisen nach dem Eingriff**, über die Herr Brandt vor der Entlassung Bescheid wissen muss:", after=20, keep=True)
     d.bullets([
         "**Wunde** sauber und trocken halten, nur mit wasserdichtem Schutz (z. B. Duschpflaster) duschen – sonst Infektionsgefahr.",
@@ -230,7 +241,7 @@ def build():
     d.p("**Entlassungsmanagement** beginnt schon bei der Aufnahme: Die Pflegefachperson schätzt ein, welche Unterstützung nach der Entlassung nötig ist, plant die "
         "Entlassung, informiert, schult und berät, stimmt sich mit Hausarzt und anderen Diensten ab und überprüft, ob alles geklappt hat "
         "(Expertenstandard „Entlassungsmanagement in der Pflege“).", after=60)
-    qr_uebung(d, 5, "Information, Schulung und Entlassung", ["6 Aufgaben – mit einem Entlassungsgespräch."])
+    qr_uebung(d, 5, "Information, Anleitung und Entlassung", ["6 Aufgaben – mit einem Entlassungsgespräch."])
     examens_training(d, 5, I.SCHREIBEN5, 8)
 
     # ================================================================ Abschluss

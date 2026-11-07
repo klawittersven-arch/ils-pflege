@@ -37,7 +37,7 @@ def build():
         ["2 Überwachen", "Übernahme aus dem AWR, DMS, Schmerz (NRS), Hochlagern/Kühlen, Urin nach 8 h, erste Mobilisation", "Bild antippen (Fuß), D/M/S-Sortierung, Fallentscheidung, Zahl aus Anordnung", "Pool Tag 3: Beobachtungskriterien, Rückmeldung an die Ärztin"],
         ["3 Komplikationen", "Thrombose (Virchow-Trias), Lungenembolie, Infektion, Hämatom, Dehiszenz, Refraktur, Kompartment", "Telefonat-Dialog, Symptom-Detektiv, Virchow-Sortierung, Lückentext", "Leitfaden-Beispiel: „Erklären Sie die Entstehung einer Thrombose bei …“"],
         ["4 Schmerz, Mobilisation", "Expertenstandard Schmerz, Analgesie vor Mobilisation, Unterarmgehstützen, Sturz- und Thromboseprophylaxe", "Reihenfolge (Treppe), Gespräch, Sortieren, Zahl", "Expertenstandard Schmerz (5 von 7 Tag-3-Prüfungen)"],
-        ["5 Information, Entlassung", "Information/Schulung/Beratung, Verhaltensweisen nach dem Eingriff, Gesprächsaufbau, Fäden, Entlassungsmanagement, PESR", "Sortieren, Entlassungsgespräch, Reihenfolge, PESR", "Pool Tag 1 II.1.d; Tag 2: Information, Schulung, Beratung"],
+        ["5 Information, Entlassung", "Information/Anleitung/Schulung/Beratung, Verhaltensweisen nach dem Eingriff, Gesprächsaufbau, Fäden, Entlassungsmanagement, PESR", "Sortieren, Entlassungsgespräch, Reihenfolge, PESR", "Pool Tag 1 II.1.d; Tag 2: Information, Schulung, Beratung"],
         ["Abschluss", "Transfer: Materialentfernung am Unterarm (Frau Schäfer)", "gemischt, 10 aus 25", "–"],
     ], [1900, 3000, 2260, 1900], size=9, first_col_bold=True)
 
@@ -71,7 +71,7 @@ def build():
         "Bei Thromboseverdacht **nicht massieren**; **zu wenig Trinken** als Faktor der Hyperkoagulabilität.",
         "**Duschen mit Duschpflaster** und Vergleich der DMS mit dem gesunden Fuß.",
         "**Analgesie 30–45 Minuten vor der Mobilisation** (aus dem Erwartungshorizont Juli 2024).",
-        "Inhalte der Expertenstandards **Schmerzmanagement** und **Entlassungsmanagement** sowie die Unterscheidung **Information – Schulung – Beratung** "
+        "Inhalte der Expertenstandards **Schmerzmanagement** und **Entlassungsmanagement** sowie die Unterscheidung **Information – Anleitung – Schulung – Beratung** (wie im KB-II-Unterricht, dort nach „Berufsdeutsch für die Pflege“, Cornelsen 2022) "
         "(in den Prüfungen regelmäßig gefragt, im gelesenen Pflegias-Auszug nicht enthalten).",
         "Gründe für die Materialentfernung „Beschwerden/Bewegungseinschränkung“ sind aus Pflegias abgeleitet (dort: kann bleiben, wenn es nicht stört und nicht schmerzt).",
     ], after_last=60)
