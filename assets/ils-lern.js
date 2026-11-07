@@ -7,7 +7,8 @@
      ziehen: 8,             // so viele Aufgaben pro Durchgang (aus dem Pool)
      fehlerMax: 4,          // erlaubte Fehler (Abschlussquiz: 2); beim nächsten Fehler → Lesepause + Neustart
      pauseSek: 30,          // Lesepause (Abschlussquiz: 180)
-     zuSchnellMax: 3,       // so oft zu schnell getippt → Lesepause + Neustart
+     zuSchnellMax: 3,       // so oft zu schnell getippt → kurze Lesepause, danach weiter mit derselben Aufgabe
+     tempoPauseSek: 30,     // Länge dieser Lesepause (auch im Abschlussquiz)
      abschluss: false,      // true = Abschlussquiz (erst nach allen Übungen)
      pool: [ …Aufgaben… ],
      schreiben: { auftrag, ort, minSek, punkte: [...] }   // optional: Examens-Training mit Checkliste
@@ -30,9 +31,9 @@ const ILSLern = (() => {
   const K = ILSKonto;
   const MAIL = 'Sven.Klawitter@Karoline-Breitinger-Schule.de';
   const STANDARD = {
-    ziehen: 8, fehlerMax: 4, pauseSek: 30, zuSchnellMax: 3,
-    leseBasisMs: 1500, leseProWortMs: 230, leseMaxMs: 14000,
-    folgeBasisMs: 600, folgeProWortMs: 120,
+    ziehen: 8, fehlerMax: 4, pauseSek: 30, zuSchnellMax: 3, tempoPauseSek: 30,
+    leseBasisMs: 1000, leseProWortMs: 150, leseMaxMs: 8000,      // ≈ 400 Wörter/Minute (zügiges Lesen)
+    folgeBasisMs: 400, folgeProWortMs: 80,
     weiterNachFehlerSek: 4
   };
 
@@ -82,7 +83,7 @@ const ILSLern = (() => {
       case 'reihe': return woerter(a.frage) + Math.min(20, woerter(a.schritte));
       case 'sortieren': return woerter(a.frage, a.elemente[0] ? a.elemente[0].t : '');
       case 'zahl': return woerter(a.frage);
-      case 'luecke': return woerter(a.frage, a.text.replace(/\{\{[^}]+\}\}/g, '___'));
+      case 'luecke': return woerter(a.frage, a.text.split('{{')[0]);   // nur bis zur ersten Lücke
       case 'bild': return woerter(a.frage, a.ziele[0] ? a.ziele[0].frage : '');
       case 'dialog': return woerter(a.frage, a.knoten[0].text, a.knoten[0].frage, a.knoten[0].optionen.map((o) => o.t));
       default: return woerter(a.frage);
@@ -377,6 +378,19 @@ const ILSLern = (() => {
       zeigen();
     }
 
+    // 3× zu schnell: kurze Lesepause, danach geht es mit derselben Aufgabe weiter (kein Neustart)
+    function tempoPause() {
+      Object.assign(S, { phase: 'pause', grund: 'tempo', zuSchnell: 0, pauseBis: Date.now() + cfg.tempoPauseSek * 1000 });
+      sichern();
+      zeigen();
+    }
+
+    function weiterNachTempoPause() {
+      Object.assign(S, { phase: 'karten', grund: '' });
+      sichern();
+      zeigen();
+    }
+
     function neustart(grund) {
       Object.assign(S, { phase: 'pause', grund, neustarts: S.neustarts + 1, pauseBis: Date.now() + cfg.pauseSek * 1000 });
       sichern();
@@ -393,7 +407,7 @@ const ILSLern = (() => {
       const regeln = [
         `Sie bekommen ${n} Aufgaben, eine nach der anderen. Nach jeder Antwort sehen Sie sofort, ob sie stimmt.`,
         `Sie dürfen höchstens ${cfg.fehlerMax} Fehler machen (❤️). Beim ${cfg.fehlerMax + 1}. Fehler gibt es eine Lesepause von ${cfg.pauseSek >= 120 ? Math.round(cfg.pauseSek / 60) + ' Minuten' : cfg.pauseSek + ' Sekunden'} – danach starten Sie mit neuen Aufgaben von vorn.`,
-        `Lesen Sie jede Aufgabe in Ruhe. Wer schneller tippt, als man lesen kann, bekommt eine Warnung – nach ${cfg.zuSchnellMax} Warnungen startet die Übung neu.`,
+        `Lesen Sie jede Aufgabe in Ruhe. Wer schneller tippt, als man lesen kann, bekommt eine Warnung – nach ${cfg.zuSchnellMax} Warnungen gibt es eine Lesepause von ${cfg.tempoPauseSek} Sekunden, danach geht es mit derselben Aufgabe weiter.`,
         'Ihr Zwischenstand bleibt gespeichert, auch wenn Sie die Seite schließen.'
       ];
       inhalt.append(titelKarte(cfg.abschluss ? '🏁 Abschlussquiz' : '📄 Zuerst lesen, dann üben',
@@ -407,11 +421,13 @@ const ILSLern = (() => {
       const themen = [...new Set(S.themen)].filter(Boolean);
       const karte = titelKarte(S.grund === 'tempo' ? '⏳ Zu schnell getippt' : '📖 Zu viele Fehler',
         el('p', {}, S.grund === 'tempo'
-          ? 'Sie haben mehrmals geantwortet, bevor man die Aufgabe lesen konnte. Durchklicken bringt nichts – lesen Sie in Ruhe.'
+          ? 'Sie haben mehrmals geantwortet, bevor man die Aufgabe lesen konnte. Durchklicken bringt nichts – lesen Sie in Ruhe. Danach geht es mit derselben Aufgabe weiter.'
           : 'Kein Problem – genau dafür ist die Übung da. Lesen Sie diese Stellen auf dem Arbeitsblatt noch einmal gründlich:'),
-        themen.length ? el('ul', {}, themen.map((t) => el('li', { html: t }))) : (cfg.abschnitt ? el('p', {}, el('strong', {}, cfg.abschnitt)) : null));
+        S.grund === 'tempo' ? null : themen.length ? el('ul', {}, themen.map((t) => el('li', { html: t }))) : (cfg.abschnitt ? el('p', {}, el('strong', {}, cfg.abschnitt)) : null));
       const anzeige = el('div', { class: 'countdown', 'aria-live': 'polite' });
-      const knopf = el('button', { type: 'button', class: 'btn block', id: 'lern-neustart', disabled: true, onclick: durchgangStarten }, 'Mit neuen Aufgaben neu starten');
+      const knopf = S.grund === 'tempo'
+        ? el('button', { type: 'button', class: 'btn block', id: 'lern-fortsetzen', disabled: true, onclick: weiterNachTempoPause }, `Weiter mit Aufgabe ${S.i + 1}`)
+        : el('button', { type: 'button', class: 'btn block', id: 'lern-neustart', disabled: true, onclick: durchgangStarten }, 'Mit neuen Aufgaben neu starten');
       karte.append(anzeige, knopf);
       inhalt.append(karte);
       const ticken = () => {
@@ -488,7 +504,7 @@ const ILSLern = (() => {
           S.zuSchnell += 1;
           S.zuSchnellGesamt += 1;
           sichern();
-          if (S.zuSchnell >= cfg.zuSchnellMax) { neustart('tempo'); return false; }
+          if (S.zuSchnell >= cfg.zuSchnellMax) { tempoPause(); return false; }
           hinweisZeigen(`⏳ Langsam! Lesen Sie zuerst alles in Ruhe. Diese Antwort zählt nicht. (Warnung ${S.zuSchnell} von ${cfg.zuSchnellMax})`, 'bad');
           return false;
         },

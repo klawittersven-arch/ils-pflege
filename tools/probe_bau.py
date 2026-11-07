@@ -76,7 +76,7 @@ ILSLern.uebung({
     { typ: 'rf', aussage: 'Ihre einzelnen Antworten werden an die Lehrkraft geschickt.', richtig: false, erklaerung: 'Nein – nur, ob Sie die Übung geschafft haben.' },
     { typ: 'rf', aussage: 'Ohne Internet geht Ihr Ergebnis verloren.', richtig: false, erklaerung: 'Nein – es wird später automatisch nachgereicht.' },
     { typ: 'rf', aussage: 'Sie müssen sich auf jedem Gerät einmal anmelden.', richtig: true, erklaerung: 'Ja – mit Klasse, Vorname und Geburtstag.' },
-    { typ: 'rf', aussage: 'Wer zu schnell tippt, muss die Übung neu starten.', richtig: true, erklaerung: 'Nach drei Warnungen.' }
+    { typ: 'rf', aussage: 'Wer zu schnell tippt, bekommt eine kurze Lesepause.', richtig: true, erklaerung: 'Nach drei Warnungen – danach geht es mit derselben Aufgabe weiter.' }
   ]
 });
 """, "../../", V)

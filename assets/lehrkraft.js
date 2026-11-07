@@ -142,7 +142,7 @@
     app.append(el('div', { id: 'lk-haupt' },
       leiste, teile.status, fehltBox, wappenBox, teile.zusammenfassung, teile.tabelle,
       el('p', { class: 'small' }, 'Tipp: Ein Klick auf ein Feld der Tabelle trägt eine Übung von Hand ein oder entfernt den Haken – z. B. wenn jemand die Übung analog vorgezeigt hat. ' +
-        '⚠2 = zwei Neustarts (zu viele Fehler oder zu schnell getippt – Hinweis auf Raten). ✍5/8 = Examens-Training: selbst abgehakte Punkte. Details: Maus auf das Feld halten.'),
+        '⚠2 = zwei Neustarts wegen zu vieler Fehler. ⏳4 = viermal zu schnell getippt (Hinweis auf Raten). ✍5/8 = Examens-Training: selbst abgehakte Punkte. Details: Maus auf das Feld halten.'),
       verwaltung()));
   }
 
@@ -213,7 +213,7 @@
           inhalt = e.quelle === 'lehrkraft' ? '✓ Hand' : `✓ ${kurzDatum(e.um)}` + (x.abschluss && e.max ? ` · ${e.punkte}/${e.max}` : '');
           titel = `${x.titel}: erledigt am ${zeit(e.um)}${e.quelle === 'lehrkraft' ? ' (von Hand eingetragen)' : ''}` +
             (e.max ? ` – ${e.punkte} von ${e.max} Aufgaben ohne Fehler` : '') +
-            (e.neustarts ? ` – ${e.neustarts} Neustart(s) wegen Fehlern/zu schnell` : '') +
+            (e.neustarts ? ` – ${e.neustarts} Neustart(s) wegen zu vieler Fehler` : '') +
             (e.zuSchnell ? ` – ${e.zuSchnell} Warnung(en) „zu schnell“` : '') +
             (e.selbstMax ? ` – Examens-Training selbst bewertet: ${e.selbst}/${e.selbstMax}` : '') +
             ' – klicken, um den Haken zu entfernen';
@@ -221,6 +221,7 @@
         return el('td', { class: 'zelle' + (e ? ' ja' : '') + (e && e.neustarts >= 2 ? ' warn' : '') },
           el('button', { type: 'button', title: titel, onclick: () => haken(s, a, x, !e) }, inhalt,
             e && e.neustarts ? el('span', { class: 'neustarts' }, ` ⚠${e.neustarts}`) : null,
+            e && e.zuSchnell ? el('span', { class: 'neustarts' }, ` ⏳${e.zuSchnell}`) : null,
             e && e.selbstMax ? el('span', { class: 'selbst' }, ` ✍${e.selbst}/${e.selbstMax}`) : null));
       });
       const statusText = { fertig: '✓ abgeschlossen', arbeitet: `${w.erledigt} von ${a.schritte.length}`, offen: `0 von ${a.schritte.length}`, nie: 'nie angemeldet' }[w.status];
@@ -439,7 +440,7 @@
         const e = w.p[x.id];
         if (!e) return '';
         return datum(e.um) + (e.quelle === 'lehrkraft' ? ' (von Hand)' : '') + (x.abschluss && e.max ? ` (${e.punkte}/${e.max})` : '') +
-          (e.neustarts ? ` Neustarts: ${e.neustarts}` : '') + (e.selbstMax ? ` Selbstkontrolle: ${e.selbst}/${e.selbstMax}` : '');
+          (e.neustarts ? ` Neustarts: ${e.neustarts}` : '') + (e.zuSchnell ? ` Zu schnell: ${e.zuSchnell}` : '') + (e.selbstMax ? ` Selbstkontrolle: ${e.selbst}/${e.selbstMax}` : '');
       }), w.fertig ? 'ja' : 'nein', ...(a.challenge ? [((s.challenge || {})[a.id] || {}).punkte ?? ''] : [])].map(feld).join(';'));
     });
     const blob = new Blob(['﻿' + zeilen.join('\r\n') + '\r\n'], { type: 'text/csv;charset=utf-8' });

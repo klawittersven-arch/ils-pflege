@@ -215,16 +215,25 @@ const QUIZ = { 'Die Lehrkraft sieht': 'Richtig', 'einzelnen Antworten': 'Falsch'
       'Selbstkontrolle 2/4, Hinweis Eigenverantwortung + E-Mail mit Betreff');
     await foto(sus, '6_fertig_handy');
 
-    console.log('SuS: Abschlussquiz (Tempo-Neustart)');
+    console.log('SuS: Abschlussquiz (Tempo-Pause ohne Neustart)');
     await sus.goto(basis + 'probe/abschluss/');
     await sus.waitForSelector('#lern-los');
     await sus.click('#lern-los');
+    await sus.waitForSelector('.lern-aussage');
+    const ersteAussage = await sus.textContent('.lern-aussage');
     for (let i = 0; i < 3; i++) await sus.click('.lern-optionen.zwei .antwort >> nth=0');   // 3× zu schnell
-    await sus.waitForSelector('#lern-neustart');
-    pruefe(/Zu schnell/.test(await sus.textContent('.lern-start')), '3× zu schnell → Lesepause');
-    await sus.clock.fastForward(181000);
-    await sus.waitForSelector('#lern-neustart:not([disabled])');
-    await sus.click('#lern-neustart');
+    await sus.waitForSelector('#lern-fortsetzen');
+    pruefe(/Zu schnell/.test(await sus.textContent('.lern-start')) && /derselben Aufgabe/.test(await sus.textContent('.lern-start')) &&
+      await sus.isDisabled('#lern-fortsetzen'), '3× zu schnell → Lesepause, danach dieselbe Aufgabe');
+    await foto(sus, '7_zu_schnell_handy');
+    await sus.clock.fastForward(20000);
+    pruefe(await sus.isDisabled('#lern-fortsetzen'), 'Tempo-Pause: nach 20 s noch gesperrt');
+    await sus.clock.fastForward(11000);
+    await sus.waitForSelector('#lern-fortsetzen:not([disabled])');
+    await sus.click('#lern-fortsetzen');
+    await sus.waitForSelector('.lern-aussage');
+    pruefe((await sus.textContent('.lern-aussage')) === ersteAussage && /Aufgabe 1 von 4/.test(await sus.textContent('.lern-kopf')),
+      'nach 30 s: weiter mit derselben Aufgabe (kein Neustart, auch im Abschlussquiz)');
     for (let i = 0; i < 4; i++) {
       await sus.waitForSelector('.lern-aussage');
       const aussage = await sus.textContent('.lern-aussage');
@@ -270,7 +279,8 @@ const QUIZ = { 'Die Lehrkraft sieht': 'Richtig', 'einzelnen Antworten': 'Falsch'
     pruefe(/4\/4/.test(await zeileLena.textContent()), 'Quiz-Punkte stehen in der Tabelle (4/4)');
     const zelleU2 = await zeileLena.locator('td.zelle').nth(1).textContent();
     pruefe(/⚠1/.test(zelleU2) && /✍2\/4/.test(zelleU2), 'Tabelle Ü2: ⚠1 Neustart und ✍2/4 Selbstkontrolle', zelleU2);
-    pruefe(/⚠1/.test(await zeileLena.locator('td.zelle').nth(2).textContent()), 'Tabelle Quiz: ⚠1 (Neustart wegen zu schnell)');
+    const zelleQuiz = await zeileLena.locator('td.zelle').nth(2).textContent();
+    pruefe(/⏳3/.test(zelleQuiz) && !/⚠/.test(zelleQuiz), 'Tabelle Quiz: ⏳3 (dreimal zu schnell), kein Neustart', zelleQuiz);
     const zeileMo = lk.locator('table.lk tbody tr', { hasText: 'Mohamed A.' });
     pruefe(/1 von 3/.test(await zeileMo.textContent()), 'Mohamed A.: 1 von 3 (offline nachgereicht)');
     pruefe(/nie angemeldet/.test(await lk.locator('table.lk tbody tr', { hasText: 'Jonas T.' }).textContent()), 'Jonas T.: nie angemeldet');

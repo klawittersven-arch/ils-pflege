@@ -66,7 +66,7 @@ def build():
             "Zum Schluss machen Sie das **Abschlussquiz**. Es wird erst freigeschaltet, wenn alle Übungen erledigt sind.",
         ], "decimal")
         + d.p_xml("**Tipp:** Bearbeiten Sie zuerst den ILS-Auftrag „Wunddrainagen“ – Herr Brandt hat auch eine Redon-Drainage. "
-                  "**Erst lesen, dann tippen:** Bei mehr als 4 Fehlern oder zu schnellem Tippen gibt es eine Lesepause und neue Aufgaben.", size=10, before=60)
+                  "**Erst lesen, dann tippen:** Bei mehr als 4 Fehlern gibt es eine Lesepause und neue Aufgaben, bei zu schnellem Tippen eine kurze Lesepause.", size=10, before=60)
     )
     d.qr_task(qr(""), "Start: Anmelden und Übersicht", ["Hier sehen Sie auch jederzeit, welche Übungen Sie schon erledigt haben."], KURZ)
     d.table(

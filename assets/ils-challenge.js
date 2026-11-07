@@ -15,7 +15,7 @@ const ILSChallenge = (() => {
   const K = ILSKonto;
   const L = ILSLern;
   const PUNKTE = 150;
-  const LESEN = { basis: 1500, proWort: 230, max: 14000, folgeBasis: 600, folgeProWort: 120 };
+  const LESEN = { basis: 1000, proWort: 150, max: 8000, folgeBasis: 400, folgeProWort: 80 };   // wie in den Übungen
   const ohneTags = (s) => String(s == null ? '' : s).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
   const woerter = (...t) => t.flat().map(ohneTags).join(' ').split(/\s+/).filter(Boolean).length;
   const span = (h, c) => el('span', { class: c || null, html: String(h) });
@@ -31,7 +31,7 @@ const ILSChallenge = (() => {
       case 'rf': return woerter(a.frage, a.aussage);
       case 'reihe': return woerter(a.frage) + Math.min(20, woerter(a.schritte));
       case 'sortieren': return woerter(a.frage, a.elemente[0].t);
-      case 'luecke': return woerter(a.frage, a.text.replace(/\{\{[^}]+\}\}/g, '___'));
+      case 'luecke': return woerter(a.frage, a.text.split('{{')[0]);   // nur bis zur ersten Lücke
       case 'bild': return woerter(a.frage, a.ziele[0].frage);
       case 'dialog': return woerter(a.frage, a.knoten[0].text, a.knoten[0].frage, a.knoten[0].optionen.map((o) => o.t));
       default: return woerter(a.frage);

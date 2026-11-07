@@ -77,7 +77,7 @@ def build():
             "Am Ende jeder Übung schreiben Sie im Kasten **Examens-Training** eine Antwort selbst – so wie im Examen.",
             "Zum Schluss machen Sie das **Abschlussquiz**. Es wird erst freigeschaltet, wenn alle Übungen erledigt sind.",
         ], "decimal")
-        + d.p_xml("**Wichtig:** Erst lesen, dann tippen! Die Übungen merken, wenn Sie schneller antworten, als man lesen kann. "
+        + d.p_xml("**Wichtig:** Erst lesen, dann tippen! Die Übungen merken, wenn Sie schneller antworten, als man lesen kann – dann gibt es eine kurze Lesepause. "
                   "Bei mehr als 4 Fehlern gibt es eine Lesepause von 30 Sekunden und neue Aufgaben. "
                   "Ihr Zwischenstand bleibt gespeichert, auch wenn Sie das Handy weglegen.", size=10, before=60)
     )

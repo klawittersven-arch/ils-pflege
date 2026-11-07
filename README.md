@@ -127,14 +127,16 @@ Neue ILS-Übungen laufen im Lernmodus (`ILSLern.uebung({...})`, Beispiel: `probe
 - **Fehlerbudget** (Standard 4 ❤️): Beim 5. Fehler Lesepause (Standard 30 s, Abschlussquiz 180 s) mit Hinweis auf
   die Stellen im Arbeitsblatt, danach Neustart mit neu gezogenen Aufgaben. Jeder Fehlklick zählt – auch beim Sortieren,
   bei der Reihenfolge, im Lückentext und beim Bild.
-- **Tempo-Kontrolle:** Jede Aufgabe hat eine Mindest-Lesezeit (nach Wortzahl). Zu frühes Tippen zählt nicht und gibt
-  eine Warnung; nach 3 Warnungen Lesepause und Neustart.
+- **Tempo-Kontrolle:** Jede Aufgabe hat eine Mindest-Lesezeit: 1 s + 0,15 s je Wort (≈ 400 Wörter/Minute), höchstens 8 s;
+  gezählt werden Frage und Antwortmöglichkeiten, beim Lückentext nur der Text bis zur ersten Lücke. Folgeschritte
+  (nächster Begriff, Begründung): 0,4 s + 0,08 s je Wort. Zu frühes Tippen zählt nicht und gibt eine Warnung; nach
+  3 Warnungen 30 s Lesepause, danach geht es mit **derselben Aufgabe** weiter (kein Neustart). Gleiche Lesezeiten in der Challenge.
 - **Nach einem Fehler** bleibt die Erklärung 4 Sekunden stehen, bevor „Weiter“ geht.
 - **Zwischenstand** (aktuelle Aufgabe, Fehler, laufende Lesepause, Schreibzeit) bleibt auf dem Gerät gespeichert.
 - **Examens-Training** (optional `schreiben`): Schreibauftrag auf Papier mit Mindestzeit, danach Checkliste
   (Erwartungshorizont) zum Selbstabhaken, Hinweis auf Eigenverantwortung und E-Mail an die Lehrkraft mit Betreff.
 - **Abschlussquiz** (`abschluss: true`): erst nach allen Übungen – das prüft auch der Server.
-- **Lehrkraft-Tabelle:** ⚠n = Neustarts, ✍x/y = selbst abgehakte Punkte im Examens-Training.
+- **Lehrkraft-Tabelle:** ⚠n = Neustarts wegen Fehlern, ⏳n = Warnungen „zu schnell“, ✍x/y = selbst abgehakte Punkte im Examens-Training.
 
 Aufgabentypen: `wahl`, `rf` (mit Begründung), `mehrfach`, `reihe`, `sortieren` (auch PESR, Ampel), `zahl`,
 `luecke`, `bild` (Stellen im SVG antippen), `dialog` (Fallentscheidung oder Gespräch) – Felder siehe Kopf von

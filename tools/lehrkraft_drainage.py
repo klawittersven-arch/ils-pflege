@@ -26,11 +26,11 @@ def build():
     d.bullets([
         "Start für die SuS: **klawittersven-arch.github.io/ils-pflege/drainage/** (einmal anmelden: Klasse, Vorname, Geburtstag)",
         "Übersicht für Sie: **klawittersven-arch.github.io/ils-pflege/lehrkraft/** → ILS-Auftrag „Wunddrainagen“ wählen",
-        "In der Tabelle: **✓ Datum** = erledigt, **⚠2** = zwei Neustarts (zu viele Fehler oder zu schnell getippt – Hinweis auf Raten), "
+        "In der Tabelle: **✓ Datum** = erledigt, **⚠2** = zwei Neustarts wegen zu vieler Fehler, **⏳4** = viermal zu schnell getippt (Hinweis auf Raten), "
         "**✍5/7** = im Examens-Training selbst abgehakte Punkte. „Wer fehlt noch?“ liefert den Text für die PPT.",
         "**ILS-Challenge** (freiwillig, nach dem Abschlussquiz): 20 Aufgaben, 150 Punkte je Aufgabe + Zeitbonus (wie die Klausur-Challenge der Lernkarten), Bestenliste je Klasse mit Vorname + Initial. Auf der Lehrkraft-Seite: Spalte „🏁 Challenge“ und **🏆 Siegerehrung** am Beamer (Taste F = Vollbild, R = nochmal, Esc = schließen). **Siegerwappen:** Wer ein Ergebnis hat, darf ein kleines Bild malen, das sofort neben dem Namen in der Bestenliste erscheint. Knopf **🛡️ Siegerwappen** = Galerie: ansehen, löschen oder Person vom Malen ausschließen. In der Siegerehrung erscheinen nur Wappen, die Sie als angesehen markiert haben.",
         "Schutz gegen Raten: Aufgaben einzeln, 4 Fehler erlaubt, dann 30 s Lesepause und neue Aufgaben; Mindest-Lesezeit je Aufgabe "
-        "(3× zu schnell = Neustart); Abschlussquiz (10 aus 25, max. 2 Fehler) erst nach allen Übungen – das prüft auch der Server.",
+        "(3× zu schnell = 30 s Pause, dann weiter mit derselben Aufgabe); Abschlussquiz (10 aus 25, max. 2 Fehler) erst nach allen Übungen – das prüft auch der Server.",
     ], after_last=60)
 
     d.h2("Übungen und Examensbezug", before=120)
