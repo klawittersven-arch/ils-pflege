@@ -135,6 +135,7 @@ def build():
     examens_training(d, 1, I.SCHREIBEN1, 6)
 
     # ================================================================ Abschnitt 2
+    d.page_break()   # von der Lehrkraft in Word so gesetzt
     d.h2("Abschnitt 2: Nach der OP überwachen", before=280)
     d.p("**Übernahme aus dem Aufwachraum:** Nur Pflegefachpersonen übernehmen. Sie erfahren: OP, Verlauf und Komplikationen, Anästhesieverfahren, "
         "Infusionen, Ableitungen und Fördermengen (hier: Redon), Bewusstseinszustand sowie Anweisungen aus dem Aufwachraum. Danach wird engmaschig "
@@ -147,6 +148,7 @@ def build():
         ["Ausscheidung", "erste Urinausscheidung **spätestens 8 Stunden** nach der OP (sonst an Harnverhalt denken)"],
     ], [3200, 5860], size=10, first_col_bold=True)
     d.image(PNG / "fuss-dms.png", 7.5, "Abb. 2: DMS-Kontrolle am rechten Fuß")
+    d.page_break()   # von der Lehrkraft in Word so gesetzt
     d.table(["", "So prüfen Sie", "Auffällig – Ärztin sofort informieren"], [
         ["D – Durchblutung", "Hautfarbe und Temperatur der Zehen; Fußpuls am Fußrücken; Nagelbettprobe: Farbe kehrt in unter 2 Sekunden zurück", "blass, kalt, kein Puls, Nagelbettprobe verzögert"],
         ["M – Motorik", "Zehen bewegen, Fuß heben und senken lassen", "kann Zehen oder Fuß nicht bewegen"],
@@ -169,7 +171,7 @@ def build():
         ["Wunddehiszenz", "Wundränder klaffen auseinander, Schwellung, Rötung, Wundexsudat", "Ärztin informieren"],
         ["Nervenreizung", "Taubheit oder Kribbeln, z. B. an einer Stelle am Fußrücken", "der Äußerung nachgehen, Ärztin informieren, dokumentieren"],
         ["Refraktur (erneuter Bruch)", "Die leeren Schraubenlöcher sind anfangs Schwachstellen im Knochen.", "Belastung und Sportpause nach Anordnung (bei Herrn Brandt: 6 Wochen kein Fußball)"],
-        ["Kompartment­syndrom", "Schmerzen nehmen trotz Schmerzmittel und Hochlagern stark zu, Muskulatur prall gespannt, Kribbeln, Bewegungsstörung",
+        ["Kompartment-\nsyndrom", "Schmerzen nehmen trotz Schmerzmittel und Hochlagern stark zu, Muskulatur prall gespannt, Kribbeln, Bewegungsstörung",
          "sofort Ärztin informieren – Druck im Gewebe gefährdet Nerven und Muskeln"],
     ], [2100, 4060, 2900], size=10, first_col_bold=True)
     d.h3("Thrombose")

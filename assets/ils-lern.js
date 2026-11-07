@@ -609,8 +609,8 @@ const ILSLern = (() => {
         sch.muster ? el('div', { class: 'musterantwort' },
           el('div', { class: 'muster-titel' }, '📝 Musterantwort – so hätte eine sehr gute Antwort im Examen ausgesehen'),
           el('div', { class: 'muster-text', html: musterHtml(sch.muster) })) : null,
-        el('p', {}, sch.muster ? 'Vergleichen Sie Ihre Antwort damit und haken Sie ehrlich ab, was Sie (sinngemäß) aufgeschrieben haben. Was fehlt, ergänzen Sie auf dem Arbeitsblatt in einer anderen Farbe.'
-          : 'Haken Sie ehrlich ab, was Sie (sinngemäß) aufgeschrieben haben. Was fehlt, ergänzen Sie auf dem Arbeitsblatt in einer anderen Farbe.'),
+        el('p', {}, sch.muster ? 'Vergleichen Sie Ihre Antwort damit und haken Sie ehrlich ab, was Sie (sinngemäß) aufgeschrieben haben. Was fehlt, ergänzen Sie in einer anderen Farbe.'
+          : 'Haken Sie ehrlich ab, was Sie (sinngemäß) aufgeschrieben haben. Was fehlt, ergänzen Sie in einer anderen Farbe.'),
         sch.muster ? el('div', { class: 'q-text checkliste-titel' }, 'Erwartungshorizont zum Abhaken') : null,
         el('div', { class: 'checkliste' }, sch.punkte.map((p, i) => el('label', { class: 'opt', for: `lern-p${i}` }, haken[i], span(p)))),
         sch.hinweis ? el('p', { class: 'small', html: sch.hinweis }) : null);

@@ -93,7 +93,7 @@ UEBUNG1 = [
 ]
 SCHREIBEN1 = {
     "auftrag": "<strong>Nennen Sie</strong> 3 Ziele (Nutzen) einer Wunddrainage und 2 mögliche Nachteile.",
-    "ort": "in den Kasten „Examens-Training 1“ auf dem Arbeitsblatt",
+    "ort": "auf ein separates Blatt",
     "minSek": 30,
     "punkte": [
         "Ziel: Hämatom verhindern – Blut und Sekret aus dem Wundgebiet der Hüft-TEP werden abgeleitet",
@@ -173,7 +173,7 @@ UEBUNG2 = [
 ]
 SCHREIBEN2 = {
     "auftrag": "<strong>Beschreiben Sie</strong> 4 Beobachtungskriterien bei Frau Kramers Redon-Drainage und <strong>begründen</strong> Sie jeweils kurz, warum Sie darauf achten.",
-    "ort": "in den Kasten „Examens-Training 2“ auf dem Arbeitsblatt",
+    "ort": "auf ein separates Blatt",
     "minSek": 30,
     "punkte": [
         "Fördermenge laut Anordnung ablesen (6 Stunden stündlich, dann 4-stündlich) und dokumentieren – Nachblutung früh erkennen, Frau Kramer bekommt Enoxaparin",
@@ -285,7 +285,7 @@ UEBUNG3 = [
 ]
 SCHREIBEN3 = {
     "auftrag": "<strong>Beschreiben Sie</strong> 4 Anzeichen, an denen Sie bei Frau Kramer eine Nachblutung mit beginnendem Schock erkennen, und 4 Sofortmaßnahmen.",
-    "ort": "in den Kasten „Examens-Training 3“ auf dem Arbeitsblatt",
+    "ort": "auf ein separates Blatt",
     "minSek": 30,
     "punkte": [
         "Anzeichen: plötzlich viel hellrotes Blut in der Redonflasche (z. B. mehr als 100 ml in einer Stunde)",
@@ -397,7 +397,7 @@ UEBUNG4 = [
 ]
 SCHREIBEN4 = {
     "auftrag": "<strong>Beschreiben Sie</strong> in 6 Schritten den Wechsel einer Redonflasche.",
-    "ort": "in den Kasten „Examens-Training 4“ auf dem Arbeitsblatt",
+    "ort": "auf ein separates Blatt",
     "minSek": 30,
     "punkte": [
         "Frau Kramer informieren – beim Öffnen setzt Sog ein, kurzer Sekundenschmerz möglich",
@@ -471,7 +471,7 @@ UEBUNG5 = [
 ]
 SCHREIBEN5 = {
     "auftrag": "<strong>Formulieren Sie</strong> für Frau Kramer das Pflegeproblem „Angst vor der Mobilisation“ nach dem PESR-Schema und <strong>ein</strong> überprüfbares Pflegeziel.",
-    "ort": "in den Kasten „Examens-Training 5“ auf dem Arbeitsblatt",
+    "ort": "auf ein separates Blatt",
     "minSek": 30,
     "punkte": [
         "P: Angst vor der Mobilisation (fachlich benannt)",

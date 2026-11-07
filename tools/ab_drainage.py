@@ -47,10 +47,10 @@ def examens_training(d, nr, schreiben, zeilen):
     kopf = (f'<w:p>{d.ppr(0, 40, keep=True)}{d.image_run(VORLAGE / "icon_stift.png", 0.55)}'
             f'{d.runs(f"  Examens-Training {nr}", bold=True)}</w:p>')
     kopf += d.p_xml(auftrag, after=40, keep=True)
-    kopf += d.p_xml("Schreiben Sie in ganzen Sätzen oder Stichpunkten mit Fachbegriffen – wie im Examen. Danach vergleichen Sie am Handy "
-                    "mit dem Erwartungshorizont.", size=9, color="404040", after=0, keep=True)
+    kopf += d.p_xml("Schreiben Sie Ihre Antwort auf ein separates Blatt, in Stichpunkten oder kurzen Sätzen und mit Fachbegriffen, so wie im "
+                    "Examen. Vergleichen Sie sie danach am Handy mit dem Erwartungshorizont.", size=9, color="404040", after=0, keep=True)
     d.add(d.table_xml([d.cell(kopf, TABLE_W, "FFF4E8")], [TABLE_W], "B4572A", 8, cant_split=True))
-    d.add(linien(d, zeilen))
+    # keine Schreiblinien: Die SuS schreiben auf ein separates Blatt (so von der Lehrkraft in Word festgelegt)
     d.space(8)
 
 
@@ -243,6 +243,7 @@ def build():
     examens_training(d, 3, I.SCHREIBEN3, 7)
 
     # ================================================================ Abschnitt 4
+    d.page_break()   # von der Lehrkraft in Word so gesetzt
     d.h2("Abschnitt 4: Sicherer Umgang, Hygiene und Recht", before=280)
     d.p("**Information nimmt Angst:** Wer schon vor der OP weiß, dass eine Drainage gelegt wird, und den Umgang geübt hat, hat weniger Angst vor der Mobilisation. "
         "Erklären Sie der Patientin, wozu die Drainage dient, wie sie sich damit bewegt und dass sie sich bei Unsicherheit oder Schmerzen sofort meldet – "
@@ -289,7 +290,7 @@ def build():
 
     # ================================================================ Abschnitt 5
     d.h2("Abschnitt 5: Examens-Training Pflegeprozess", before=280)
-    d.p("Im Examen wird in **jeder** Prüfung der Pflegeprozess abgefragt: Pflegeprobleme im **PESR-Schema** (meist je 1 Punkt für P, E, S und R), "
+    d.p("Im Examen wird i.d.R. in **jeder** Prüfung der Pflegeprozess abgefragt: Pflegeprobleme im **PESR-Schema** (meist je 1 Punkt für P, E, S und R), "
         "**überprüfbare Pflegeziele** und **konkrete Pflegemaßnahmen** – immer mit Bezug zum Fall.", after=60)
     d.table(["", "Bedeutung", "Beispiel Frau Kramer"], [
         ["P", "Problem (Pflegediagnose)", "Gefahr einer Nachblutung"],
@@ -306,6 +307,7 @@ def build():
     examens_training(d, 5, I.SCHREIBEN5, 7)
 
     # ================================================================ Abschluss
+    d.page_break()   # von der Lehrkraft in Word so gesetzt
     d.h2("Abschluss", before=120)
     d.qr_task(qr("abschluss/"), "Abschlussquiz", ["Neuer Fall: Herr Yilmaz mit Robinson-Drainage. 10 Fragen, höchstens 2 Fehler.",
                                                  "Das Quiz wird erst freigeschaltet, wenn alle 5 Übungen erledigt sind.",
