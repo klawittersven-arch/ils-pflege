@@ -181,9 +181,9 @@ const QUIZ = { 'Die Lehrkraft sieht': 'Richtig', 'einzelnen Antworten': 'Falsch'
     await weiterKlicken(sus);
     await sus.reload();
     await sus.waitForSelector('.lern-karte');
-    pruefe((await typ(sus)) === 'sortieren' && (await sus.textContent('.herzen')).split('❤️').length - 1 === 2, 'nach Neuladen: nächste Aufgabe, Fehler bleiben gezählt (2 ❤️ übrig)');
+    pruefe((await typ(sus)) === 'sortieren' && (await sus.textContent('.herzen')).split('❤️').length - 1 === 3, 'nach Neuladen: nächste Aufgabe, Fehler bleiben gezählt (3 ❤️ übrig)');
     await lesen(sus);
-    for (let i = 0; i < 3; i++) {   // drei falsche Zuordnungen → 4. Fehler insgesamt → Lesepause
+    for (let i = 0; i < 4; i++) {   // vier falsche Zuordnungen → 5. Fehler insgesamt → Lesepause
       const t = (await sus.textContent('.sort-text')).trim();
       await sus.click(`.sort-knopf:has-text("${SORT[t] === 'aktiv' ? 'passiv' : 'aktiv'}")`);
     }

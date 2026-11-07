@@ -124,7 +124,7 @@ Neue ILS-Übungen laufen im Lernmodus (`ILSLern.uebung({...})`, Beispiel: `probe
 
 - **Eine Aufgabe nach der anderen**, sofortige Rückmeldung mit Erklärung. Pro Durchgang werden Aufgaben aus einem
   größeren Pool gezogen (Varianten über `gruppe`, feste über `fest`).
-- **Fehlerbudget** (Standard 3 ❤️): Beim 4. Fehler Lesepause (Standard 30 s, Abschlussquiz 180 s) mit Hinweis auf
+- **Fehlerbudget** (Standard 4 ❤️): Beim 5. Fehler Lesepause (Standard 30 s, Abschlussquiz 180 s) mit Hinweis auf
   die Stellen im Arbeitsblatt, danach Neustart mit neu gezogenen Aufgaben. Jeder Fehlklick zählt – auch beim Sortieren,
   bei der Reihenfolge, im Lückentext und beim Bild.
 - **Tempo-Kontrolle:** Jede Aufgabe hat eine Mindest-Lesezeit (nach Wortzahl). Zu frühes Tippen zählt nicht und gibt

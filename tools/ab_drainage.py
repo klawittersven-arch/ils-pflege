@@ -78,7 +78,7 @@ def build():
             "Zum Schluss machen Sie das **Abschlussquiz**. Es wird erst freigeschaltet, wenn alle Übungen erledigt sind.",
         ], "decimal")
         + d.p_xml("**Wichtig:** Erst lesen, dann tippen! Die Übungen merken, wenn Sie schneller antworten, als man lesen kann. "
-                  "Bei mehr als 3 Fehlern gibt es eine Lesepause von 30 Sekunden und neue Aufgaben. "
+                  "Bei mehr als 4 Fehlern gibt es eine Lesepause von 30 Sekunden und neue Aufgaben. "
                   "Ihr Zwischenstand bleibt gespeichert, auch wenn Sie das Handy weglegen.", size=10, before=60)
     )
     d.qr_task(qr(""), "Start: Anmelden und Übersicht", ["Hier sehen Sie auch jederzeit, welche Übungen Sie schon erledigt haben."], KURZ)
