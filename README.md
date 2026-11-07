@@ -132,6 +132,11 @@ Neue ILS-Übungen laufen im Lernmodus (`ILSLern.uebung({...})`, Beispiel: `probe
   (nächster Begriff, Begründung): 0,4 s + 0,08 s je Wort. Zu frühes Tippen zählt nicht und gibt eine Warnung; nach
   3 Warnungen 15 s Lesepause, danach geht es mit **derselben Aufgabe** weiter (kein Neustart). Gleiche Lesezeiten in der Challenge.
 - **Nach einem Fehler** bleibt die Erklärung 4 Sekunden stehen, bevor „Weiter“ geht.
+- **Sortieren ohne Muster:** Die Begriffe werden zufällig gemischt, durchschaubare Reihenfolgen werden aber verworfen
+  (bei zwei Kategorien kein ständiges Links-rechts-Wechseln und nicht „erst alle links, dann alle rechts“; nie mehr als
+  3 Begriffe derselben Kategorie hintereinander). Gilt auch in der Challenge; der Inhaltstest prüft es je Aufgabe.
+- **Antwortlängen:** Die richtige Antwort ist höchstens 20 % länger als die längste falsche und je Auftrag in höchstens
+  40 % der Fälle die längste (bzw. kürzeste) – Prüfung: `python3 tools/laengen_check.py` und Inhaltstest.
 - **Zwischenstand** (aktuelle Aufgabe, Fehler, laufende Lesepause, Schreibzeit) bleibt auf dem Gerät gespeichert.
 - **Examens-Training** (optional `schreiben`): Schreibauftrag auf Papier mit Mindestzeit (`minSek`, in beiden Aufträgen 30 s), danach Checkliste
   (Erwartungshorizont) zum Selbstabhaken, Hinweis auf Eigenverantwortung und E-Mail an die Lehrkraft mit Betreff.

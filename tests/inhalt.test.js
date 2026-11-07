@@ -88,6 +88,23 @@ function laengen(name, pool) {
         const pool = await s.evaluate(() => POOL);
         const statisch = pruefePool(schritt.titel, pool);
         pruefe(!statisch.length, `${schritt.titel}: Pool (${pool.length} Aufgaben) formal in Ordnung`, statisch);
+        // Sortieren: 400-mal mischen – kein Links-rechts-Wechselmuster, keine langen Ketten, trotzdem zufällig
+        const muster = await s.evaluate(() => POOL.map((a, nr) => {
+          if (a.typ !== 'sortieren') return null;
+          const folgen = new Set();
+          let fehler = '';
+          for (let i = 0; i < 400; i++) {
+            const k = ILSLern.sortierFolge(a.elemente, a.kategorien.length).map((e) => e.k);
+            folgen.add(k.join(''));
+            let wechsel = 0, kette = 1, maxKette = 1;
+            for (let j = 1; j < k.length; j++) { if (k[j] !== k[j - 1]) { wechsel++; kette = 1; } else maxKette = Math.max(maxKette, ++kette); }
+            if (a.kategorien.length === 2 && k.length >= 4 && wechsel === k.length - 1) fehler = `#${nr + 1}: reines Abwechseln (${k.join('')})`;
+            if (maxKette > 3) fehler = `#${nr + 1}: ${maxKette}× dieselbe Kategorie hintereinander (${k.join('')})`;
+          }
+          if (folgen.size < 3) fehler = `#${nr + 1}: zu wenig verschiedene Reihenfolgen (${folgen.size})`;
+          return fehler || 'ok';
+        }).filter(Boolean));
+        if (muster.length) pruefe(muster.every((m) => m === 'ok'), `${schritt.titel}: Sortieren ohne durchschaubares Muster (${muster.length} Aufgabe/n)`, muster.filter((m) => m !== 'ok'));
         const lg = laengen(schritt.titel, pool);
         alleFaelle.push(...lg.faelle);
         pruefe(!lg.fehler.length, `${schritt.titel}: richtige Antwort nicht an der Länge erkennbar`, lg.fehler);

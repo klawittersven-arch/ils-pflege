@@ -195,8 +195,32 @@ const ILSLern = (() => {
     api.karte.append(liste, el('div', { class: 'order-label' }, 'Tippen Sie auf den nächsten Schritt:'), pool);
   };
 
+  // Reihenfolge beim Sortieren: zufällig, aber ohne durchschaubares Muster. Verworfen werden
+  // · bei zwei Kategorien: (fast) ständiges Abwechseln links–rechts und „erst alle links, dann alle rechts“,
+  // · bei allen: mehr als 3 Begriffe derselben Kategorie hintereinander.
+  function sortierFolge(elemente, anzahlKategorien) {
+    const n = elemente.length;
+    const passt = (f) => {
+      let wechsel = 0;
+      let kette = 1;
+      let maxKette = 1;
+      for (let i = 1; i < n; i++) {
+        if (f[i].k !== f[i - 1].k) { wechsel++; kette = 1; } else { kette++; maxKette = Math.max(maxKette, kette); }
+      }
+      if (maxKette > 3) return false;
+      if (anzahlKategorien === 2 && n >= 4) {
+        if (wechsel > Math.ceil((n - 1) / 2)) return false;
+        if (n >= 5 && wechsel < 2) return false;
+      }
+      return true;
+    };
+    let f = mischen(elemente);
+    for (let versuch = 0; versuch < 500 && !passt(f); versuch++) f = mischen(elemente);
+    return f;
+  }
+
   TYPEN.sortieren = (a, api) => {
-    const elemente = mischen(a.elemente.slice());
+    const elemente = sortierFolge(a.elemente, a.kategorien.length);
     const spalten = a.kategorien.map((k) => el('div', { class: 'sort-spalte' }, el('div', { class: 'sort-titel', html: k }), el('ul', {})));
     const frage = el('div', { class: 'sort-element', 'aria-live': 'polite' });
     const zaehler = el('div', { class: 'small' });
@@ -643,5 +667,5 @@ const ILSLern = (() => {
     return { schritt };
   }
 
-  return { uebung, ziehen, signatur, TYPEN };
+  return { uebung, ziehen, signatur, TYPEN, sortierFolge };
 })();
