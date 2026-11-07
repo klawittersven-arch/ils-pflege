@@ -388,7 +388,7 @@ const ILSKonto = (() => {
         el('div', { class: 'balken' }, el('span', { style: `width:${Math.round((erledigt / a.schritte.length) * 100)}%` }))));
       if (erledigt === a.schritte.length) {
         info.append(el('div', { class: 'card erledigt' }, '🎉 Sie haben diesen ILS-Auftrag abgeschlossen.'));
-        if (a.challenge) info.append(el('a', { class: 'btn block challenge-knopf', href: link(a.challenge) }, '🏁 ILS-Challenge: Knacken Sie den Highscore!'));
+        if (a.challenge) info.append(el('a', { class: 'btn block challenge-knopf', href: link(a.challenge) }, '🏁 ILS-Challenge: Knacken Sie den Highscore! (freiwillig)'));
       }
       info.append(el('div', { class: 'links schritte-liste' }, a.schritte.map((s) => {
         const e = meins[s.id];
