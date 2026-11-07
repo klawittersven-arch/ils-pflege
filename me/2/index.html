@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Übung 2: Nach der OP überwachen</title>
-<link rel="stylesheet" href="../../assets/ils.css?v=v202611071650">
+<link rel="stylesheet" href="../../assets/ils.css?v=v202611071722">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Übung 2 von 5</div><h1>Übung 2: Nach der OP überwachen</h1></div></header>
@@ -13,11 +13,11 @@
 <div id="app"></div>
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
 </main>
-<script src="../../assets/ils.js?v=v202611071650"></script>
-<script src="../../assets/ils-server.js?v=v202611071650"></script>
-<script src="../../assets/auftraege.js?v=v202611071650"></script>
-<script src="../../assets/ils-konto.js?v=v202611071650"></script>
-<script src="../../assets/ils-lern.js?v=v202611071650"></script>
+<script src="../../assets/ils.js?v=v202611071722"></script>
+<script src="../../assets/ils-server.js?v=v202611071722"></script>
+<script src="../../assets/auftraege.js?v=v202611071722"></script>
+<script src="../../assets/ils-konto.js?v=v202611071722"></script>
+<script src="../../assets/ils-lern.js?v=v202611071722"></script>
 <script>
 const POOL = [
  {
@@ -173,17 +173,17 @@ const POOL = [
     "frage": "Was tun Sie vor dem Aufstehen?",
     "optionen": [
      {
-      "t": "Puls und Blutdruck messen, nach Schwindel und Schmerzen fragen, feste Schuhe, Stützen bereitstellen – und ihn begleiten.",
+      "t": "Blutdruck und Puls messen, nach Schwindel fragen, feste Schuhe und Stützen holen, ihn begleiten.",
       "richtig": true,
-      "rueck": "Kreislauf kontrollieren und begleiten – am OP-Tag ist das Sturzrisiko durch die Narkose erhöht."
+      "rueck": "Kreislauf kontrollieren, nach Schwindel und Schmerzen fragen, feste Schuhe und Stützen – und begleiten. Am OP-Tag ist das Sturzrisiko durch die Narkose erhöht."
      },
      {
-      "t": "Ihn allein gehen lassen – er ist ja jung und fit.",
+      "t": "Ihn allein gehen lassen und ihm sagen, er soll auf der Toilette klingeln – er ist ja jung und fit.",
       "richtig": false,
-      "rueck": "Auch junge Menschen können nach der Narkose kollabieren und stürzen."
+      "rueck": "Auch junge Menschen können nach der Narkose kollabieren und stürzen – am OP-Tag begleiten Sie ihn."
      },
      {
-      "t": "Ihm die Bettpfanne geben – aufstehen erst nächste Woche.",
+      "t": "Ihm die Bettpfanne geben – nach einer OP am Bein darf er erst in einigen Tagen aufstehen.",
       "richtig": false,
       "rueck": "Frühmobilisation am OP-Tag oder Folgetag beugt Komplikationen vor."
      }
@@ -199,14 +199,14 @@ const POOL = [
       "rueck": "Erst stabilisieren, nicht weiter mobilisieren."
      },
      {
-      "t": "Schnell aufstellen – im Stehen geht der Schwindel vorbei.",
+      "t": "Ihn schnell aufstellen und ein paar Schritte gehen lassen – im Stehen geht der Schwindel vorbei.",
       "richtig": false,
-      "rueck": "Gefahr eines Kollapses und Sturzes."
+      "rueck": "Gefahr eines Kollapses und Sturzes – erst hinlegen und den Kreislauf stabilisieren."
      },
      {
-      "t": "Ihn kurz allein lassen und einen Kaffee holen.",
+      "t": "Ihn an der Bettkante sitzen lassen und schnell ein Glas Wasser holen.",
       "richtig": false,
-      "rueck": "Nicht allein lassen!"
+      "rueck": "Nicht allein lassen – er könnte kollabieren und von der Bettkante stürzen."
      }
     ]
    },
@@ -215,19 +215,19 @@ const POOL = [
     "frage": "Wie geht es weiter?",
     "optionen": [
      {
-      "t": "Langsam erneut aufsetzen, über die operierte Seite aufstehen und mit Unterarmgehstützen und Begleitung zur Toilette gehen.",
+      "t": "Langsam aufsetzen, über die operierte Seite aufstehen und mit Stützen und Begleitung zur Toilette gehen.",
       "richtig": true,
       "rueck": "So steht es in Pflegias: über die operierte Seite aufstehen lassen und den Kreislauf kontrollieren."
      },
      {
-      "t": "Auf dem gesunden Bein zur Toilette hüpfen lassen.",
+      "t": "Über die gesunde Seite aufstehen und auf dem gesunden Bein zur Toilette hüpfen lassen.",
       "richtig": false,
-      "rueck": "Hüpfen ist unsicher – Sturzgefahr!"
+      "rueck": "Aufgestanden wird über die operierte Seite – und Hüpfen ist unsicher: Sturzgefahr!"
      },
      {
-      "t": "Ohne Stützen gehen lassen, damit er schneller wieder fit wird.",
+      "t": "Ohne Stützen, aber mit Begleitung gehen lassen – so trainiert er das Bein und wird schneller fit.",
       "richtig": false,
-      "rueck": "Die Stützen geben Sicherheit, solange die Ärztin nichts anderes anordnet."
+      "rueck": "Die Stützen geben Sicherheit, solange die Ärztin nichts anderes anordnet – angeordnet sind 2 Unterarmgehstützen."
      }
     ]
    }
@@ -262,25 +262,25 @@ const POOL = [
   "richtig": true,
   "begruendung": {
    "optionen": [
-    "Das fördert den Abfluss von Blut und Lymphe (Ödemabfluss) und vermindert Schwellung und Schmerz.",
-    "Damit die Wunde schneller trocknet.",
-    "Damit das Bein nicht einschläft."
+    "Das fördert den Ödemabfluss und vermindert Schwellung und Schmerz.",
+    "Das trocknet die Wunde aus, deshalb heilt sie schneller und die Fäden halten besser.",
+    "Das lässt mehr Blut in den Fuß fließen und verbessert so die Durchblutung der Wunde."
    ],
    "richtig": 0
   },
-  "erklaerung": "Hochlagern und Kühlen sind wichtige nicht-medikamentöse Maßnahmen nach Eingriffen am Bein."
+  "erklaerung": "Hochlagern und Kühlen fördern den Abfluss von Blut und Lymphe (Ödemabfluss). Sie sind wichtige nicht-medikamentöse Maßnahmen nach Eingriffen am Bein."
  },
  {
   "typ": "wahl",
   "frage": "Worauf achten Sie beim <b>Kühlen</b>?",
   "optionen": [
-   "Kühlpack nicht direkt auf die Haut, Dauer und Temperatur beachten, Haut kontrollieren – Kälteschäden vermeiden",
-   "So lange und so kalt wie möglich kühlen",
-   "Eis direkt auf die Wunde legen",
-   "Nur kühlen, wenn der Patient friert"
+   "Kühlpack nicht direkt auf die Haut legen, auf Dauer und Temperatur achten",
+   "So lange und so kalt wie möglich kühlen, damit die Schwellung schnell zurückgeht",
+   "Eis direkt auf die Haut neben der Wunde legen, damit die Kälte gut wirkt",
+   "Erst kühlen, wenn das Bein schon stark geschwollen ist"
   ],
   "richtig": 0,
-  "erklaerung": "Zu langes oder zu kaltes Kühlen kann die Haut schädigen."
+  "erklaerung": "Zu langes oder zu kaltes Kühlen kann die Haut schädigen (Kälteschäden). Deshalb die Haut regelmäßig kontrollieren."
  },
  {
   "typ": "wahl",

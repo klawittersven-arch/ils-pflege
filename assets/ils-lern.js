@@ -8,7 +8,7 @@
      fehlerMax: 4,          // erlaubte Fehler (Abschlussquiz: 2); beim nächsten Fehler → Lesepause + Neustart
      pauseSek: 30,          // Lesepause (Abschlussquiz: 180)
      zuSchnellMax: 3,       // so oft zu schnell getippt → kurze Lesepause, danach weiter mit derselben Aufgabe
-     tempoPauseSek: 30,     // Länge dieser Lesepause (auch im Abschlussquiz)
+     tempoPauseSek: 15,     // Länge dieser Lesepause (auch im Abschlussquiz)
      abschluss: false,      // true = Abschlussquiz (erst nach allen Übungen)
      pool: [ …Aufgaben… ],
      schreiben: { auftrag, ort, minSek, punkte: [...] }   // optional: Examens-Training mit Checkliste
@@ -31,7 +31,7 @@ const ILSLern = (() => {
   const K = ILSKonto;
   const MAIL = 'Sven.Klawitter@Karoline-Breitinger-Schule.de';
   const STANDARD = {
-    ziehen: 8, fehlerMax: 4, pauseSek: 30, zuSchnellMax: 3, tempoPauseSek: 30,
+    ziehen: 8, fehlerMax: 4, pauseSek: 30, zuSchnellMax: 3, tempoPauseSek: 15,
     leseBasisMs: 1000, leseProWortMs: 150, leseMaxMs: 8000,      // ≈ 400 Wörter/Minute (zügiges Lesen)
     folgeBasisMs: 400, folgeProWortMs: 80,
     weiterNachFehlerSek: 4

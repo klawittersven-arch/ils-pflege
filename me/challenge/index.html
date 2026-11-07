@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>ILS-Challenge: Materialentfernung</title>
-<link rel="stylesheet" href="../../assets/ils.css?v=v202611071650">
+<link rel="stylesheet" href="../../assets/ils.css?v=v202611071722">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Highscore</div><h1>ILS-Challenge: Materialentfernung</h1></div></header>
@@ -13,12 +13,12 @@
 <div id="app"></div>
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
 </main>
-<script src="../../assets/ils.js?v=v202611071650"></script>
-<script src="../../assets/ils-server.js?v=v202611071650"></script>
-<script src="../../assets/auftraege.js?v=v202611071650"></script>
-<script src="../../assets/ils-konto.js?v=v202611071650"></script>
-<script src="../../assets/ils-lern.js?v=v202611071650"></script>
-<script src="../../assets/ils-challenge.js?v=v202611071650"></script>
+<script src="../../assets/ils.js?v=v202611071722"></script>
+<script src="../../assets/ils-server.js?v=v202611071722"></script>
+<script src="../../assets/auftraege.js?v=v202611071722"></script>
+<script src="../../assets/ils-konto.js?v=v202611071722"></script>
+<script src="../../assets/ils-lern.js?v=v202611071722"></script>
+<script src="../../assets/ils-challenge.js?v=v202611071722"></script>
 <script>
 const POOLS = [
 { name: "Abschnitt 1 „Osteosynthese und Materialentfernung“", ziehen: 3, aufgaben: [
@@ -73,22 +73,22 @@ const POOLS = [
   "gruppe": "Abschnitt 1 „Osteosynthese und Materialentfernung“:begriff",
   "frage": "Was ist eine <b>Osteosynthese</b>?",
   "optionen": [
-   "die operative Verbindung von Knochenbruchstücken mit Material wie Platten, Schrauben, Nagel oder Drähten",
-   "ein Gipsverband",
-   "eine Knochenentzündung",
-   "ein Röntgenbild des Knochens"
+   "die operative Verbindung der Bruchstücke mit Material wie Platten oder Schrauben",
+   "die Ruhigstellung eines Bruchs mit einem Gips- oder Kunststoffverband (Cast)",
+   "das Einrichten der verschobenen Bruchstücke unter Narkose in die richtige Stellung",
+   "die Entfernung von Platten und Schrauben nach der Knochenheilung"
   ],
   "richtig": 0,
-  "erklaerung": "Ziel ist eine möglichst schonende (biologische) Osteosynthese."
+  "erklaerung": "Bei der Osteosynthese werden die Bruchstücke operativ mit Material verbunden (Platten, Schrauben, Nagel oder Drähte). Ziel ist eine möglichst schonende (biologische) Osteosynthese. Gips oder Cast = konservative Behandlung, Einrichten = Reposition, Entfernen = Materialentfernung."
  },
  {
   "typ": "wahl",
   "frage": "Wann wird das Osteosynthesematerial in der Regel entfernt?",
   "optionen": [
    "nach Abschluss der Knochenheilung, meist nach 1,5 bis 2 Jahren",
-   "nach einer Woche",
-   "vor Abschluss der Knochenheilung",
-   "nie"
+   "nach etwa 6 Wochen, sobald sich Kallus gebildet hat",
+   "vor Abschluss der Knochenheilung, damit nichts einwächst",
+   "nach 5 bis 10 Jahren, wenn der Knochen ganz umgebaut ist"
   ],
   "richtig": 0,
   "behalten": true,
@@ -137,8 +137,8 @@ const POOLS = [
   "begruendung": {
    "optionen": [
     "Es kann bleiben, wenn eine zweite OP ein großes Risiko wäre und es weder stört noch schmerzt.",
-    "Metall im Körper ist immer gefährlich.",
-    "Es löst sich nach einem Jahr von selbst auf."
+    "Es bleibt immer im Körper, weil eine zweite Operation grundsätzlich zu gefährlich ist.",
+    "Es löst sich nach etwa einem Jahr von selbst auf, eine zweite OP ist deshalb nie nötig."
    ],
    "richtig": 0
   },
@@ -154,8 +154,8 @@ const POOLS = [
    "Stabilität der Osteosynthese",
    "Umfang der Weichteilverletzung",
    "Medikamente wie Kortison oder Chemotherapie (wirken negativ)",
-   "die Haarfarbe",
-   "die Jahreszeit"
+   "die Blutgruppe des Patienten",
+   "die Jahreszeit der Operation"
   ],
   "richtig": [
    0,
@@ -172,9 +172,9 @@ const POOLS = [
   "frage": "Wann wird typischerweise ein <b>Fixateur externe</b> verwendet?",
   "optionen": [
    "bei offenen Brüchen 2. und 3. Grades mit Weichteilverletzung",
-   "bei jeder Fingerfraktur",
-   "nur bei Kindern",
-   "bei Bänderrissen"
+   "bei geschlossenen Brüchen ohne Weichteilverletzung, wenn sofort voll belastet werden soll",
+   "nur bei Kindern, weil ihr Knochen noch wächst",
+   "bei Bänderrissen am Sprunggelenk ohne Knochenbruch"
   ],
   "richtig": 0,
   "erklaerung": "Der Fixateur ist übungsstabil, aber nicht belastbar. Seine Eintrittsstellen werden täglich aseptisch versorgt."
@@ -190,13 +190,13 @@ const POOLS = [
   "gruppe": "Abschnitt 1 „Osteosynthese und Materialentfernung“:begriff",
   "frage": "Wie heißt die Entfernung von Platten, Schrauben oder Nägeln im Lehrbuch Pflegias?",
   "optionen": [
-   "Materialentfernung (oft auch „Metallentfernung“ genannt)",
+   "Materialentfernung",
    "Reposition",
-   "Osteosynthese",
+   "Plattenosteosynthese",
    "Fixation"
   ],
   "richtig": 0,
-  "erklaerung": "In Kliniken hört man meist „ME“ oder „Metallentfernung“."
+  "erklaerung": "Pflegias sagt „Materialentfernung“. In Kliniken hört man meist „ME“ oder „Metallentfernung“."
  }
 ] },
 { name: "Abschnitt 2 „Nach der OP überwachen“", ziehen: 3, aufgaben: [
@@ -331,17 +331,17 @@ const POOLS = [
     "frage": "Was tun Sie vor dem Aufstehen?",
     "optionen": [
      {
-      "t": "Puls und Blutdruck messen, nach Schwindel und Schmerzen fragen, feste Schuhe, Stützen bereitstellen – und ihn begleiten.",
+      "t": "Blutdruck und Puls messen, nach Schwindel fragen, feste Schuhe und Stützen holen, ihn begleiten.",
       "richtig": true,
-      "rueck": "Kreislauf kontrollieren und begleiten – am OP-Tag ist das Sturzrisiko durch die Narkose erhöht."
+      "rueck": "Kreislauf kontrollieren, nach Schwindel und Schmerzen fragen, feste Schuhe und Stützen – und begleiten. Am OP-Tag ist das Sturzrisiko durch die Narkose erhöht."
      },
      {
-      "t": "Ihn allein gehen lassen – er ist ja jung und fit.",
+      "t": "Ihn allein gehen lassen und ihm sagen, er soll auf der Toilette klingeln – er ist ja jung und fit.",
       "richtig": false,
-      "rueck": "Auch junge Menschen können nach der Narkose kollabieren und stürzen."
+      "rueck": "Auch junge Menschen können nach der Narkose kollabieren und stürzen – am OP-Tag begleiten Sie ihn."
      },
      {
-      "t": "Ihm die Bettpfanne geben – aufstehen erst nächste Woche.",
+      "t": "Ihm die Bettpfanne geben – nach einer OP am Bein darf er erst in einigen Tagen aufstehen.",
       "richtig": false,
       "rueck": "Frühmobilisation am OP-Tag oder Folgetag beugt Komplikationen vor."
      }
@@ -357,14 +357,14 @@ const POOLS = [
       "rueck": "Erst stabilisieren, nicht weiter mobilisieren."
      },
      {
-      "t": "Schnell aufstellen – im Stehen geht der Schwindel vorbei.",
+      "t": "Ihn schnell aufstellen und ein paar Schritte gehen lassen – im Stehen geht der Schwindel vorbei.",
       "richtig": false,
-      "rueck": "Gefahr eines Kollapses und Sturzes."
+      "rueck": "Gefahr eines Kollapses und Sturzes – erst hinlegen und den Kreislauf stabilisieren."
      },
      {
-      "t": "Ihn kurz allein lassen und einen Kaffee holen.",
+      "t": "Ihn an der Bettkante sitzen lassen und schnell ein Glas Wasser holen.",
       "richtig": false,
-      "rueck": "Nicht allein lassen!"
+      "rueck": "Nicht allein lassen – er könnte kollabieren und von der Bettkante stürzen."
      }
     ]
    },
@@ -373,19 +373,19 @@ const POOLS = [
     "frage": "Wie geht es weiter?",
     "optionen": [
      {
-      "t": "Langsam erneut aufsetzen, über die operierte Seite aufstehen und mit Unterarmgehstützen und Begleitung zur Toilette gehen.",
+      "t": "Langsam aufsetzen, über die operierte Seite aufstehen und mit Stützen und Begleitung zur Toilette gehen.",
       "richtig": true,
       "rueck": "So steht es in Pflegias: über die operierte Seite aufstehen lassen und den Kreislauf kontrollieren."
      },
      {
-      "t": "Auf dem gesunden Bein zur Toilette hüpfen lassen.",
+      "t": "Über die gesunde Seite aufstehen und auf dem gesunden Bein zur Toilette hüpfen lassen.",
       "richtig": false,
-      "rueck": "Hüpfen ist unsicher – Sturzgefahr!"
+      "rueck": "Aufgestanden wird über die operierte Seite – und Hüpfen ist unsicher: Sturzgefahr!"
      },
      {
-      "t": "Ohne Stützen gehen lassen, damit er schneller wieder fit wird.",
+      "t": "Ohne Stützen, aber mit Begleitung gehen lassen – so trainiert er das Bein und wird schneller fit.",
       "richtig": false,
-      "rueck": "Die Stützen geben Sicherheit, solange die Ärztin nichts anderes anordnet."
+      "rueck": "Die Stützen geben Sicherheit, solange die Ärztin nichts anderes anordnet – angeordnet sind 2 Unterarmgehstützen."
      }
     ]
    }
@@ -420,25 +420,25 @@ const POOLS = [
   "richtig": true,
   "begruendung": {
    "optionen": [
-    "Das fördert den Abfluss von Blut und Lymphe (Ödemabfluss) und vermindert Schwellung und Schmerz.",
-    "Damit die Wunde schneller trocknet.",
-    "Damit das Bein nicht einschläft."
+    "Das fördert den Ödemabfluss und vermindert Schwellung und Schmerz.",
+    "Das trocknet die Wunde aus, deshalb heilt sie schneller und die Fäden halten besser.",
+    "Das lässt mehr Blut in den Fuß fließen und verbessert so die Durchblutung der Wunde."
    ],
    "richtig": 0
   },
-  "erklaerung": "Hochlagern und Kühlen sind wichtige nicht-medikamentöse Maßnahmen nach Eingriffen am Bein."
+  "erklaerung": "Hochlagern und Kühlen fördern den Abfluss von Blut und Lymphe (Ödemabfluss). Sie sind wichtige nicht-medikamentöse Maßnahmen nach Eingriffen am Bein."
  },
  {
   "typ": "wahl",
   "frage": "Worauf achten Sie beim <b>Kühlen</b>?",
   "optionen": [
-   "Kühlpack nicht direkt auf die Haut, Dauer und Temperatur beachten, Haut kontrollieren – Kälteschäden vermeiden",
-   "So lange und so kalt wie möglich kühlen",
-   "Eis direkt auf die Wunde legen",
-   "Nur kühlen, wenn der Patient friert"
+   "Kühlpack nicht direkt auf die Haut legen, auf Dauer und Temperatur achten",
+   "So lange und so kalt wie möglich kühlen, damit die Schwellung schnell zurückgeht",
+   "Eis direkt auf die Haut neben der Wunde legen, damit die Kälte gut wirkt",
+   "Erst kühlen, wenn das Bein schon stark geschwollen ist"
   ],
   "richtig": 0,
-  "erklaerung": "Zu langes oder zu kaltes Kühlen kann die Haut schädigen."
+  "erklaerung": "Zu langes oder zu kaltes Kühlen kann die Haut schädigen (Kälteschäden). Deshalb die Haut regelmäßig kontrollieren."
  },
  {
   "typ": "wahl",
@@ -489,19 +489,19 @@ const POOLS = [
     "frage": "Was raten Sie?",
     "optionen": [
      {
-      "t": "Heute noch ärztlich abklären lassen. Bekommen Sie Atemnot oder Brustschmerzen, rufen Sie sofort die 112.",
+      "t": "Lassen Sie das heute noch ärztlich abklären. Bei Atemnot oder Brustschmerz rufen Sie sofort die 112.",
       "richtig": true,
       "rueck": "Die gefährlichste Komplikation einer Thrombose ist die Lungenembolie."
      },
      {
-      "t": "Massieren Sie die Wade kräftig.",
+      "t": "Massieren Sie die Wade kräftig und lagern Sie das Bein hoch – dann geht die Schwellung bald wieder zurück.",
       "richtig": false,
-      "rueck": "Bei Verdacht auf Thrombose nicht massieren – ein Gerinnsel könnte sich lösen."
+      "rueck": "Bei Verdacht auf Thrombose nicht massieren – ein Gerinnsel könnte sich lösen. Der Verdacht muss heute noch abgeklärt werden."
      },
      {
-      "t": "Warten Sie bis zum Fadenziehen in 11 Tagen.",
+      "t": "Spritzen Sie weiter Ihr Enoxaparin und warten Sie bis zum Fadenziehen in 11 Tagen.",
       "richtig": false,
-      "rueck": "Ein Thromboseverdacht muss sofort abgeklärt werden."
+      "rueck": "Das Enoxaparin beugt vor, ersetzt aber keine Abklärung. Ein Thromboseverdacht muss sofort abgeklärt werden."
      }
     ]
    }
@@ -526,13 +526,13 @@ const POOLS = [
   "gruppe": "Abschnitt 3 „Komplikationen erkennen“:detektiv2",
   "frage": "Symptom-Detektiv: Neben der Wunde ist die Haut geschwollen, schmerzhaft und rötlich bis blau-violett verfärbt. Was liegt vor?",
   "optionen": [
-   "ein Hämatom (Bluterguss)",
+   "ein Hämatom",
    "eine Wunddehiszenz",
    "ein Keloid",
    "eine Thrombose"
   ],
   "richtig": 0,
-  "erklaerung": "Ein Hämatom ist eine Ansammlung von Blut im Gewebe – z. B. nach einer OP."
+  "erklaerung": "Ein Hämatom (Bluterguss) ist eine Ansammlung von Blut im Gewebe – z. B. nach einer OP."
  },
  {
   "typ": "wahl",
@@ -616,34 +616,34 @@ const POOLS = [
   "richtig": false,
   "begruendung": {
    "optionen": [
-    "Die leeren Schraubenlöcher sind anfangs Schwachstellen – es droht ein erneuter Bruch (Refraktur). Deshalb Sportpause nach Anordnung.",
-    "Der Knochen ist danach weich wie Gummi.",
-    "Fußball ist nach einer OP immer verboten."
+    "Die leeren Schraubenlöcher sind anfangs Schwachstellen – es droht ein erneuter Bruch (Refraktur).",
+    "Der Knochen ist nach der OP noch weich und muss erst wieder verkalken – das dauert etwa ein Jahr.",
+    "Nach einer Narkose ist Sport grundsätzlich drei Monate verboten, auch ohne Schaden am Knochen."
    ],
    "richtig": 0
   },
-  "erklaerung": "Bei Herrn Brandt hat die Ärztin 6 Wochen Sportpause angeordnet."
+  "erklaerung": "Wegen der Refrakturgefahr gilt eine Sportpause nach Anordnung – bei Herrn Brandt hat die Ärztin 6 Wochen angeordnet."
  },
  {
   "typ": "wahl",
   "frage": "Am Abend hat Herr Brandt trotz Schmerzmittel und Hochlagern <b>immer stärkere</b> Schmerzen, der Unterschenkel ist prall gespannt und die Zehen kribbeln. Was tun Sie?",
   "optionen": [
-   "Sofort die Ärztin informieren – Verdacht auf eine gefährliche Druckerhöhung im Gewebe (Kompartmentsyndrom)",
-   "Stärker kühlen und bis morgen abwarten",
-   "Den Verband fester wickeln",
-   "Eine Schlaftablette anbieten"
+   "Sofort die Ärztin informieren – Verdacht auf ein Kompartmentsyndrom",
+   "Stärker kühlen, das Bein noch höher lagern und bis zur Visite morgen abwarten",
+   "Den Verband fester wickeln, damit die Schwellung nicht weiter zunimmt",
+   "Die nächste Bedarfsmedikation geben und in 2 Stunden wieder nachfragen"
   ],
   "richtig": 0,
-  "erklaerung": "Zunehmende Schmerzen, die sich nicht bessern, plus Kribbeln sind ein Alarmzeichen. Hier zählt jede Stunde."
+  "erklaerung": "Beim Kompartmentsyndrom steigt der Druck im Gewebe gefährlich an und gefährdet Nerven und Muskeln. Zunehmende Schmerzen, die sich nicht bessern, plus Kribbeln sind ein Alarmzeichen. Hier zählt jede Stunde."
  },
  {
   "typ": "wahl",
   "frage": "Nach der OP ist ein kleines Hautareal am rechten Fußrücken taub. Was tun Sie?",
   "optionen": [
    "Der Äußerung nachgehen, die Ärztin informieren und den Befund dokumentieren",
-   "Nichts – das ist nach jeder OP so",
-   "Die Stelle kräftig massieren",
-   "Erst nach der Entlassung erwähnen"
+   "Nichts tun – ein tauber Fleck ist nach einer OP normal und vergeht",
+   "Die Stelle kräftig massieren, damit das Gefühl schneller zurückkommt",
+   "Die Stelle kühlen und erst beim Fadenziehen dem Hausarzt zeigen"
   ],
   "richtig": 0,
   "erklaerung": "Die Sensibilität kann nach einer OP vorübergehend gestört sein. Äußerungen zu Sensibilitätsstörungen gehen Sie immer nach."
@@ -676,13 +676,13 @@ const POOLS = [
   "typ": "wahl",
   "frage": "Wie werden Unterarmgehstützen richtig eingestellt?",
   "optionen": [
-   "Handgriff etwa auf Höhe des Oberschenkelknochens (Hüfte), Ellenbogen leicht gebeugt, Schultern nicht hochgezogen",
-   "Handgriff auf Höhe der Schultern, Arme ganz gestreckt",
-   "Handgriff auf Kniehöhe",
-   "So kurz wie möglich, damit man sich gut aufstützt"
+   "Handgriff etwa auf Höhe des Oberschenkelknochens (Hüfte), Ellenbogen leicht gebeugt",
+   "Handgriff auf Schulterhöhe, Ellenbogen stark gebeugt",
+   "Handgriff auf Kniehöhe, Oberkörper weit nach vorn gebeugt",
+   "So kurz wie möglich einstellen, damit man sich mit dem ganzen Oberkörper aufstützt"
   ],
   "richtig": 0,
-  "erklaerung": "Die Stützen werden mit dem physiotherapeutischen Team angepasst – möglichst schon vor der OP, damit der Patient üben kann."
+  "erklaerung": "Die Schultern werden dabei nicht hochgezogen. Die Stützen werden mit dem physiotherapeutischen Team angepasst – möglichst schon vor der OP, damit der Patient üben kann."
  },
  {
   "typ": "sortieren",
@@ -723,13 +723,13 @@ const POOLS = [
   "typ": "wahl",
   "frage": "Wann geben Sie das Schmerzmittel (nach Anordnung) vor der Mobilisation?",
   "optionen": [
-   "rechtzeitig vorher, z. B. 30–45 Minuten, damit es wirkt, wenn es weh tut",
-   "erst wenn er beim Gehen schreit",
-   "nach der Mobilisation",
-   "gar nicht – Schmerz gehört dazu"
+   "rechtzeitig vorher, z. B. 30–45 Minuten vor dem Aufstehen",
+   "erst wenn er beim Gehen über starke Schmerzen klagt, damit nichts unnötig gegeben wird",
+   "direkt nach der Mobilisation, wenn das Bein wieder hochgelagert ist",
+   "genau beim Aufstehen, damit es im richtigen Moment wirkt"
   ],
   "richtig": 0,
-  "erklaerung": "In Erwartungshorizonten heißt das: „präventive Analgetikagabe vor schmerzauslösenden Interventionen“."
+  "erklaerung": "Das Schmerzmittel braucht Zeit – es soll wirken, wenn die Bewegung weh tut. In Erwartungshorizonten heißt das: „präventive Analgetikagabe vor schmerzauslösenden Interventionen“."
  },
  {
   "typ": "mehrfach",
@@ -762,17 +762,17 @@ const POOLS = [
     "frage": "Was antworten Sie?",
     "optionen": [
      {
-      "t": "Die Stützen geben Ihnen Sicherheit und entlasten das Bein. Heute ist durch die Narkose auch die Sturzgefahr höher.",
+      "t": "Die Stützen entlasten das Bein und geben Sicherheit. Nach der Narkose ist heute die Sturzgefahr höher.",
       "richtig": true,
       "rueck": "Begründen statt befehlen."
      },
      {
-      "t": "Dann gehen Sie halt ohne.",
+      "t": "Gut, dann gehen Sie ohne Stützen – Sie sind jung und kennen Ihren Körper am besten.",
       "richtig": false,
-      "rueck": "Das gefährdet ihn – Sturz und Überlastung."
+      "rueck": "Das gefährdet ihn – Sturz und Überlastung. Erklären Sie ihm, wozu die Stützen da sind."
      },
      {
-      "t": "Sie müssen, sonst gibt es Ärger.",
+      "t": "Sie müssen die Stützen nehmen, sonst muss ich das der Ärztin melden und Sie bleiben länger im Krankenhaus.",
       "richtig": false,
       "rueck": "Drohen hilft nicht – erklären Sie den Sinn."
      }
@@ -784,19 +784,19 @@ const POOLS = [
     "frage": "Was antworten Sie?",
     "optionen": [
      {
-      "t": "Heute nach der Narkose begleite ich Sie – klingeln Sie bitte vorher. Wenn Sie morgen sicher gehen, auch allein.",
+      "t": "Heute begleite ich Sie, klingeln Sie bitte vorher. Wenn Sie morgen sicher gehen, auch allein.",
       "richtig": true,
       "rueck": "Das Sturzrisiko nach der Narkose besteht oft nur kurz – am OP-Tag reicht meist die Begleitung zur Toilette."
      },
      {
-      "t": "Klar, Sie sind ja fit.",
+      "t": "Klar, Sie sind ja fit – nehmen Sie nur die Stützen mit und lassen Sie die Toilettentür einen Spalt offen.",
       "richtig": false,
-      "rueck": "Am OP-Tag besteht durch die Narkose eine Sturzgefahr."
+      "rueck": "Am OP-Tag besteht durch die Narkose eine Sturzgefahr – heute begleiten Sie ihn."
      },
      {
-      "t": "Nein, Sie bleiben drei Tage im Bett.",
+      "t": "Nein, bis zur Entlassung bleiben Sie im Bett und nehmen bitte die Bettpfanne.",
       "richtig": false,
-      "rueck": "Frühe Mobilisation ist erwünscht."
+      "rueck": "Frühe Mobilisation ist erwünscht – das Sturzrisiko besteht oft nur kurz."
      }
     ]
    }
@@ -831,8 +831,8 @@ const POOLS = [
   "begruendung": {
    "optionen": [
     "Beim Gehen pumpt die Wadenmuskulatur das Blut in den Venen zum Herzen (Muskelpumpe).",
-    "Bewegung verdünnt das Blut wie ein Medikament.",
-    "Durch Bewegung wird die Wunde kleiner."
+    "Bewegung verdünnt das Blut wie Heparin, deshalb braucht man dann keine Spritze mehr.",
+    "Bewegung senkt den Blutdruck, deshalb kann sich kein Gerinnsel mehr bilden."
    ],
    "richtig": 0
   },
@@ -916,19 +916,19 @@ const POOLS = [
     "frage": "Was antworten Sie?",
     "optionen": [
      {
-      "t": "Laut Ihrer Ärztin frühestens nach 6 Wochen – vorher ist der Knochen an den Schraubenlöchern noch geschwächt.",
+      "t": "Laut Ihrer Ärztin frühestens nach 6 Wochen – bis dahin ist der Knochen an den Schraubenlöchern geschwächt.",
       "richtig": true,
       "rueck": "Anordnung nennen und begründen."
      },
      {
-      "t": "Sobald es nicht mehr weh tut.",
+      "t": "Sobald die Wunde nicht mehr weh tut und die Fäden gezogen sind, also nach etwa 2 Wochen.",
       "richtig": false,
-      "rueck": "Schmerzfreiheit heißt nicht, dass der Knochen belastbar ist – Refrakturgefahr."
+      "rueck": "Schmerzfreiheit und gezogene Fäden heißen nicht, dass der Knochen belastbar ist – Refrakturgefahr. Angeordnet sind 6 Wochen Pause."
      },
      {
-      "t": "Nie wieder.",
+      "t": "Nach einer Materialentfernung verzichten Sie besser ganz auf Fußball – das Risiko für einen neuen Bruch ist zu hoch.",
       "richtig": false,
-      "rueck": "Das stimmt nicht und macht unnötig Angst."
+      "rueck": "Das stimmt nicht und macht unnötig Angst – angeordnet sind 6 Wochen ohne Fußball."
      }
     ]
    },
@@ -938,19 +938,19 @@ const POOLS = [
     "frage": "Was antworten Sie?",
     "optionen": [
      {
-      "t": "Ja, wenn die Wunde wasserdicht abgedeckt ist, z. B. mit einem Duschpflaster. Die Wunde soll sauber und trocken bleiben.",
+      "t": "Ja, mit wasserdichtem Schutz, z. B. einem Duschpflaster – die Wunde soll sauber und trocken bleiben.",
       "richtig": true,
       "rueck": "Verständlich, konkret, mit Begründung."
      },
      {
-      "t": "Baden Sie ruhig lange, das ist gut für die Wunde.",
+      "t": "Ja, baden Sie ruhig lange – warmes Wasser reinigt die Wunde und fördert die Heilung.",
       "richtig": false,
-      "rueck": "Eine aufgeweichte Wunde ist anfälliger für Infektionen."
+      "rueck": "Eine aufgeweichte Wunde ist anfälliger für Infektionen – nur mit wasserdichtem Schutz duschen."
      },
      {
-      "t": "Nein, drei Wochen gar nicht waschen.",
+      "t": "Nein, bis zum Fadenziehen dürfen Sie sich gar nicht waschen, sonst entzündet sich die Wunde.",
       "richtig": false,
-      "rueck": "Körperpflege ist möglich – die Wunde wird geschützt."
+      "rueck": "Körperpflege ist möglich – die Wunde wird wasserdicht geschützt."
      }
     ]
    },
@@ -960,19 +960,19 @@ const POOLS = [
     "frage": "Was antworten Sie?",
     "optionen": [
      {
-      "t": "Wenn die Wunde rot, warm und dick wird oder nässt, Sie Fieber bekommen oder die Wade dick wird und schmerzt: zum Arzt. Bei Atemnot oder Brustschmerz sofort 112.",
+      "t": "Zum Arzt, wenn die Wunde rot, warm, dick oder nass wird, bei Fieber oder schmerzender Wade. Bei Atemnot oder Brustschmerz: 112.",
       "richtig": true,
       "rueck": "Konkrete Warnzeichen und was dann zu tun ist."
      },
      {
-      "t": "Das merken Sie schon.",
+      "t": "Das merken Sie schon – wenn es stärker weh tut, nehmen Sie eine Schmerztablette mehr und warten ab.",
       "richtig": false,
-      "rueck": "Zu ungenau – er braucht konkrete Warnzeichen."
+      "rueck": "Zu ungenau, und Abwarten kann gefährlich sein – er braucht konkrete Warnzeichen."
      },
      {
-      "t": "Warten Sie einfach bis zum Fadenziehen.",
+      "t": "Wenn die Wunde stark blutet, rufen Sie bitte an. Alles andere sieht sich Ihr Hausarzt dann beim Fadenziehen an.",
       "richtig": false,
-      "rueck": "Warnzeichen müssen sofort abgeklärt werden."
+      "rueck": "Warnzeichen wie Rötung, Fieber oder eine dicke Wade müssen sofort abgeklärt werden – nicht erst beim Fadenziehen."
      }
     ]
    }
@@ -1016,10 +1016,10 @@ const POOLS = [
   "typ": "wahl",
   "frage": "Herr Brandt soll sich das Enoxaparin zu Hause selbst spritzen. Wie vermitteln Sie das?",
   "optionen": [
-   "Schulung: zeigen, erklären, selbst üben lassen und kontrollieren, bis er es sicher kann",
-   "Ihm das Merkblatt in die Hand drücken",
-   "Seiner Freundin sagen, sie soll es irgendwie machen",
-   "Gar nicht – das macht der Hausarzt"
+   "Schulung: zeigen, erklären, üben lassen und kontrollieren, bis er es sicher kann",
+   "Information: ihm ein Merkblatt geben und erklären, wo und wie oft er spritzen soll",
+   "Einmal vorspritzen und ihm sagen, er soll es zu Hause genauso machen",
+   "Gar nicht – das übernimmt nach der Entlassung der Hausarzt jeden Tag"
   ],
   "richtig": 0,
   "erklaerung": "Eine Fertigkeit lernt man durch Üben unter Anleitung – das ist Schulung."
@@ -1062,13 +1062,13 @@ const POOLS = [
   "gruppe": "Abschnitt 5 „Information, Schulung und Entlassung“:faeden",
   "frage": "Wer legt fest, wann die Fäden gezogen werden?",
   "optionen": [
-   "die Ärztin – die Durchführung kann an Pflegefachpersonen delegiert werden",
-   "der Patient selbst",
-   "die Physiotherapie",
-   "die Krankenkasse"
+   "die Ärztin – das Fadenziehen selbst kann sie delegieren",
+   "die Pflegefachperson, die beim Verbandswechsel die Wunde beurteilt",
+   "der Patient selbst, sobald die Wunde nicht mehr schmerzt",
+   "die Physiotherapie, sobald er das Bein wieder voll belastet"
   ],
   "richtig": 0,
-  "erklaerung": "Nahtmaterial darf nur entfernt werden, wenn die Wundränder auch ohne Fäden zusammenbleiben. Oft wird zuerst jeder zweite Faden entfernt."
+  "erklaerung": "Die Ärztin legt den Zeitpunkt fest; die Durchführung kann an Pflegefachpersonen delegiert werden. Nahtmaterial darf nur entfernt werden, wenn die Wundränder auch ohne Fäden zusammenbleiben. Oft wird zuerst jeder zweite Faden entfernt."
  },
  {
   "typ": "wahl",
@@ -1076,8 +1076,8 @@ const POOLS = [
   "frage": "Nach Pflegias werden Fäden an der <b>unteren Extremität</b> meist nach … entfernt (in Gelenknähe nach 21 Tagen oder später).",
   "optionen": [
    "12–14 Tagen",
-   "2–3 Tagen",
    "5–7 Tagen",
+   "18–21 Tagen",
    "6 Wochen"
   ],
   "richtig": 0,
@@ -1090,9 +1090,9 @@ const POOLS = [
   "richtig": false,
   "begruendung": {
    "optionen": [
-    "Es beginnt schon bei der Aufnahme mit der Einschätzung, welche Unterstützung nach der Entlassung nötig ist.",
-    "Es beginnt erst beim Hausarzt.",
-    "Entlassungsmanagement ist nur für alte Menschen."
+    "Es beginnt schon bei der Aufnahme: Man schätzt ein, welche Hilfe nach der Entlassung nötig ist.",
+    "Es beginnt erst nach der Entlassung, wenn der Hausarzt die weitere Behandlung übernimmt.",
+    "Es beginnt am Tag vor der Entlassung, wenn die Ärztin den Entlassungstermin festlegt."
    ],
    "richtig": 0
   },
@@ -1103,12 +1103,12 @@ const POOLS = [
   "frage": "Welches Pflegeziel für Herrn Brandt ist <b>überprüfbar</b>?",
   "optionen": [
    "Herr Brandt spritzt sich das Enoxaparin bis zur Entlassung morgen selbstständig und korrekt.",
-   "Herr Brandt weiß Bescheid.",
-   "Die Pflegefachperson schult Herrn Brandt.",
-   "Herr Brandt hat keine Fragen mehr."
+   "Herr Brandt weiß gut über die Selbstinjektion des Enoxaparins Bescheid.",
+   "Die Pflegefachperson schult Herrn Brandt bis zur Entlassung morgen in der Selbstinjektion des Enoxaparins.",
+   "Herr Brandt fühlt sich bei der Selbstinjektion zu Hause sicher und hat keine Angst mehr."
   ],
   "richtig": 0,
-  "erklaerung": "Beobachtbares Verhalten + Zeitpunkt. „Die Pflegefachperson schult …“ ist eine Maßnahme."
+  "erklaerung": "Beobachtbares Verhalten + Zeitpunkt. „Die Pflegefachperson schult …“ ist eine Maßnahme. „Weiß Bescheid“ oder „fühlt sich sicher“ kann man nicht beobachten."
  }
 ] },
 { name: "Abschlussquiz", ziehen: 5, aufgaben: [
@@ -1117,9 +1117,9 @@ const POOLS = [
   "frage": "Frau Schäfer (52) wurde eine Platte am rechten Unterarm entfernt. Wo prüfen Sie die DMS?",
   "optionen": [
    "an den Fingern der rechten Hand: Farbe, Temperatur, Bewegung, Gefühl",
-   "an den Zehen",
-   "an der linken Hand",
-   "am Oberarm oberhalb der OP"
+   "an der linken Hand, weil die rechte vom Verband verdeckt ist",
+   "am rechten Oberarm oberhalb der OP-Stelle: Farbe, Temperatur, Puls",
+   "direkt an der Wunde: Rötung, Schwellung, Wärme und Schmerz"
   ],
   "richtig": 0,
   "erklaerung": "Immer körperfern (distal) der OP-Stelle prüfen."
@@ -1129,8 +1129,8 @@ const POOLS = [
   "frage": "Nach Pflegias werden Fäden an der <b>oberen Extremität</b> meist nach … entfernt.",
   "optionen": [
    "10–12 Tagen",
-   "2 Tagen",
-   "21 Tagen",
+   "3–5 Tagen",
+   "21–28 Tagen",
    "6 Wochen"
   ],
   "richtig": 0,
@@ -1189,21 +1189,21 @@ const POOLS = [
   "frage": "Welche Kombination spricht für eine <b>Thrombose</b>?",
   "optionen": [
    "Wade geschwollen, warm, ziehende Schmerzen, Spannungsgefühl",
-   "Zehen blass, kalt, pulslos",
-   "Wundränder klaffen auseinander",
-   "Haut juckt unter dem Pflaster"
+   "Zehen blass, kalt und pulslos, der Fuß lässt sich schlecht bewegen",
+   "Wunde gerötet, warm, geschwollen, trübes Sekret und Fieber",
+   "Haut neben der Wunde blau-violett verfärbt, geschwollen und schmerzhaft"
   ],
   "richtig": 0,
-  "erklaerung": "Leitsymptome der tiefen Beinvenenthrombose."
+  "erklaerung": "Leitsymptome der tiefen Beinvenenthrombose. Blasse, kalte Zehen ohne Puls sprechen für eine arterielle Durchblutungsstörung, Sekret und Fieber für eine Wundinfektion, eine blau-violette Verfärbung für ein Hämatom."
  },
  {
   "typ": "wahl",
   "frage": "Herr Brandt bekommt zu Hause plötzlich Atemnot und Schmerzen in der Brust. Was ist zu tun?",
   "optionen": [
    "sofort die 112 rufen – Verdacht auf Lungenembolie",
-   "bis morgen abwarten",
-   "ein Schmerzmittel nehmen und hinlegen",
-   "die Wade massieren"
+   "sich hinlegen, ruhig atmen und morgen früh zum Hausarzt gehen",
+   "ein Schmerzmittel nehmen – das sind sicher Verspannungen von den Stützen",
+   "die Wade massieren, damit sich das Gerinnsel auflöst"
   ],
   "richtig": 0,
   "erklaerung": "Die Lungenembolie ist die gefährlichste Komplikation einer Thrombose."
@@ -1215,7 +1215,7 @@ const POOLS = [
    "sofort die Ärztin informieren",
    "stärker kühlen und abwarten",
    "den Verband fester wickeln",
-   "mehr trinken lassen"
+   "die Bedarfsmedikation geben und in einer Stunde nachfragen"
   ],
   "richtig": 0,
   "erklaerung": "Alarmzeichen – hier darf man nicht abwarten."
@@ -1239,8 +1239,8 @@ const POOLS = [
   "begruendung": {
    "optionen": [
     "Das fördert den Ödemabfluss und vermindert Schwellung und Schmerz.",
-    "Damit die Fäden halten.",
-    "Damit der Patient nicht aufsteht."
+    "Das erhöht den Blutdruck im Bein und verbessert so die Wundheilung.",
+    "Damit der Patient im Bett bleibt und das Bein nicht belastet."
    ],
    "richtig": 0
   },
@@ -1259,7 +1259,7 @@ const POOLS = [
   "optionen": [
    "über die operierte Seite",
    "über die gesunde Seite",
-   "über das Fußende",
+   "über das Fußende des Bettes",
    "egal"
   ],
   "richtig": 0,
@@ -1281,9 +1281,9 @@ const POOLS = [
   "frage": "Wo liegt der Handgriff der Unterarmgehstütze richtig?",
   "optionen": [
    "etwa auf Höhe des Oberschenkelknochens (Hüfte), Ellenbogen leicht gebeugt",
-   "auf Schulterhöhe",
-   "auf Kniehöhe",
-   "auf Höhe der Taille, Arme gestreckt"
+   "auf Höhe der Achsel, damit die Stütze unter der Achsel liegt",
+   "auf Kniehöhe, Oberkörper leicht nach vorn gebeugt",
+   "auf Höhe der Taille, Arme ganz gestreckt und Schultern hochgezogen"
   ],
   "richtig": 0,
   "erklaerung": "Schultern nicht hochziehen."
@@ -1309,9 +1309,9 @@ const POOLS = [
   "frage": "Warum geben Sie das Schmerzmittel (nach Anordnung) <b>vor</b> der Mobilisation?",
   "optionen": [
    "damit es wirkt, wenn die Bewegung Schmerzen auslöst",
-   "damit der Patient müde wird",
-   "weil es sonst abläuft",
-   "damit er schneller entlassen wird"
+   "damit es den Kreislauf stabilisiert und Schwindel verhindert",
+   "weil Schmerzmittel nach der Bewegung nicht mehr wirken",
+   "damit man die Schmerzen danach nicht mehr einschätzen muss"
   ],
   "richtig": 0,
   "erklaerung": "Präventive Analgetikagabe vor schmerzauslösenden Maßnahmen."
@@ -1358,21 +1358,21 @@ const POOLS = [
   "frage": "Welches Ziel ist <b>überprüfbar</b>?",
   "optionen": [
    "Frau Schäfer bewegt bis heute Abend alle Finger der rechten Hand ohne Kribbeln.",
-   "Frau Schäfer geht es gut.",
-   "Die Pflegefachperson prüft die DMS.",
-   "Frau Schäfer soll keine Probleme haben."
+   "Frau Schäfer geht es nach der Operation am Unterarm gut.",
+   "Die Pflegefachperson prüft bis heute Abend alle 2 Stunden die DMS der rechten Hand.",
+   "Frau Schäfer soll möglichst keine Probleme mit den Fingern bekommen."
   ],
   "richtig": 0,
-  "erklaerung": "Beobachtbar + Zeitpunkt."
+  "erklaerung": "Beobachtbar + Zeitpunkt. „Die Pflegefachperson prüft …“ ist eine Maßnahme, kein Ziel."
  },
  {
   "typ": "wahl",
   "frage": "PESR: Was ist bei Herrn Brandt eine <b>Ressource</b>?",
   "optionen": [
    "ist motiviert und stellt gezielte Fragen",
-   "erste OP dieser Art",
+   "erste OP dieser Art, morgen schon Entlassung",
    "fragt, wann er duschen darf",
-   "Wissensdefizit"
+   "Wissensdefizit zum Verhalten nach der Entlassung"
   ],
   "richtig": 0,
   "erklaerung": "„Erste OP“ ist ein Einflussfaktor, die Frage ein Kennzeichen, das Wissensdefizit das Problem."
@@ -1388,9 +1388,9 @@ const POOLS = [
   "frage": "Warum soll Herr Brandt nach der Materialentfernung einige Wochen keinen Fußball spielen?",
   "optionen": [
    "Die Schraubenlöcher sind anfangs Schwachstellen – Gefahr eines erneuten Bruchs.",
-   "Damit die Fäden nicht reißen.",
-   "Weil Fußball immer verboten ist.",
-   "Wegen der Narkose."
+   "Damit sich die Platte im Knochen nicht wieder lockert und verrutscht.",
+   "Weil die Narkose noch einige Wochen im Körper nachwirkt.",
+   "Weil das neue Material im Knochen erst einwachsen muss."
   ],
   "richtig": 0,
   "erklaerung": "Die Sportpause legt die Ärztin fest – bei Herrn Brandt 6 Wochen."
@@ -1416,9 +1416,9 @@ const POOLS = [
   "frage": "Eine kleine Stelle am Fußrücken ist nach der OP taub. Was tun Sie?",
   "optionen": [
    "der Äußerung nachgehen, Ärztin informieren, dokumentieren",
-   "ignorieren",
-   "kräftig massieren",
-   "kühlen, bis es weggeht"
+   "nichts tun – das ist nach einer OP normal und geht weg",
+   "kräftig massieren, bis das Gefühl zurückkommt",
+   "die Stelle kühlen und morgen noch einmal nachfragen"
   ],
   "richtig": 0,
   "erklaerung": "Sensibilitätsstörungen immer ernst nehmen."
@@ -1428,12 +1428,12 @@ const POOLS = [
   "frage": "Was ist eine <b>Wunddehiszenz</b>?",
   "optionen": [
    "Auseinanderklaffen der Wundränder nach einer Naht",
-   "überschießende Narbe",
-   "Bluterguss",
-   "Wundstarrkrampf"
+   "wulstige Narbe, die über den Wundrand hinauswächst",
+   "Ansammlung von Blut im Gewebe neben der Naht",
+   "Entzündung der Wunde mit Eiter und Fieber"
   ],
   "richtig": 0,
-  "erklaerung": "Ursachen: Infektion, Manipulation, übermäßige Belastung."
+  "erklaerung": "Ursachen: Infektion, Manipulation, übermäßige Belastung. Die wulstige Narbe ist ein Keloid, die Blutansammlung ein Hämatom."
  }
 ] }
 ];

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Abschlussquiz Materialentfernung</title>
-<link rel="stylesheet" href="../../assets/ils.css?v=v202611071650">
+<link rel="stylesheet" href="../../assets/ils.css?v=v202611071722">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Abschluss</div><h1>Abschlussquiz Materialentfernung</h1></div></header>
@@ -13,11 +13,11 @@
 <div id="app"></div>
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
 </main>
-<script src="../../assets/ils.js?v=v202611071650"></script>
-<script src="../../assets/ils-server.js?v=v202611071650"></script>
-<script src="../../assets/auftraege.js?v=v202611071650"></script>
-<script src="../../assets/ils-konto.js?v=v202611071650"></script>
-<script src="../../assets/ils-lern.js?v=v202611071650"></script>
+<script src="../../assets/ils.js?v=v202611071722"></script>
+<script src="../../assets/ils-server.js?v=v202611071722"></script>
+<script src="../../assets/auftraege.js?v=v202611071722"></script>
+<script src="../../assets/ils-konto.js?v=v202611071722"></script>
+<script src="../../assets/ils-lern.js?v=v202611071722"></script>
 <script>
 const POOL = [
  {
@@ -25,9 +25,9 @@ const POOL = [
   "frage": "Frau Schäfer (52) wurde eine Platte am rechten Unterarm entfernt. Wo prüfen Sie die DMS?",
   "optionen": [
    "an den Fingern der rechten Hand: Farbe, Temperatur, Bewegung, Gefühl",
-   "an den Zehen",
-   "an der linken Hand",
-   "am Oberarm oberhalb der OP"
+   "an der linken Hand, weil die rechte vom Verband verdeckt ist",
+   "am rechten Oberarm oberhalb der OP-Stelle: Farbe, Temperatur, Puls",
+   "direkt an der Wunde: Rötung, Schwellung, Wärme und Schmerz"
   ],
   "richtig": 0,
   "erklaerung": "Immer körperfern (distal) der OP-Stelle prüfen."
@@ -37,8 +37,8 @@ const POOL = [
   "frage": "Nach Pflegias werden Fäden an der <b>oberen Extremität</b> meist nach … entfernt.",
   "optionen": [
    "10–12 Tagen",
-   "2 Tagen",
-   "21 Tagen",
+   "3–5 Tagen",
+   "21–28 Tagen",
    "6 Wochen"
   ],
   "richtig": 0,
@@ -97,21 +97,21 @@ const POOL = [
   "frage": "Welche Kombination spricht für eine <b>Thrombose</b>?",
   "optionen": [
    "Wade geschwollen, warm, ziehende Schmerzen, Spannungsgefühl",
-   "Zehen blass, kalt, pulslos",
-   "Wundränder klaffen auseinander",
-   "Haut juckt unter dem Pflaster"
+   "Zehen blass, kalt und pulslos, der Fuß lässt sich schlecht bewegen",
+   "Wunde gerötet, warm, geschwollen, trübes Sekret und Fieber",
+   "Haut neben der Wunde blau-violett verfärbt, geschwollen und schmerzhaft"
   ],
   "richtig": 0,
-  "erklaerung": "Leitsymptome der tiefen Beinvenenthrombose."
+  "erklaerung": "Leitsymptome der tiefen Beinvenenthrombose. Blasse, kalte Zehen ohne Puls sprechen für eine arterielle Durchblutungsstörung, Sekret und Fieber für eine Wundinfektion, eine blau-violette Verfärbung für ein Hämatom."
  },
  {
   "typ": "wahl",
   "frage": "Herr Brandt bekommt zu Hause plötzlich Atemnot und Schmerzen in der Brust. Was ist zu tun?",
   "optionen": [
    "sofort die 112 rufen – Verdacht auf Lungenembolie",
-   "bis morgen abwarten",
-   "ein Schmerzmittel nehmen und hinlegen",
-   "die Wade massieren"
+   "sich hinlegen, ruhig atmen und morgen früh zum Hausarzt gehen",
+   "ein Schmerzmittel nehmen – das sind sicher Verspannungen von den Stützen",
+   "die Wade massieren, damit sich das Gerinnsel auflöst"
   ],
   "richtig": 0,
   "erklaerung": "Die Lungenembolie ist die gefährlichste Komplikation einer Thrombose."
@@ -123,7 +123,7 @@ const POOL = [
    "sofort die Ärztin informieren",
    "stärker kühlen und abwarten",
    "den Verband fester wickeln",
-   "mehr trinken lassen"
+   "die Bedarfsmedikation geben und in einer Stunde nachfragen"
   ],
   "richtig": 0,
   "erklaerung": "Alarmzeichen – hier darf man nicht abwarten."
@@ -147,8 +147,8 @@ const POOL = [
   "begruendung": {
    "optionen": [
     "Das fördert den Ödemabfluss und vermindert Schwellung und Schmerz.",
-    "Damit die Fäden halten.",
-    "Damit der Patient nicht aufsteht."
+    "Das erhöht den Blutdruck im Bein und verbessert so die Wundheilung.",
+    "Damit der Patient im Bett bleibt und das Bein nicht belastet."
    ],
    "richtig": 0
   },
@@ -167,7 +167,7 @@ const POOL = [
   "optionen": [
    "über die operierte Seite",
    "über die gesunde Seite",
-   "über das Fußende",
+   "über das Fußende des Bettes",
    "egal"
   ],
   "richtig": 0,
@@ -189,9 +189,9 @@ const POOL = [
   "frage": "Wo liegt der Handgriff der Unterarmgehstütze richtig?",
   "optionen": [
    "etwa auf Höhe des Oberschenkelknochens (Hüfte), Ellenbogen leicht gebeugt",
-   "auf Schulterhöhe",
-   "auf Kniehöhe",
-   "auf Höhe der Taille, Arme gestreckt"
+   "auf Höhe der Achsel, damit die Stütze unter der Achsel liegt",
+   "auf Kniehöhe, Oberkörper leicht nach vorn gebeugt",
+   "auf Höhe der Taille, Arme ganz gestreckt und Schultern hochgezogen"
   ],
   "richtig": 0,
   "erklaerung": "Schultern nicht hochziehen."
@@ -217,9 +217,9 @@ const POOL = [
   "frage": "Warum geben Sie das Schmerzmittel (nach Anordnung) <b>vor</b> der Mobilisation?",
   "optionen": [
    "damit es wirkt, wenn die Bewegung Schmerzen auslöst",
-   "damit der Patient müde wird",
-   "weil es sonst abläuft",
-   "damit er schneller entlassen wird"
+   "damit es den Kreislauf stabilisiert und Schwindel verhindert",
+   "weil Schmerzmittel nach der Bewegung nicht mehr wirken",
+   "damit man die Schmerzen danach nicht mehr einschätzen muss"
   ],
   "richtig": 0,
   "erklaerung": "Präventive Analgetikagabe vor schmerzauslösenden Maßnahmen."
@@ -266,21 +266,21 @@ const POOL = [
   "frage": "Welches Ziel ist <b>überprüfbar</b>?",
   "optionen": [
    "Frau Schäfer bewegt bis heute Abend alle Finger der rechten Hand ohne Kribbeln.",
-   "Frau Schäfer geht es gut.",
-   "Die Pflegefachperson prüft die DMS.",
-   "Frau Schäfer soll keine Probleme haben."
+   "Frau Schäfer geht es nach der Operation am Unterarm gut.",
+   "Die Pflegefachperson prüft bis heute Abend alle 2 Stunden die DMS der rechten Hand.",
+   "Frau Schäfer soll möglichst keine Probleme mit den Fingern bekommen."
   ],
   "richtig": 0,
-  "erklaerung": "Beobachtbar + Zeitpunkt."
+  "erklaerung": "Beobachtbar + Zeitpunkt. „Die Pflegefachperson prüft …“ ist eine Maßnahme, kein Ziel."
  },
  {
   "typ": "wahl",
   "frage": "PESR: Was ist bei Herrn Brandt eine <b>Ressource</b>?",
   "optionen": [
    "ist motiviert und stellt gezielte Fragen",
-   "erste OP dieser Art",
+   "erste OP dieser Art, morgen schon Entlassung",
    "fragt, wann er duschen darf",
-   "Wissensdefizit"
+   "Wissensdefizit zum Verhalten nach der Entlassung"
   ],
   "richtig": 0,
   "erklaerung": "„Erste OP“ ist ein Einflussfaktor, die Frage ein Kennzeichen, das Wissensdefizit das Problem."
@@ -296,9 +296,9 @@ const POOL = [
   "frage": "Warum soll Herr Brandt nach der Materialentfernung einige Wochen keinen Fußball spielen?",
   "optionen": [
    "Die Schraubenlöcher sind anfangs Schwachstellen – Gefahr eines erneuten Bruchs.",
-   "Damit die Fäden nicht reißen.",
-   "Weil Fußball immer verboten ist.",
-   "Wegen der Narkose."
+   "Damit sich die Platte im Knochen nicht wieder lockert und verrutscht.",
+   "Weil die Narkose noch einige Wochen im Körper nachwirkt.",
+   "Weil das neue Material im Knochen erst einwachsen muss."
   ],
   "richtig": 0,
   "erklaerung": "Die Sportpause legt die Ärztin fest – bei Herrn Brandt 6 Wochen."
@@ -324,9 +324,9 @@ const POOL = [
   "frage": "Eine kleine Stelle am Fußrücken ist nach der OP taub. Was tun Sie?",
   "optionen": [
    "der Äußerung nachgehen, Ärztin informieren, dokumentieren",
-   "ignorieren",
-   "kräftig massieren",
-   "kühlen, bis es weggeht"
+   "nichts tun – das ist nach einer OP normal und geht weg",
+   "kräftig massieren, bis das Gefühl zurückkommt",
+   "die Stelle kühlen und morgen noch einmal nachfragen"
   ],
   "richtig": 0,
   "erklaerung": "Sensibilitätsstörungen immer ernst nehmen."
@@ -336,12 +336,12 @@ const POOL = [
   "frage": "Was ist eine <b>Wunddehiszenz</b>?",
   "optionen": [
    "Auseinanderklaffen der Wundränder nach einer Naht",
-   "überschießende Narbe",
-   "Bluterguss",
-   "Wundstarrkrampf"
+   "wulstige Narbe, die über den Wundrand hinauswächst",
+   "Ansammlung von Blut im Gewebe neben der Naht",
+   "Entzündung der Wunde mit Eiter und Fieber"
   ],
   "richtig": 0,
-  "erklaerung": "Ursachen: Infektion, Manipulation, übermäßige Belastung."
+  "erklaerung": "Ursachen: Infektion, Manipulation, übermäßige Belastung. Die wulstige Narbe ist ein Keloid, die Blutansammlung ein Hämatom."
  }
 ];
 ILSLern.uebung(Object.assign({"mount": "#app", "ils": "me", "schritt": "quiz", "abschluss": true, "abschnitt": "alle Abschnitte des Arbeitsblatts", "ziehen": 10, "fehlerMax": 2, "pauseSek": 180, "intro": "Neuer Fall: <strong>Frau Schäfer</strong> (52) wurde eine Platte am rechten <strong>Unterarm</strong> entfernt. Dazu kommen Fragen zu allen Abschnitten. Sie dürfen höchstens 2 Fehler machen."}, { pool: POOL }));

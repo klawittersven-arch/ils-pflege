@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Übung 5: Information, Schulung und Entlassung</title>
-<link rel="stylesheet" href="../../assets/ils.css?v=v202611071650">
+<link rel="stylesheet" href="../../assets/ils.css?v=v202611071722">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Übung 5 von 5</div><h1>Übung 5: Information, Schulung und Entlassung</h1></div></header>
@@ -13,11 +13,11 @@
 <div id="app"></div>
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
 </main>
-<script src="../../assets/ils.js?v=v202611071650"></script>
-<script src="../../assets/ils-server.js?v=v202611071650"></script>
-<script src="../../assets/auftraege.js?v=v202611071650"></script>
-<script src="../../assets/ils-konto.js?v=v202611071650"></script>
-<script src="../../assets/ils-lern.js?v=v202611071650"></script>
+<script src="../../assets/ils.js?v=v202611071722"></script>
+<script src="../../assets/ils-server.js?v=v202611071722"></script>
+<script src="../../assets/auftraege.js?v=v202611071722"></script>
+<script src="../../assets/ils-konto.js?v=v202611071722"></script>
+<script src="../../assets/ils-lern.js?v=v202611071722"></script>
 <script>
 const POOL = [
  {
@@ -69,19 +69,19 @@ const POOL = [
     "frage": "Was antworten Sie?",
     "optionen": [
      {
-      "t": "Laut Ihrer Ärztin frühestens nach 6 Wochen – vorher ist der Knochen an den Schraubenlöchern noch geschwächt.",
+      "t": "Laut Ihrer Ärztin frühestens nach 6 Wochen – bis dahin ist der Knochen an den Schraubenlöchern geschwächt.",
       "richtig": true,
       "rueck": "Anordnung nennen und begründen."
      },
      {
-      "t": "Sobald es nicht mehr weh tut.",
+      "t": "Sobald die Wunde nicht mehr weh tut und die Fäden gezogen sind, also nach etwa 2 Wochen.",
       "richtig": false,
-      "rueck": "Schmerzfreiheit heißt nicht, dass der Knochen belastbar ist – Refrakturgefahr."
+      "rueck": "Schmerzfreiheit und gezogene Fäden heißen nicht, dass der Knochen belastbar ist – Refrakturgefahr. Angeordnet sind 6 Wochen Pause."
      },
      {
-      "t": "Nie wieder.",
+      "t": "Nach einer Materialentfernung verzichten Sie besser ganz auf Fußball – das Risiko für einen neuen Bruch ist zu hoch.",
       "richtig": false,
-      "rueck": "Das stimmt nicht und macht unnötig Angst."
+      "rueck": "Das stimmt nicht und macht unnötig Angst – angeordnet sind 6 Wochen ohne Fußball."
      }
     ]
    },
@@ -91,19 +91,19 @@ const POOL = [
     "frage": "Was antworten Sie?",
     "optionen": [
      {
-      "t": "Ja, wenn die Wunde wasserdicht abgedeckt ist, z. B. mit einem Duschpflaster. Die Wunde soll sauber und trocken bleiben.",
+      "t": "Ja, mit wasserdichtem Schutz, z. B. einem Duschpflaster – die Wunde soll sauber und trocken bleiben.",
       "richtig": true,
       "rueck": "Verständlich, konkret, mit Begründung."
      },
      {
-      "t": "Baden Sie ruhig lange, das ist gut für die Wunde.",
+      "t": "Ja, baden Sie ruhig lange – warmes Wasser reinigt die Wunde und fördert die Heilung.",
       "richtig": false,
-      "rueck": "Eine aufgeweichte Wunde ist anfälliger für Infektionen."
+      "rueck": "Eine aufgeweichte Wunde ist anfälliger für Infektionen – nur mit wasserdichtem Schutz duschen."
      },
      {
-      "t": "Nein, drei Wochen gar nicht waschen.",
+      "t": "Nein, bis zum Fadenziehen dürfen Sie sich gar nicht waschen, sonst entzündet sich die Wunde.",
       "richtig": false,
-      "rueck": "Körperpflege ist möglich – die Wunde wird geschützt."
+      "rueck": "Körperpflege ist möglich – die Wunde wird wasserdicht geschützt."
      }
     ]
    },
@@ -113,19 +113,19 @@ const POOL = [
     "frage": "Was antworten Sie?",
     "optionen": [
      {
-      "t": "Wenn die Wunde rot, warm und dick wird oder nässt, Sie Fieber bekommen oder die Wade dick wird und schmerzt: zum Arzt. Bei Atemnot oder Brustschmerz sofort 112.",
+      "t": "Zum Arzt, wenn die Wunde rot, warm, dick oder nass wird, bei Fieber oder schmerzender Wade. Bei Atemnot oder Brustschmerz: 112.",
       "richtig": true,
       "rueck": "Konkrete Warnzeichen und was dann zu tun ist."
      },
      {
-      "t": "Das merken Sie schon.",
+      "t": "Das merken Sie schon – wenn es stärker weh tut, nehmen Sie eine Schmerztablette mehr und warten ab.",
       "richtig": false,
-      "rueck": "Zu ungenau – er braucht konkrete Warnzeichen."
+      "rueck": "Zu ungenau, und Abwarten kann gefährlich sein – er braucht konkrete Warnzeichen."
      },
      {
-      "t": "Warten Sie einfach bis zum Fadenziehen.",
+      "t": "Wenn die Wunde stark blutet, rufen Sie bitte an. Alles andere sieht sich Ihr Hausarzt dann beim Fadenziehen an.",
       "richtig": false,
-      "rueck": "Warnzeichen müssen sofort abgeklärt werden."
+      "rueck": "Warnzeichen wie Rötung, Fieber oder eine dicke Wade müssen sofort abgeklärt werden – nicht erst beim Fadenziehen."
      }
     ]
    }
@@ -169,10 +169,10 @@ const POOL = [
   "typ": "wahl",
   "frage": "Herr Brandt soll sich das Enoxaparin zu Hause selbst spritzen. Wie vermitteln Sie das?",
   "optionen": [
-   "Schulung: zeigen, erklären, selbst üben lassen und kontrollieren, bis er es sicher kann",
-   "Ihm das Merkblatt in die Hand drücken",
-   "Seiner Freundin sagen, sie soll es irgendwie machen",
-   "Gar nicht – das macht der Hausarzt"
+   "Schulung: zeigen, erklären, üben lassen und kontrollieren, bis er es sicher kann",
+   "Information: ihm ein Merkblatt geben und erklären, wo und wie oft er spritzen soll",
+   "Einmal vorspritzen und ihm sagen, er soll es zu Hause genauso machen",
+   "Gar nicht – das übernimmt nach der Entlassung der Hausarzt jeden Tag"
   ],
   "richtig": 0,
   "erklaerung": "Eine Fertigkeit lernt man durch Üben unter Anleitung – das ist Schulung."
@@ -215,13 +215,13 @@ const POOL = [
   "gruppe": "faeden",
   "frage": "Wer legt fest, wann die Fäden gezogen werden?",
   "optionen": [
-   "die Ärztin – die Durchführung kann an Pflegefachpersonen delegiert werden",
-   "der Patient selbst",
-   "die Physiotherapie",
-   "die Krankenkasse"
+   "die Ärztin – das Fadenziehen selbst kann sie delegieren",
+   "die Pflegefachperson, die beim Verbandswechsel die Wunde beurteilt",
+   "der Patient selbst, sobald die Wunde nicht mehr schmerzt",
+   "die Physiotherapie, sobald er das Bein wieder voll belastet"
   ],
   "richtig": 0,
-  "erklaerung": "Nahtmaterial darf nur entfernt werden, wenn die Wundränder auch ohne Fäden zusammenbleiben. Oft wird zuerst jeder zweite Faden entfernt."
+  "erklaerung": "Die Ärztin legt den Zeitpunkt fest; die Durchführung kann an Pflegefachpersonen delegiert werden. Nahtmaterial darf nur entfernt werden, wenn die Wundränder auch ohne Fäden zusammenbleiben. Oft wird zuerst jeder zweite Faden entfernt."
  },
  {
   "typ": "wahl",
@@ -229,8 +229,8 @@ const POOL = [
   "frage": "Nach Pflegias werden Fäden an der <b>unteren Extremität</b> meist nach … entfernt (in Gelenknähe nach 21 Tagen oder später).",
   "optionen": [
    "12–14 Tagen",
-   "2–3 Tagen",
    "5–7 Tagen",
+   "18–21 Tagen",
    "6 Wochen"
   ],
   "richtig": 0,
@@ -243,9 +243,9 @@ const POOL = [
   "richtig": false,
   "begruendung": {
    "optionen": [
-    "Es beginnt schon bei der Aufnahme mit der Einschätzung, welche Unterstützung nach der Entlassung nötig ist.",
-    "Es beginnt erst beim Hausarzt.",
-    "Entlassungsmanagement ist nur für alte Menschen."
+    "Es beginnt schon bei der Aufnahme: Man schätzt ein, welche Hilfe nach der Entlassung nötig ist.",
+    "Es beginnt erst nach der Entlassung, wenn der Hausarzt die weitere Behandlung übernimmt.",
+    "Es beginnt am Tag vor der Entlassung, wenn die Ärztin den Entlassungstermin festlegt."
    ],
    "richtig": 0
   },
@@ -256,12 +256,12 @@ const POOL = [
   "frage": "Welches Pflegeziel für Herrn Brandt ist <b>überprüfbar</b>?",
   "optionen": [
    "Herr Brandt spritzt sich das Enoxaparin bis zur Entlassung morgen selbstständig und korrekt.",
-   "Herr Brandt weiß Bescheid.",
-   "Die Pflegefachperson schult Herrn Brandt.",
-   "Herr Brandt hat keine Fragen mehr."
+   "Herr Brandt weiß gut über die Selbstinjektion des Enoxaparins Bescheid.",
+   "Die Pflegefachperson schult Herrn Brandt bis zur Entlassung morgen in der Selbstinjektion des Enoxaparins.",
+   "Herr Brandt fühlt sich bei der Selbstinjektion zu Hause sicher und hat keine Angst mehr."
   ],
   "richtig": 0,
-  "erklaerung": "Beobachtbares Verhalten + Zeitpunkt. „Die Pflegefachperson schult …“ ist eine Maßnahme."
+  "erklaerung": "Beobachtbares Verhalten + Zeitpunkt. „Die Pflegefachperson schult …“ ist eine Maßnahme. „Weiß Bescheid“ oder „fühlt sich sicher“ kann man nicht beobachten."
  }
 ];
 const SCHREIBEN = {"auftrag": "<strong>Beschreiben Sie</strong> 4 Verhaltensweisen, über die Sie Herrn Brandt vor der Entlassung informieren, und <strong>begründen</strong> Sie diese.", "ort": "in den Kasten „Examens-Training 5“ auf dem Arbeitsblatt", "minSek": 30, "punkte": ["Wunde sauber und trocken halten, nur mit Schutz duschen – Infektionsschutz", "Fäden laut Arztbrief am 14. Tag beim Hausarzt ziehen lassen – Wundkontrolle", "Warnzeichen kennen (Infektion, Thrombose; Atemnot/Brustschmerz → 112) – schnelle Hilfe", "Enoxaparin täglich selbst spritzen bis zum angeordneten Tag, viel bewegen und trinken – Thromboseprophylaxe", "Belastung mit Stützen nach Anordnung, 6 Wochen kein Fußball – Refraktur vermeiden", "bei Schwellung hochlagern und kühlen, Schmerzmittel nach Plan", "jede Verhaltensweise begründet"]};

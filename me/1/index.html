@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Übung 1: Osteosynthese und Materialentfernung</title>
-<link rel="stylesheet" href="../../assets/ils.css?v=v202611071650">
+<link rel="stylesheet" href="../../assets/ils.css?v=v202611071722">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Übung 1 von 5</div><h1>Übung 1: Osteosynthese und Materialentfernung</h1></div></header>
@@ -13,11 +13,11 @@
 <div id="app"></div>
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
 </main>
-<script src="../../assets/ils.js?v=v202611071650"></script>
-<script src="../../assets/ils-server.js?v=v202611071650"></script>
-<script src="../../assets/auftraege.js?v=v202611071650"></script>
-<script src="../../assets/ils-konto.js?v=v202611071650"></script>
-<script src="../../assets/ils-lern.js?v=v202611071650"></script>
+<script src="../../assets/ils.js?v=v202611071722"></script>
+<script src="../../assets/ils-server.js?v=v202611071722"></script>
+<script src="../../assets/auftraege.js?v=v202611071722"></script>
+<script src="../../assets/ils-konto.js?v=v202611071722"></script>
+<script src="../../assets/ils-lern.js?v=v202611071722"></script>
 <script>
 const POOL = [
  {
@@ -71,22 +71,22 @@ const POOL = [
   "gruppe": "begriff",
   "frage": "Was ist eine <b>Osteosynthese</b>?",
   "optionen": [
-   "die operative Verbindung von Knochenbruchstücken mit Material wie Platten, Schrauben, Nagel oder Drähten",
-   "ein Gipsverband",
-   "eine Knochenentzündung",
-   "ein Röntgenbild des Knochens"
+   "die operative Verbindung der Bruchstücke mit Material wie Platten oder Schrauben",
+   "die Ruhigstellung eines Bruchs mit einem Gips- oder Kunststoffverband (Cast)",
+   "das Einrichten der verschobenen Bruchstücke unter Narkose in die richtige Stellung",
+   "die Entfernung von Platten und Schrauben nach der Knochenheilung"
   ],
   "richtig": 0,
-  "erklaerung": "Ziel ist eine möglichst schonende (biologische) Osteosynthese."
+  "erklaerung": "Bei der Osteosynthese werden die Bruchstücke operativ mit Material verbunden (Platten, Schrauben, Nagel oder Drähte). Ziel ist eine möglichst schonende (biologische) Osteosynthese. Gips oder Cast = konservative Behandlung, Einrichten = Reposition, Entfernen = Materialentfernung."
  },
  {
   "typ": "wahl",
   "frage": "Wann wird das Osteosynthesematerial in der Regel entfernt?",
   "optionen": [
    "nach Abschluss der Knochenheilung, meist nach 1,5 bis 2 Jahren",
-   "nach einer Woche",
-   "vor Abschluss der Knochenheilung",
-   "nie"
+   "nach etwa 6 Wochen, sobald sich Kallus gebildet hat",
+   "vor Abschluss der Knochenheilung, damit nichts einwächst",
+   "nach 5 bis 10 Jahren, wenn der Knochen ganz umgebaut ist"
   ],
   "richtig": 0,
   "behalten": true,
@@ -135,8 +135,8 @@ const POOL = [
   "begruendung": {
    "optionen": [
     "Es kann bleiben, wenn eine zweite OP ein großes Risiko wäre und es weder stört noch schmerzt.",
-    "Metall im Körper ist immer gefährlich.",
-    "Es löst sich nach einem Jahr von selbst auf."
+    "Es bleibt immer im Körper, weil eine zweite Operation grundsätzlich zu gefährlich ist.",
+    "Es löst sich nach etwa einem Jahr von selbst auf, eine zweite OP ist deshalb nie nötig."
    ],
    "richtig": 0
   },
@@ -152,8 +152,8 @@ const POOL = [
    "Stabilität der Osteosynthese",
    "Umfang der Weichteilverletzung",
    "Medikamente wie Kortison oder Chemotherapie (wirken negativ)",
-   "die Haarfarbe",
-   "die Jahreszeit"
+   "die Blutgruppe des Patienten",
+   "die Jahreszeit der Operation"
   ],
   "richtig": [
    0,
@@ -170,9 +170,9 @@ const POOL = [
   "frage": "Wann wird typischerweise ein <b>Fixateur externe</b> verwendet?",
   "optionen": [
    "bei offenen Brüchen 2. und 3. Grades mit Weichteilverletzung",
-   "bei jeder Fingerfraktur",
-   "nur bei Kindern",
-   "bei Bänderrissen"
+   "bei geschlossenen Brüchen ohne Weichteilverletzung, wenn sofort voll belastet werden soll",
+   "nur bei Kindern, weil ihr Knochen noch wächst",
+   "bei Bänderrissen am Sprunggelenk ohne Knochenbruch"
   ],
   "richtig": 0,
   "erklaerung": "Der Fixateur ist übungsstabil, aber nicht belastbar. Seine Eintrittsstellen werden täglich aseptisch versorgt."
@@ -188,22 +188,22 @@ const POOL = [
   "gruppe": "begriff",
   "frage": "Wie heißt die Entfernung von Platten, Schrauben oder Nägeln im Lehrbuch Pflegias?",
   "optionen": [
-   "Materialentfernung (oft auch „Metallentfernung“ genannt)",
+   "Materialentfernung",
    "Reposition",
-   "Osteosynthese",
+   "Plattenosteosynthese",
    "Fixation"
   ],
   "richtig": 0,
-  "erklaerung": "In Kliniken hört man meist „ME“ oder „Metallentfernung“."
+  "erklaerung": "Pflegias sagt „Materialentfernung“. In Kliniken hört man meist „ME“ oder „Metallentfernung“."
  },
  {
   "typ": "wahl",
   "frage": "Schauen Sie in die Fallsituation (Seite 1): Warum möchte Herr Brandt die Platte entfernen lassen?",
   "optionen": [
    "Die Platte drückt und schmerzt, vor allem in Fußballschuhen.",
-   "Der Bruch ist noch nicht verheilt.",
-   "Die Platte hat sich entzündet.",
-   "Er möchte ein neues Röntgenbild."
+   "Der Bruch ist nach 18 Monaten noch nicht verheilt.",
+   "Die Platte hat sich entzündet, die Narbe ist gerötet und eitert.",
+   "Die Platte hat sich gelockert, das zeigt das Röntgenbild."
   ],
   "richtig": 0,
   "erklaerung": "Beschwerden durch das Material sind ein häufiger Grund – bei jungen Menschen wird das Material oft entfernt."

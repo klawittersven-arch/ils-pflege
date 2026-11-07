@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Übung 3: Komplikationen erkennen</title>
-<link rel="stylesheet" href="../../assets/ils.css?v=v202611071650">
+<link rel="stylesheet" href="../../assets/ils.css?v=v202611071722">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Übung 3 von 5</div><h1>Übung 3: Komplikationen erkennen</h1></div></header>
@@ -13,11 +13,11 @@
 <div id="app"></div>
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
 </main>
-<script src="../../assets/ils.js?v=v202611071650"></script>
-<script src="../../assets/ils-server.js?v=v202611071650"></script>
-<script src="../../assets/auftraege.js?v=v202611071650"></script>
-<script src="../../assets/ils-konto.js?v=v202611071650"></script>
-<script src="../../assets/ils-lern.js?v=v202611071650"></script>
+<script src="../../assets/ils.js?v=v202611071722"></script>
+<script src="../../assets/ils-server.js?v=v202611071722"></script>
+<script src="../../assets/auftraege.js?v=v202611071722"></script>
+<script src="../../assets/ils-konto.js?v=v202611071722"></script>
+<script src="../../assets/ils-lern.js?v=v202611071722"></script>
 <script>
 const POOL = [
  {
@@ -54,19 +54,19 @@ const POOL = [
     "frage": "Was raten Sie?",
     "optionen": [
      {
-      "t": "Heute noch ärztlich abklären lassen. Bekommen Sie Atemnot oder Brustschmerzen, rufen Sie sofort die 112.",
+      "t": "Lassen Sie das heute noch ärztlich abklären. Bei Atemnot oder Brustschmerz rufen Sie sofort die 112.",
       "richtig": true,
       "rueck": "Die gefährlichste Komplikation einer Thrombose ist die Lungenembolie."
      },
      {
-      "t": "Massieren Sie die Wade kräftig.",
+      "t": "Massieren Sie die Wade kräftig und lagern Sie das Bein hoch – dann geht die Schwellung bald wieder zurück.",
       "richtig": false,
-      "rueck": "Bei Verdacht auf Thrombose nicht massieren – ein Gerinnsel könnte sich lösen."
+      "rueck": "Bei Verdacht auf Thrombose nicht massieren – ein Gerinnsel könnte sich lösen. Der Verdacht muss heute noch abgeklärt werden."
      },
      {
-      "t": "Warten Sie bis zum Fadenziehen in 11 Tagen.",
+      "t": "Spritzen Sie weiter Ihr Enoxaparin und warten Sie bis zum Fadenziehen in 11 Tagen.",
       "richtig": false,
-      "rueck": "Ein Thromboseverdacht muss sofort abgeklärt werden."
+      "rueck": "Das Enoxaparin beugt vor, ersetzt aber keine Abklärung. Ein Thromboseverdacht muss sofort abgeklärt werden."
      }
     ]
    }
@@ -91,13 +91,13 @@ const POOL = [
   "gruppe": "detektiv2",
   "frage": "Symptom-Detektiv: Neben der Wunde ist die Haut geschwollen, schmerzhaft und rötlich bis blau-violett verfärbt. Was liegt vor?",
   "optionen": [
-   "ein Hämatom (Bluterguss)",
+   "ein Hämatom",
    "eine Wunddehiszenz",
    "ein Keloid",
    "eine Thrombose"
   ],
   "richtig": 0,
-  "erklaerung": "Ein Hämatom ist eine Ansammlung von Blut im Gewebe – z. B. nach einer OP."
+  "erklaerung": "Ein Hämatom (Bluterguss) ist eine Ansammlung von Blut im Gewebe – z. B. nach einer OP."
  },
  {
   "typ": "wahl",
@@ -181,34 +181,34 @@ const POOL = [
   "richtig": false,
   "begruendung": {
    "optionen": [
-    "Die leeren Schraubenlöcher sind anfangs Schwachstellen – es droht ein erneuter Bruch (Refraktur). Deshalb Sportpause nach Anordnung.",
-    "Der Knochen ist danach weich wie Gummi.",
-    "Fußball ist nach einer OP immer verboten."
+    "Die leeren Schraubenlöcher sind anfangs Schwachstellen – es droht ein erneuter Bruch (Refraktur).",
+    "Der Knochen ist nach der OP noch weich und muss erst wieder verkalken – das dauert etwa ein Jahr.",
+    "Nach einer Narkose ist Sport grundsätzlich drei Monate verboten, auch ohne Schaden am Knochen."
    ],
    "richtig": 0
   },
-  "erklaerung": "Bei Herrn Brandt hat die Ärztin 6 Wochen Sportpause angeordnet."
+  "erklaerung": "Wegen der Refrakturgefahr gilt eine Sportpause nach Anordnung – bei Herrn Brandt hat die Ärztin 6 Wochen angeordnet."
  },
  {
   "typ": "wahl",
   "frage": "Am Abend hat Herr Brandt trotz Schmerzmittel und Hochlagern <b>immer stärkere</b> Schmerzen, der Unterschenkel ist prall gespannt und die Zehen kribbeln. Was tun Sie?",
   "optionen": [
-   "Sofort die Ärztin informieren – Verdacht auf eine gefährliche Druckerhöhung im Gewebe (Kompartmentsyndrom)",
-   "Stärker kühlen und bis morgen abwarten",
-   "Den Verband fester wickeln",
-   "Eine Schlaftablette anbieten"
+   "Sofort die Ärztin informieren – Verdacht auf ein Kompartmentsyndrom",
+   "Stärker kühlen, das Bein noch höher lagern und bis zur Visite morgen abwarten",
+   "Den Verband fester wickeln, damit die Schwellung nicht weiter zunimmt",
+   "Die nächste Bedarfsmedikation geben und in 2 Stunden wieder nachfragen"
   ],
   "richtig": 0,
-  "erklaerung": "Zunehmende Schmerzen, die sich nicht bessern, plus Kribbeln sind ein Alarmzeichen. Hier zählt jede Stunde."
+  "erklaerung": "Beim Kompartmentsyndrom steigt der Druck im Gewebe gefährlich an und gefährdet Nerven und Muskeln. Zunehmende Schmerzen, die sich nicht bessern, plus Kribbeln sind ein Alarmzeichen. Hier zählt jede Stunde."
  },
  {
   "typ": "wahl",
   "frage": "Nach der OP ist ein kleines Hautareal am rechten Fußrücken taub. Was tun Sie?",
   "optionen": [
    "Der Äußerung nachgehen, die Ärztin informieren und den Befund dokumentieren",
-   "Nichts – das ist nach jeder OP so",
-   "Die Stelle kräftig massieren",
-   "Erst nach der Entlassung erwähnen"
+   "Nichts tun – ein tauber Fleck ist nach einer OP normal und vergeht",
+   "Die Stelle kräftig massieren, damit das Gefühl schneller zurückkommt",
+   "Die Stelle kühlen und erst beim Fadenziehen dem Hausarzt zeigen"
   ],
   "richtig": 0,
   "erklaerung": "Die Sensibilität kann nach einer OP vorübergehend gestört sein. Äußerungen zu Sensibilitätsstörungen gehen Sie immer nach."

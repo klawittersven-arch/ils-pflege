@@ -130,7 +130,7 @@ Neue ILS-Übungen laufen im Lernmodus (`ILSLern.uebung({...})`, Beispiel: `probe
 - **Tempo-Kontrolle:** Jede Aufgabe hat eine Mindest-Lesezeit: 1 s + 0,15 s je Wort (≈ 400 Wörter/Minute), höchstens 8 s;
   gezählt werden Frage und Antwortmöglichkeiten, beim Lückentext nur der Text bis zur ersten Lücke. Folgeschritte
   (nächster Begriff, Begründung): 0,4 s + 0,08 s je Wort. Zu frühes Tippen zählt nicht und gibt eine Warnung; nach
-  3 Warnungen 30 s Lesepause, danach geht es mit **derselben Aufgabe** weiter (kein Neustart). Gleiche Lesezeiten in der Challenge.
+  3 Warnungen 15 s Lesepause, danach geht es mit **derselben Aufgabe** weiter (kein Neustart). Gleiche Lesezeiten in der Challenge.
 - **Nach einem Fehler** bleibt die Erklärung 4 Sekunden stehen, bevor „Weiter“ geht.
 - **Zwischenstand** (aktuelle Aufgabe, Fehler, laufende Lesepause, Schreibzeit) bleibt auf dem Gerät gespeichert.
 - **Examens-Training** (optional `schreiben`): Schreibauftrag auf Papier mit Mindestzeit (`minSek`, in beiden Aufträgen 30 s), danach Checkliste

@@ -226,14 +226,14 @@ const QUIZ = { 'Die Lehrkraft sieht': 'Richtig', 'einzelnen Antworten': 'Falsch'
     pruefe(/Zu schnell/.test(await sus.textContent('.lern-start')) && /derselben Aufgabe/.test(await sus.textContent('.lern-start')) &&
       await sus.isDisabled('#lern-fortsetzen'), '3× zu schnell → Lesepause, danach dieselbe Aufgabe');
     await foto(sus, '7_zu_schnell_handy');
-    await sus.clock.fastForward(20000);
-    pruefe(await sus.isDisabled('#lern-fortsetzen'), 'Tempo-Pause: nach 20 s noch gesperrt');
-    await sus.clock.fastForward(11000);
+    await sus.clock.fastForward(10000);
+    pruefe(await sus.isDisabled('#lern-fortsetzen'), 'Tempo-Pause: nach 10 s noch gesperrt');
+    await sus.clock.fastForward(6000);   // Tempo-Pause 15 s
     await sus.waitForSelector('#lern-fortsetzen:not([disabled])');
     await sus.click('#lern-fortsetzen');
     await sus.waitForSelector('.lern-aussage');
     pruefe((await sus.textContent('.lern-aussage')) === ersteAussage && /Aufgabe 1 von 4/.test(await sus.textContent('.lern-kopf')),
-      'nach 30 s: weiter mit derselben Aufgabe (kein Neustart, auch im Abschlussquiz)');
+      'nach 15 s: weiter mit derselben Aufgabe (kein Neustart, auch im Abschlussquiz)');
     for (let i = 0; i < 4; i++) {
       await sus.waitForSelector('.lern-aussage');
       const aussage = await sus.textContent('.lern-aussage');

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Übung 4: Schmerz und Mobilisation</title>
-<link rel="stylesheet" href="../../assets/ils.css?v=v202611071650">
+<link rel="stylesheet" href="../../assets/ils.css?v=v202611071722">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">ILS Materialentfernung · Übung 4 von 5</div><h1>Übung 4: Schmerz und Mobilisation</h1></div></header>
@@ -13,11 +13,11 @@
 <div id="app"></div>
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
 </main>
-<script src="../../assets/ils.js?v=v202611071650"></script>
-<script src="../../assets/ils-server.js?v=v202611071650"></script>
-<script src="../../assets/auftraege.js?v=v202611071650"></script>
-<script src="../../assets/ils-konto.js?v=v202611071650"></script>
-<script src="../../assets/ils-lern.js?v=v202611071650"></script>
+<script src="../../assets/ils.js?v=v202611071722"></script>
+<script src="../../assets/ils-server.js?v=v202611071722"></script>
+<script src="../../assets/auftraege.js?v=v202611071722"></script>
+<script src="../../assets/ils-konto.js?v=v202611071722"></script>
+<script src="../../assets/ils-lern.js?v=v202611071722"></script>
 <script>
 const POOL = [
  {
@@ -46,13 +46,13 @@ const POOL = [
   "typ": "wahl",
   "frage": "Wie werden Unterarmgehstützen richtig eingestellt?",
   "optionen": [
-   "Handgriff etwa auf Höhe des Oberschenkelknochens (Hüfte), Ellenbogen leicht gebeugt, Schultern nicht hochgezogen",
-   "Handgriff auf Höhe der Schultern, Arme ganz gestreckt",
-   "Handgriff auf Kniehöhe",
-   "So kurz wie möglich, damit man sich gut aufstützt"
+   "Handgriff etwa auf Höhe des Oberschenkelknochens (Hüfte), Ellenbogen leicht gebeugt",
+   "Handgriff auf Schulterhöhe, Ellenbogen stark gebeugt",
+   "Handgriff auf Kniehöhe, Oberkörper weit nach vorn gebeugt",
+   "So kurz wie möglich einstellen, damit man sich mit dem ganzen Oberkörper aufstützt"
   ],
   "richtig": 0,
-  "erklaerung": "Die Stützen werden mit dem physiotherapeutischen Team angepasst – möglichst schon vor der OP, damit der Patient üben kann."
+  "erklaerung": "Die Schultern werden dabei nicht hochgezogen. Die Stützen werden mit dem physiotherapeutischen Team angepasst – möglichst schon vor der OP, damit der Patient üben kann."
  },
  {
   "typ": "sortieren",
@@ -93,13 +93,13 @@ const POOL = [
   "typ": "wahl",
   "frage": "Wann geben Sie das Schmerzmittel (nach Anordnung) vor der Mobilisation?",
   "optionen": [
-   "rechtzeitig vorher, z. B. 30–45 Minuten, damit es wirkt, wenn es weh tut",
-   "erst wenn er beim Gehen schreit",
-   "nach der Mobilisation",
-   "gar nicht – Schmerz gehört dazu"
+   "rechtzeitig vorher, z. B. 30–45 Minuten vor dem Aufstehen",
+   "erst wenn er beim Gehen über starke Schmerzen klagt, damit nichts unnötig gegeben wird",
+   "direkt nach der Mobilisation, wenn das Bein wieder hochgelagert ist",
+   "genau beim Aufstehen, damit es im richtigen Moment wirkt"
   ],
   "richtig": 0,
-  "erklaerung": "In Erwartungshorizonten heißt das: „präventive Analgetikagabe vor schmerzauslösenden Interventionen“."
+  "erklaerung": "Das Schmerzmittel braucht Zeit – es soll wirken, wenn die Bewegung weh tut. In Erwartungshorizonten heißt das: „präventive Analgetikagabe vor schmerzauslösenden Interventionen“."
  },
  {
   "typ": "mehrfach",
@@ -132,17 +132,17 @@ const POOL = [
     "frage": "Was antworten Sie?",
     "optionen": [
      {
-      "t": "Die Stützen geben Ihnen Sicherheit und entlasten das Bein. Heute ist durch die Narkose auch die Sturzgefahr höher.",
+      "t": "Die Stützen entlasten das Bein und geben Sicherheit. Nach der Narkose ist heute die Sturzgefahr höher.",
       "richtig": true,
       "rueck": "Begründen statt befehlen."
      },
      {
-      "t": "Dann gehen Sie halt ohne.",
+      "t": "Gut, dann gehen Sie ohne Stützen – Sie sind jung und kennen Ihren Körper am besten.",
       "richtig": false,
-      "rueck": "Das gefährdet ihn – Sturz und Überlastung."
+      "rueck": "Das gefährdet ihn – Sturz und Überlastung. Erklären Sie ihm, wozu die Stützen da sind."
      },
      {
-      "t": "Sie müssen, sonst gibt es Ärger.",
+      "t": "Sie müssen die Stützen nehmen, sonst muss ich das der Ärztin melden und Sie bleiben länger im Krankenhaus.",
       "richtig": false,
       "rueck": "Drohen hilft nicht – erklären Sie den Sinn."
      }
@@ -154,19 +154,19 @@ const POOL = [
     "frage": "Was antworten Sie?",
     "optionen": [
      {
-      "t": "Heute nach der Narkose begleite ich Sie – klingeln Sie bitte vorher. Wenn Sie morgen sicher gehen, auch allein.",
+      "t": "Heute begleite ich Sie, klingeln Sie bitte vorher. Wenn Sie morgen sicher gehen, auch allein.",
       "richtig": true,
       "rueck": "Das Sturzrisiko nach der Narkose besteht oft nur kurz – am OP-Tag reicht meist die Begleitung zur Toilette."
      },
      {
-      "t": "Klar, Sie sind ja fit.",
+      "t": "Klar, Sie sind ja fit – nehmen Sie nur die Stützen mit und lassen Sie die Toilettentür einen Spalt offen.",
       "richtig": false,
-      "rueck": "Am OP-Tag besteht durch die Narkose eine Sturzgefahr."
+      "rueck": "Am OP-Tag besteht durch die Narkose eine Sturzgefahr – heute begleiten Sie ihn."
      },
      {
-      "t": "Nein, Sie bleiben drei Tage im Bett.",
+      "t": "Nein, bis zur Entlassung bleiben Sie im Bett und nehmen bitte die Bettpfanne.",
       "richtig": false,
-      "rueck": "Frühe Mobilisation ist erwünscht."
+      "rueck": "Frühe Mobilisation ist erwünscht – das Sturzrisiko besteht oft nur kurz."
      }
     ]
    }
@@ -201,8 +201,8 @@ const POOL = [
   "begruendung": {
    "optionen": [
     "Beim Gehen pumpt die Wadenmuskulatur das Blut in den Venen zum Herzen (Muskelpumpe).",
-    "Bewegung verdünnt das Blut wie ein Medikament.",
-    "Durch Bewegung wird die Wunde kleiner."
+    "Bewegung verdünnt das Blut wie Heparin, deshalb braucht man dann keine Spritze mehr.",
+    "Bewegung senkt den Blutdruck, deshalb kann sich kein Gerinnsel mehr bilden."
    ],
    "richtig": 0
   },
