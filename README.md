@@ -168,5 +168,22 @@ beliebig oft – wie die Klausur-Challenge der Lernkarten:
 - **Bestenliste je ILS-Auftrag und Klasse** mit Vorname + Initial (Top 10, eigener Platz). Es zählt das beste Ergebnis.
 - **Lehrkraft-Seite:** Spalte „🏁 Challenge“ (auch in der CSV) und **🏆 Siegerehrung** am Beamer: Treppchen 2 – 1 – 3,
   Plätze 4–12, Konfetti. Tasten **F** Vollbild, **R**/Leertaste nochmal, **Esc** schließen. Ohne gewählte Klasse wird sie zuerst abgefragt.
-- „Fortschritt eines Auftrags löschen“, „Person löschen“ und „Alles löschen“ löschen auch die Challenge-Ergebnisse.
+- „Fortschritt eines Auftrags löschen“, „Person löschen“ und „Alles löschen“ löschen auch die Challenge-Ergebnisse und Siegerwappen.
 - Test: `node tests/challenge.test.js`
+
+### Siegerwappen
+
+Wer ein Challenge-Ergebnis hat, darf mit dem Finger ein kleines **Siegerwappen** malen (je ILS-Auftrag eines, jederzeit neu malbar).
+Es erscheint neben dem Namen in der Bestenliste der Klasse.
+
+- Malfläche mit 9 Farben (Weiß = Radierer), 3 Strichstärken, Rückgängig, Neu. Gespeichert wird ein PNG mit 128 × 128 Pixeln
+  (meist 3–15 KB). Der Server nimmt nur echte PNG-Bilder zwischen 32 und 128 Pixeln und bis ca. 30 KB an – kein Text, kein SVG.
+  Ohne Internet wird das Wappen auf dem Handy gemerkt und beim nächsten Öffnen der Challenge-Seite gesendet.
+- **Sofort sichtbar** für die Klasse (Vertrauen statt Vorabkontrolle). Die Lehrkraft-Seite zeigt neue Wappen an:
+  Knopf **🛡️ Siegerwappen (2 neu)**, in der Tabelle „🛡️ neu“.
+- **Galerie** (Knopf 🛡️ Siegerwappen): alle Wappen des gewählten Auftrags/der Klasse, neue zuerst. Je Wappen
+  „✓ Angesehen“, „Löschen“ (Person kann neu malen) und „Vom Malen ausschließen“ (löscht alle Wappen der Person, kein neues möglich;
+  „Wieder zulassen“ in der Galerie oder unter Verwaltung → Einzelne Person → „Siegerwappen: Malen aus/an“). In der Tabelle: 🚫.
+- Die **🏆 Siegerehrung** am Beamer zeigt **nur Wappen, die Sie als angesehen markiert haben** – ein frisch gemaltes Bild
+  landet also nie ungeprüft an der Wand.
+- Speicher im Worker: `w:<ils>:<sid>` = { bild, um, gesehen }, `wsperre:<sid>`.

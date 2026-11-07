@@ -7,7 +7,8 @@
    · 150 Punkte je Aufgabe; bei Aufgaben mit mehreren Schritten anteilig – jeder Fehlklick kostet.
    · Zeitbonus bis 750 Punkte, sinkt in 15 Minuten auf 0 und zählt nur anteilig zu den richtigen Antworten.
      Die Zeit misst der Server (Start bis Ende), die Mindest-Lesezeit je Aufgabe gilt weiter.
-   · Lösungen gibt es erst am Ende. Bestenliste je ILS-Auftrag und Klasse (Vorname + Initial). */
+   · Lösungen gibt es erst am Ende. Bestenliste je ILS-Auftrag und Klasse (Vorname + Initial).
+   · Siegerwappen: Wer ein Ergebnis hat, darf ein kleines Bild malen (je Auftrag eines), das neben dem Namen erscheint. */
 const ILSChallenge = (() => {
   'use strict';
   const el = ILS.el;
@@ -65,6 +66,86 @@ const ILSChallenge = (() => {
     }
   }
 
+  /* ---------- Siegerwappen malen ---------- */
+  const FARBEN = ['#1f1d1b', '#c0392b', '#e67e22', '#f1c40f', '#27ae60', '#2471a3', '#8e44ad', '#7b4a2a', '#ffffff'];
+  const DICKEN = [['dünn', 5], ['mittel', 11], ['dick', 22]];
+
+  function wappenEditor(speichern, abbrechen) {
+    const G = 256;
+    let farbe = FARBEN[1];
+    let dicke = DICKEN[1][1];
+    const striche = [];
+    let aktuell = null;
+    const cv = el('canvas', { width: G, height: G, class: 'wappen-flaeche', id: 'wappen-flaeche', 'aria-label': 'Malfläche für das Siegerwappen' });
+    const ctx = cv.getContext('2d');
+    function zeichnen() {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, G, G);
+      for (const st of striche) {
+        ctx.strokeStyle = st.farbe; ctx.fillStyle = st.farbe; ctx.lineWidth = st.dicke; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        if (st.punkte.length === 1) { ctx.beginPath(); ctx.arc(st.punkte[0][0], st.punkte[0][1], st.dicke / 2, 0, Math.PI * 2); ctx.fill(); continue; }
+        ctx.beginPath();
+        st.punkte.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+        ctx.stroke();
+      }
+    }
+    const pos = (e) => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * G / r.width, (e.clientY - r.top) * G / r.height]; };
+    cv.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      try { cv.setPointerCapture(e.pointerId); } catch (x) { /* egal */ }
+      meldung.className = 'fb';
+      aktuell = { farbe, dicke, punkte: [pos(e)] };
+      striche.push(aktuell);
+      zeichnen();
+    });
+    cv.addEventListener('pointermove', (e) => { if (!aktuell) return; e.preventDefault(); aktuell.punkte.push(pos(e)); zeichnen(); });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((t) => cv.addEventListener(t, () => { aktuell = null; }));
+    zeichnen();
+
+    const farbKnoepfe = FARBEN.map((f) => {
+      const b = el('button', { type: 'button', class: 'farbe' + (f === farbe ? ' an' : ''), style: `background:${f}`, 'aria-label': f === '#ffffff' ? 'Radierer (weiß)' : 'Farbe ' + f });
+      b.addEventListener('click', () => { farbe = f; farbKnoepfe.forEach((x) => x.classList.toggle('an', x === b)); });
+      return b;
+    });
+    const dickKnoepfe = DICKEN.map(([name, d]) => {
+      const b = el('button', { type: 'button', class: 'dicke' + (d === dicke ? ' an' : '') }, name);
+      b.addEventListener('click', () => { dicke = d; dickKnoepfe.forEach((x) => x.classList.toggle('an', x === b)); });
+      return b;
+    });
+    const meldung = el('div', { class: 'fb' });
+    const speichernKnopf = el('button', { type: 'button', class: 'btn', id: 'wappen-speichern' }, 'Siegerwappen speichern');
+    speichernKnopf.addEventListener('click', async () => {
+      if (!striche.length) { meldung.className = 'fb show hint'; meldung.textContent = 'Malen Sie zuerst etwas.'; return; }
+      let bild = '';
+      for (const g of [128, 96, 64]) {
+        const klein = document.createElement('canvas');
+        klein.width = g; klein.height = g;
+        const k2 = klein.getContext('2d');
+        k2.imageSmoothingQuality = 'high';
+        k2.drawImage(cv, 0, 0, g, g);
+        bild = klein.toDataURL('image/png');
+        if (bild.length <= 38000) break;
+      }
+      speichernKnopf.disabled = true;
+      const fehler = await speichern(bild);
+      speichernKnopf.disabled = false;
+      if (fehler) { meldung.className = 'fb show bad'; meldung.textContent = fehler; }
+    });
+    return el('div', { class: 'wappen-editor' },
+      el('div', { class: 'q-text' }, '🛡️ Ihr Siegerwappen'),
+      el('p', { class: 'small' }, 'Malen Sie mit dem Finger ein kleines Bild. Es erscheint neben Ihrem Namen in der Bestenliste Ihrer Klasse – alle können es sehen.'),
+      el('div', { class: 'wappen-flaeche-rahmen' }, cv),
+      el('div', { class: 'farben' }, farbKnoepfe),
+      el('div', { class: 'dicken' }, dickKnoepfe,
+        el('button', { type: 'button', class: 'dicke', onclick: () => { striche.pop(); zeichnen(); } }, '↶ Rückgängig'),
+        el('button', { type: 'button', class: 'dicke', onclick: () => { striche.length = 0; zeichnen(); } }, 'Neu')),
+      el('div', { class: 'lk-knoepfe' }, speichernKnopf, el('button', { type: 'button', class: 'btn secondary', onclick: abbrechen }, 'Abbrechen')),
+      meldung);
+  }
+
+  const wappenBild = (bild, name, cls) => (bild && bild.startsWith('data:image/png;base64,')
+    ? el('img', { class: cls || 'wappen', src: bild, alt: `Siegerwappen von ${name}` }) : el('span', { class: (cls || 'wappen') + ' leer', 'aria-hidden': 'true' }));
+
   function start(cfg) {
     const { oben, info, inhalt } = K.rahmen(cfg);
     const a = K.auftrag(cfg.ils);
@@ -80,8 +161,59 @@ const ILSChallenge = (() => {
     function bestenliste(liste, eigenerName) {
       if (!liste || !liste.length) return el('p', { class: 'small' }, 'Noch niemand aus Ihrer Klasse hat die Challenge gespielt – seien Sie die oder der Erste!');
       return el('ol', { class: 'bestenliste' }, liste.map((e, i) => el('li', { class: e.name === eigenerName ? 'ich' : null },
-        el('span', { class: 'platz' }, ['🥇', '🥈', '🥉'][i] || `${i + 1}.`), el('span', { class: 'name' }, e.name),
+        el('span', { class: 'platz' }, ['🥇', '🥈', '🥉'][i] || `${i + 1}.`), wappenBild(e.wappen, e.name),
+        el('span', { class: 'name' }, e.name),
         el('span', { class: 'pkt' }, `${e.punkte} P.`), el('span', { class: 'zeit' }, uhr(e.sekunden)))));
+    }
+
+    const offenSchl = () => `ils-wappen-offen|${K.werIst(K.konto()) || 'gast'}|${cfg.ils}`;
+    async function wappenSenden(bild) {
+      const k = K.konto();
+      try {
+        const { status, d } = await K.api('/api/challenge/wappen', { methode: 'POST', token: k && k.token, daten: { ils: cfg.ils, bild } });
+        if (status === 200) { speicher.schreiben(offenSchl(), null); return ''; }
+        if (d.grund === 'wappen-gesperrt') return 'Ihre Lehrkraft hat das Malen für Sie ausgeschaltet.';
+        if (d.grund === 'voraussetzung') return 'Spielen Sie zuerst einmal die Challenge.';
+        return 'Das Bild konnte nicht gespeichert werden. Bitte versuchen Sie es noch einmal.';
+      } catch (e) {
+        speicher.schreiben(offenSchl(), bild);
+        return 'Keine Verbindung – Ihr Wappen wird gesendet, sobald Sie die Challenge-Seite wieder online öffnen.';
+      }
+    }
+
+    // Bereich „Ihr Siegerwappen“ unter Ergebnis bzw. Startseite
+    function wappenBereich(info) {
+      const box = el('div', { class: 'card wappen-box', id: 'wappen-box' });
+      const zeigen = (bild) => {
+        box.innerHTML = '';
+        if (info.malenGesperrt) {
+          box.append(el('div', { class: 'q-text' }, '🛡️ Siegerwappen'), el('p', { class: 'small' }, 'Ihre Lehrkraft hat das Malen eines Siegerwappens für Sie ausgeschaltet.'));
+          return;
+        }
+        box.append(el('div', { class: 'wappen-zeile' }, wappenBild(bild, 'Ihnen', 'wappen gross'),
+          el('div', {}, el('div', { class: 'q-text' }, '🛡️ Ihr Siegerwappen'),
+            el('p', { class: 'small' }, bild ? 'So sehen die anderen Ihr Wappen in der Bestenliste.' : 'Malen Sie ein kleines Bild – es erscheint neben Ihrem Namen in der Bestenliste.'))),
+        el('button', { type: 'button', class: 'btn block', id: 'wappen-malen', onclick: () => {
+          box.innerHTML = '';
+          box.append(wappenEditor(async (neu) => {
+            const fehler = await wappenSenden(neu);
+            if (!fehler || /Keine Verbindung/.test(fehler)) {
+              const k = K.konto();
+              info.meinWappen = neu;
+              (info.liste || []).forEach((e) => { if (k && e.name === k.name) e.wappen = neu; });
+              if (S) sichern();
+              document.querySelectorAll('.bestenliste li.ich .wappen').forEach((w) => w.replaceWith(wappenBild(neu, k && k.name)));
+              zeigen(neu);
+              if (fehler) box.append(el('p', { class: 'small' }, fehler));
+              return '';
+            }
+            return fehler;
+          }, () => zeigen(info.meinWappen)));
+          box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } }, bild ? 'Siegerwappen neu malen' : 'Siegerwappen malen'));
+      };
+      zeigen(info.meinWappen);
+      return box;
     }
 
     async function startZeigen() {
@@ -130,7 +262,10 @@ const ILSChallenge = (() => {
         liste.append(el('div', { class: 'q-text' }, `Bestenliste ${d.klasse || ''}`));
         if (status === 200) {
           liste.append(bestenliste(d.liste, k && k.name));
-          if (d.best) liste.append(el('p', { class: 'small' }, `Ihr bestes Ergebnis: ${d.best.punkte} Punkte (${uhr(d.best.sekunden)}) – Platz ${d.platz} von ${d.von}.`));
+          if (d.best) {
+            liste.append(el('p', { class: 'small' }, `Ihr bestes Ergebnis: ${d.best.punkte} Punkte (${uhr(d.best.sekunden)}) – Platz ${d.platz} von ${d.von}.`));
+            inhalt.append(wappenBereich(d));
+          }
         }
       } catch (e) { liste.querySelector('.small').textContent = 'Bestenliste gerade nicht erreichbar.'; }
     }
@@ -210,7 +345,7 @@ const ILSChallenge = (() => {
         const k = K.konto();
         const { status, d } = await K.api('/api/challenge/ende', { methode: 'POST', token: k && k.token,
           daten: { ils: cfg.ils, laufId: S.laufId, aufgabenPunkte, anzahl: S.karten.length } });
-        if (status === 200) { S.phase = 'ende'; S.resultat = d; sichern(); zeigen(); return; }
+        if (status === 200) { S.phase = 'ende'; S.resultat = d; sichern(); leeren(); endeZeigen(false); return; }
         karte.innerHTML = '';
         karte.append(el('div', { class: 'q-text' }, 'Ergebnis nicht gewertet'),
           el('p', {}, d.grund === 'zu-schnell' ? 'Das ging schneller, als man die Aufgaben lesen kann – dieser Durchgang zählt nicht.'
@@ -225,7 +360,8 @@ const ILSChallenge = (() => {
       }
     }
 
-    function endeZeigen() {
+    // nachladen = true: Ergebnis kommt aus dem Speicher → Bestenliste und Wappen-Stand frisch vom Server holen
+    function endeZeigen(nachladen) {
       const r = S.resultat;
       const k = K.konto();
       const kopfKarte = el('div', { class: 'card ch-ergebnis' },
@@ -234,7 +370,9 @@ const ILSChallenge = (() => {
         el('p', {}, `Aufgaben: ${r.aufgabenPunkte} von ${S.karten.length * PUNKTE} · Zeitbonus: ${r.bonus} · Zeit: ${uhr(r.sekunden)}`),
         r.neuerRekord ? el('p', { class: 'geschafft' }, '🎉 Neuer persönlicher Rekord!') : el('p', { class: 'small' }, `Ihr Rekord: ${r.best.punkte} Punkte`),
         el('p', { class: 'q-text' }, `Platz ${r.platz} von ${r.von} in Ihrer Klasse`));
-      const liste = el('div', { class: 'card' }, el('div', { class: 'q-text' }, 'Bestenliste Ihrer Klasse'), bestenliste(r.liste, k && k.name));
+      const listeKarte = () => el('div', { class: 'card' }, el('div', { class: 'q-text' }, 'Bestenliste Ihrer Klasse'), bestenliste(r.liste, k && k.name));
+      let liste = listeKarte();
+      let wappenBox = wappenBereich(r);
       // Punkte je Abschnitt
       const jeAbschnitt = pools.map((p, pi) => {
         const e = S.ergebnisse.filter((x) => x.p === pi);
@@ -258,7 +396,16 @@ const ILSChallenge = (() => {
       const knoepfe = el('div', { class: 'links' },
         el('button', { type: 'button', class: 'btn block', id: 'ch-nochmal', onclick: () => { S = null; speicher.schreiben(schluessel(), null); startZeigen(); } }, 'Nochmal spielen'),
         a ? el('a', { class: 'btn secondary block', href: K.link(a.pfad) }, 'Zur Übersicht') : null);
-      inhalt.append(kopfKarte, liste, themen, loesungen, knoepfe);
+      inhalt.append(kopfKarte, wappenBox, liste, themen, loesungen, knoepfe);
+      if (!nachladen) return;
+      K.api('/api/challenge/liste?ils=' + encodeURIComponent(cfg.ils), { token: k && k.token }).then(({ status, d }) => {
+        if (status !== 200 || !S || S.resultat !== r || !liste.isConnected) return;
+        Object.assign(r, { liste: d.liste, meinWappen: d.meinWappen, malenGesperrt: d.malenGesperrt });
+        sichern();
+        const neueListe = listeKarte();
+        liste.replaceWith(neueListe); liste = neueListe;
+        if (!wappenBox.querySelector('.wappen-editor')) { const neu = wappenBereich(r); wappenBox.replaceWith(neu); wappenBox = neu; }
+      }).catch(() => { /* offline: gespeicherter Stand bleibt */ });
     }
 
     function zeigen() {
@@ -266,7 +413,7 @@ const ILSChallenge = (() => {
       if (!S) return startZeigen();
       if (S.phase === 'lauf') return karteZeigen();
       if (S.phase === 'senden') return senden();
-      if (S.phase === 'ende') return endeZeigen();
+      if (S.phase === 'ende') return endeZeigen(true);
       return startZeigen();
     }
 
@@ -279,6 +426,8 @@ const ILSChallenge = (() => {
           el('a', { class: 'btn secondary block', href: K.link(a.pfad) }, 'Zur Übersicht')));
         return;
       }
+      const offen = speicher.lesen(offenSchl());
+      if (offen) await wappenSenden(offen);
       S = speicher.lesen(schluessel());
       if (S && S.sig !== sig) S = null;
       inhalt.classList.remove('hidden');

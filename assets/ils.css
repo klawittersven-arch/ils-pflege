@@ -343,7 +343,7 @@ table.lk td.zelle .selbst { color: var(--muted); font-weight: 600; font-size: 12
 .ch-ergebnis { text-align: center; }
 .ch-gesamt { font-size: 40px; font-weight: 800; color: #1f3a5f; line-height: 1.1; margin: 4px 0; }
 .bestenliste { list-style: none; padding: 0; margin: 8px 0 0; }
-.bestenliste li { display: grid; grid-template-columns: 2.2em 1fr auto auto; gap: 8px; align-items: center; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+.bestenliste li { display: grid; grid-template-columns: 2.2em 34px 1fr auto auto; gap: 8px; align-items: center; padding: 8px 6px; border-bottom: 1px solid var(--line); }
 .bestenliste li.ich { background: #eaf1fb; border-radius: 8px; font-weight: 700; }
 .bestenliste .platz { font-weight: 800; text-align: center; }
 .bestenliste .pkt { font-weight: 800; color: #1f3a5f; font-variant-numeric: tabular-nums; }
@@ -384,3 +384,35 @@ table.lk td.challenge-zelle { font-weight: 700; color: #1f3a5f; white-space: now
 .se-knoepfe .btn { padding: 8px 12px; min-height: 40px; font-size: 14px; }
 .se-konfetti { position: absolute; top: -12px; width: 10px; height: 14px; border-radius: 2px; animation: se-fall linear forwards; }
 @keyframes se-fall { to { top: 105vh; transform: rotate(720deg) translateX(40px); } }
+
+/* ---------- Siegerwappen ---------- */
+.wappen { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); background: #fff; object-fit: cover; display: inline-block; }
+.wappen.leer { border-style: dashed; background: #faf8f5; }
+.wappen.gross { width: 88px; height: 88px; border-radius: 14px; flex: none; }
+.wappen-zeile { display: flex; gap: 14px; align-items: center; margin-bottom: 10px; }
+.wappen-flaeche-rahmen { display: flex; justify-content: center; margin: 8px 0; }
+.wappen-flaeche { width: min(300px, 80vw); height: auto; aspect-ratio: 1; border: 2px solid var(--line); border-radius: 14px; background: #fff; touch-action: none; cursor: crosshair; }
+.farben { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 6px 0; }
+.farbe { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #ccc; cursor: pointer; }
+.farbe.an { outline: 3px solid var(--accent); outline-offset: 2px; }
+.dicken { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 6px 0 10px; }
+.dicke { font: inherit; font-size: 14px; padding: 6px 10px; min-height: 38px; border-radius: 999px; border: 2px solid var(--line); background: #fff; cursor: pointer; }
+.dicke.an { border-color: var(--accent); background: var(--accent-soft); }
+
+/* Siegerwappen auf der Lehrkraft-Seite */
+#lk-wappen-knopf.neu { border-color: var(--accent); font-weight: 700; }
+.wappen-hinweis { font-size: 12px; white-space: nowrap; }
+.wappen-hinweis.neu { color: var(--accent); font-weight: 700; }
+.wappen-galerie { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin: 12px 0; }
+.wappen-kachel { margin: 0; padding: 10px; border: 1px solid var(--line); border-radius: 12px; background: #fff; display: grid; gap: 6px; justify-items: center; text-align: center; }
+.wappen-kachel.neu { border: 2px solid var(--accent); background: var(--accent-soft); }
+.wappen-kachel img { width: 128px; height: 128px; border-radius: 12px; border: 1px solid var(--line); background: #fff; image-rendering: auto; }
+.wappen-aktionen { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.wappen-aktionen .btn { padding: 6px 10px; min-height: 36px; font-size: 13px; }
+.wappen-gesperrt li { margin: 6px 0; }
+.wappen-gesperrt .btn { padding: 6px 10px; min-height: 36px; font-size: 13px; }
+/* Siegerwappen in der Siegerehrung */
+.se-wappen { width: clamp(70px, 11vw, 150px); height: clamp(70px, 11vw, 150px); border-radius: 18px; background: #fff; border: 4px solid rgba(255,255,255,.85);
+  box-shadow: 0 6px 24px rgba(0,0,0,.35); margin-bottom: 8px; object-fit: cover; }
+.se-p1 .se-wappen { border-color: #f1c232; }
+.se-wappen-klein { width: 1.8em; height: 1.8em; border-radius: 6px; background: #fff; vertical-align: middle; margin-right: 8px; object-fit: cover; }

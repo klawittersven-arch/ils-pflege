@@ -16,7 +16,8 @@
  *     POST /api/challenge/start (Bearer) { ils }            → { laufId }   (Zeit misst der Server)
  *     POST /api/challenge/ende  (Bearer) { ils, laufId, aufgabenPunkte, anzahl }
  *                                                           → { punkte, bonus, sekunden, best, platz, von, liste }
- *     GET  /api/challenge/liste?ils=… (Bearer)              → Top 10 der eigenen Klasse + eigener Platz
+ *     GET  /api/challenge/liste?ils=… (Bearer)              → Top 10 der eigenen Klasse (mit Siegerwappen) + eigener Platz
+ *     POST /api/challenge/wappen (Bearer) { ils, bild }     Siegerwappen speichern (PNG, max. 128×128, nach eigenem Ergebnis)
  *   Lehrkraft (Kopfzeile X-Passwort = Secret LEHRKRAFT_PASSWORT)
  *     GET  /api/lehrkraft/stand                 → alle SuS mit Fortschritt
  *     POST /api/lehrkraft/import    { text }    Zeilen „Klasse;Name;TT.MM.JJJJ“
@@ -25,6 +26,10 @@
  *     POST /api/lehrkraft/schueler-loeschen     { sid }
  *     POST /api/lehrkraft/auftrag-loeschen      { ils }   Fortschritt eines ILS-Auftrags löschen
  *     POST /api/lehrkraft/alles-loeschen        { bestaetigung: 'ALLES LÖSCHEN' }
+ *     GET  /api/lehrkraft/wappen?ils=…          alle Siegerwappen eines Auftrags (Galerie)
+ *     POST /api/lehrkraft/wappen-loeschen       { sid, ils }
+ *     POST /api/lehrkraft/wappen-sperre         { sid, gesperrt }   Person vom Malen ausschließen (löscht ihre Wappen)
+ *     POST /api/lehrkraft/wappen-gesehen        { ils, sids: [...] } angesehen → darf in der Siegerehrung erscheinen
  *
  * Datenschutz: Geburtsdaten werden nie gespeichert, nur ein Prüfwert (HMAC-SHA-256 mit einem
  * geheimen Schlüssel, der nur im Durable Object liegt). Gespeichert werden Klasse, Anzeigename
@@ -64,6 +69,20 @@ const CH_PUNKTE_JE_AUFGABE = 150;
 const CH_BONUS_MAX = 750;
 const CH_BONUS_SEK = 900;
 const CH_TOP = 10;
+const WAPPEN_MAX_BYTES = 40000;   // Länge der data:-Adresse
+const WAPPEN_PREFIX = 'data:image/png;base64,';
+
+// Prüft ein Siegerwappen: PNG, 32–128 Pixel breit und hoch, nicht zu groß
+export function wappenPruefen(bild) {
+  if (typeof bild !== 'string' || !bild.startsWith(WAPPEN_PREFIX) || bild.length > WAPPEN_MAX_BYTES) return false;
+  let bytes;
+  try { bytes = Uint8Array.from(atob(bild.slice(WAPPEN_PREFIX.length, WAPPEN_PREFIX.length + 44)), (c) => c.charCodeAt(0)); } catch (e) { return false; }
+  const sig = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+  if (bytes.length < 24 || !sig.every((b, i) => bytes[i] === b)) return false;
+  const breite = (bytes[16] << 24) | (bytes[17] << 16) | (bytes[18] << 8) | bytes[19];
+  const hoehe = (bytes[20] << 24) | (bytes[21] << 16) | (bytes[22] << 8) | bytes[23];
+  return breite >= 32 && breite <= 128 && hoehe >= 32 && hoehe <= 128;
+}
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -166,7 +185,7 @@ async function gleichSicher(a, b) {
 }
 
 const STATUS = { ungueltig: 400, abgemeldet: 401, 'nicht-gefunden': 401, passwort: 401, gesperrt: 429, unbekannt: 404, voll: 409, voraussetzung: 409,
-  'zu-schnell': 400, 'lauf-unbekannt': 409, 'passwort-fehlt': 503 };
+  'zu-schnell': 400, 'lauf-unbekannt': 409, 'wappen-gesperrt': 403, 'passwort-fehlt': 503 };
 const mitStatus = (erg) => antwort(erg, erg.ok ? 200 : (STATUS[erg.grund] || 400));
 
 /* ---------- Worker ---------- */
@@ -248,6 +267,10 @@ export default {
         if (!auftrag) return antwort({ ok: false, grund: 'ungueltig' }, 400);
         const quiz = auftrag.schritte.find((x) => x.abschluss);
         if (aktion === 'start') return mitStatus(await daten.challengeStart(token, ils, quiz ? quiz.id : null));
+        if (aktion === 'wappen') {
+          if (!wappenPruefen(d?.bild)) return antwort({ ok: false, grund: 'ungueltig' }, 400);
+          return mitStatus(await daten.wappenSpeichern(token, ils, d.bild));
+        }
         if (aktion === 'ende') {
           const laufId = String(d?.laufId ?? '');
           const anzahl = ganzzahl(d?.anzahl, 5, 40);
@@ -269,6 +292,11 @@ export default {
         const aktion = weg.slice('/api/lehrkraft/'.length);
 
         if (aktion === 'stand' && methode === 'GET') return mitStatus(await daten.stand());
+        if (aktion === 'wappen' && methode === 'GET') {
+          const ils = url.searchParams.get('ils') || '';
+          if (!ILS_MUSTER.test(ils)) return antwort({ ok: false, grund: 'ungueltig' }, 400);
+          return mitStatus(await daten.wappenGalerie(ils));
+        }
         if (methode !== 'POST') return antwort({ ok: false, grund: 'nicht-gefunden' }, 404);
         const d = await jsonLesen(request);
         if (!d || typeof d !== 'object') return antwort({ ok: false, grund: 'ungueltig' }, 400);
@@ -286,6 +314,20 @@ export default {
         if (aktion === 'abmelden' || aktion === 'schueler-loeschen') {
           if (!SID_MUSTER.test(sid)) return antwort({ ok: false, grund: 'ungueltig' }, 400);
           return mitStatus(aktion === 'abmelden' ? await daten.abmeldenAlle(sid) : await daten.schuelerLoeschen(sid));
+        }
+        if (aktion === 'wappen-loeschen' || aktion === 'wappen-sperre' || aktion === 'wappen-gesehen') {
+          const ils = String(d.ils ?? '');
+          if (aktion === 'wappen-gesehen') {
+            const sids = Array.isArray(d.sids) ? d.sids.map(String) : [];
+            if (!ILS_MUSTER.test(ils) || !sids.every((x) => SID_MUSTER.test(x)) || sids.length > MAX_SCHUELER) return antwort({ ok: false, grund: 'ungueltig' }, 400);
+            return mitStatus(await daten.wappenGesehen(ils, sids));
+          }
+          if (!SID_MUSTER.test(sid)) return antwort({ ok: false, grund: 'ungueltig' }, 400);
+          if (aktion === 'wappen-loeschen') {
+            if (!ILS_MUSTER.test(ils)) return antwort({ ok: false, grund: 'ungueltig' }, 400);
+            return mitStatus(await daten.wappenLoeschen(sid, ils));
+          }
+          return mitStatus(await daten.wappenSperre(sid, d.gesperrt === true));
         }
         if (aktion === 'auftrag-loeschen') {
           const ils = String(d.ils ?? '');
@@ -313,6 +355,8 @@ export default {
  *   t:<token>       { sid, um }   (angemeldetes Gerät)
  *   c:<ils>:<sid>   { punkte, aufgabenPunkte, sekunden, um, spiele }  bestes Challenge-Ergebnis
  *   lauf:<ils>:<sid> { laufId, start }  laufende Challenge (Zeit misst der Server)
+ *   w:<ils>:<sid>   { bild, um, gesehen }  Siegerwappen (PNG als data:-Adresse)
+ *   wsperre:<sid>   true                  Person darf kein Siegerwappen malen
  *   fehl:<klasse>   { start, anzahl }  fehlgeschlagene Anmeldungen
  *   lkfehl          { start, anzahl }  falsche Lehrkraft-Passwörter */
 export class Daten extends DurableObject {
@@ -428,12 +472,19 @@ export class Daten extends DurableObject {
   }
 
   async stand() {
-    const [schueler, fortschritte, tokens, challenges] = await Promise.all([
+    const [schueler, fortschritte, tokens, challenges, wappen, sperren] = await Promise.all([
       this.alleSchueler(),
       this.ctx.storage.list({ prefix: 'p:' }),
       this.ctx.storage.list({ prefix: 't:' }),
-      this.ctx.storage.list({ prefix: 'c:' })
+      this.ctx.storage.list({ prefix: 'c:' }),
+      this.ctx.storage.list({ prefix: 'w:' }),
+      this.ctx.storage.list({ prefix: 'wsperre:' })
     ]);
+    const wappenInfo = {};
+    for (const [k, w] of wappen) {
+      const [, ils, sid] = k.split(':');
+      (wappenInfo[sid] = wappenInfo[sid] || {})[ils] = { gesehen: !!w.gesehen };
+    }
     const geraete = {};
     for (const t of tokens.values()) geraete[t.sid] = (geraete[t.sid] || 0) + 1;
     const challenge = {};
@@ -449,7 +500,9 @@ export class Daten extends DurableObject {
         ersteAnmeldung: s.ersteAnmeldung || null, zuletzt: s.zuletzt || null,
         geraete: geraete[s.sid] || 0,
         fortschritt: fortschritte.get('p:' + s.sid) || {},
-        challenge: challenge[s.sid] || {}
+        challenge: challenge[s.sid] || {},
+        wappen: wappenInfo[s.sid] || {},
+        malenGesperrt: sperren.has('wsperre:' + s.sid)
       }))
     };
   }
@@ -518,14 +571,15 @@ export class Daten extends DurableObject {
 
   async schuelerLoeschen(sid) {
     const weg = await this.tokensVon(sid);
-    const ch = [...(await this.ctx.storage.list({ prefix: 'c:' })).keys(), ...(await this.ctx.storage.list({ prefix: 'lauf:' })).keys()]
-      .filter((k) => k.endsWith(':' + sid));
-    await this.ctx.storage.delete([...weg, ...ch, 's:' + sid, 'p:' + sid]);
+    const ch = [...(await this.ctx.storage.list({ prefix: 'c:' })).keys(), ...(await this.ctx.storage.list({ prefix: 'lauf:' })).keys(),
+      ...(await this.ctx.storage.list({ prefix: 'w:' })).keys()].filter((k) => k.endsWith(':' + sid));
+    await this.ctx.storage.delete([...weg, ...ch, 's:' + sid, 'p:' + sid, 'wsperre:' + sid]);
     return { ok: true };
   }
 
   async auftragLoeschen(ils) {
-    const ch = [...(await this.ctx.storage.list({ prefix: `c:${ils}:` })).keys(), ...(await this.ctx.storage.list({ prefix: `lauf:${ils}:` })).keys()];
+    const ch = [...(await this.ctx.storage.list({ prefix: `c:${ils}:` })).keys(), ...(await this.ctx.storage.list({ prefix: `lauf:${ils}:` })).keys(),
+      ...(await this.ctx.storage.list({ prefix: `w:${ils}:` })).keys()];
     for (let i = 0; i < ch.length; i += 100) await this.ctx.storage.delete(ch.slice(i, i + 100));
     const alle = await this.ctx.storage.list({ prefix: 'p:' });
     const schreiben = {};
@@ -549,12 +603,18 @@ export class Daten extends DurableObject {
   }
 
   async bestenliste(ils, klasse) {
-    const [schueler, alle] = await Promise.all([this.alleSchueler(), this.ctx.storage.list({ prefix: `c:${ils}:` })]);
+    const [schueler, alle, wappen] = await Promise.all([this.alleSchueler(), this.ctx.storage.list({ prefix: `c:${ils}:` }),
+      this.ctx.storage.list({ prefix: `w:${ils}:` })]);
     const namen = new Map(schueler.filter((x) => x.klasse === klasse).map((x) => [x.sid, x.name]));
     return [...alle].map(([k, c]) => ({ sid: k.split(':')[2], ...c }))
       .filter((c) => namen.has(c.sid))
       .sort((a, b) => b.punkte - a.punkte || a.sekunden - b.sekunden || a.um - b.um)
-      .map((c) => ({ sid: c.sid, name: namen.get(c.sid), punkte: c.punkte, sekunden: c.sekunden }));
+      .map((c) => ({ sid: c.sid, name: namen.get(c.sid), punkte: c.punkte, sekunden: c.sekunden,
+        wappen: (wappen.get(`w:${ils}:${c.sid}`) || {}).bild || null }));
+  }
+
+  oeffentlich(liste) {
+    return liste.slice(0, CH_TOP).map(({ name, punkte, sekunden, wappen }) => ({ name, punkte, sekunden, wappen }));
   }
 
   async challengeListe(token, ils) {
@@ -565,7 +625,9 @@ export class Daten extends DurableObject {
     return {
       ok: true, klasse: s.klasse, von: liste.length, platz: platz || null,
       best: (await this.ctx.storage.get(`c:${ils}:${s.sid}`)) || null,
-      liste: liste.slice(0, CH_TOP).map(({ name, punkte, sekunden }) => ({ name, punkte, sekunden }))
+      meinWappen: ((await this.ctx.storage.get(`w:${ils}:${s.sid}`)) || {}).bild || null,
+      malenGesperrt: !!(await this.ctx.storage.get('wsperre:' + s.sid)),
+      liste: this.oeffentlich(liste)
     };
   }
 
@@ -591,8 +653,61 @@ export class Daten extends DurableObject {
     return {
       ok: true, punkte, bonus, aufgabenPunkte, sekunden, neuerRekord, best,
       platz: liste.findIndex((c) => c.sid === s.sid) + 1, von: liste.length,
-      liste: liste.slice(0, CH_TOP).map(({ name, punkte: pk, sekunden: sk }) => ({ name, punkte: pk, sekunden: sk }))
+      meinWappen: ((await this.ctx.storage.get(`w:${ils}:${s.sid}`)) || {}).bild || null,
+      malenGesperrt: !!(await this.ctx.storage.get('wsperre:' + s.sid)),
+      liste: this.oeffentlich(liste)
     };
+  }
+
+  /* ----- Siegerwappen ----- */
+  async wappenSpeichern(token, ils, bild) {
+    const s = await this.schuelerZuToken(token);
+    if (!s) return { ok: false, grund: 'abgemeldet' };
+    if (await this.ctx.storage.get('wsperre:' + s.sid)) return { ok: false, grund: 'wappen-gesperrt' };
+    if (!(await this.ctx.storage.get(`c:${ils}:${s.sid}`))) return { ok: false, grund: 'voraussetzung' };
+    await this.ctx.storage.put(`w:${ils}:${s.sid}`, { bild, um: Date.now(), gesehen: false });
+    return { ok: true };
+  }
+
+  async wappenGalerie(ils) {
+    const [schueler, wappen, sperren] = await Promise.all([this.alleSchueler(), this.ctx.storage.list({ prefix: `w:${ils}:` }),
+      this.ctx.storage.list({ prefix: 'wsperre:' })]);
+    const wer = new Map(schueler.map((x) => [x.sid, x]));
+    return {
+      ok: true,
+      wappen: [...wappen].map(([k, w]) => ({ sid: k.split(':')[2], ...w }))
+        .filter((w) => wer.has(w.sid))
+        .map((w) => ({ sid: w.sid, name: wer.get(w.sid).name, klasse: wer.get(w.sid).klasse, bild: w.bild, um: w.um, gesehen: !!w.gesehen }))
+        .sort((a, b) => Number(a.gesehen) - Number(b.gesehen) || b.um - a.um),
+      gesperrt: [...sperren.keys()].map((k) => k.slice('wsperre:'.length)).filter((x) => wer.has(x))
+    };
+  }
+
+  async wappenLoeschen(sid, ils) {
+    await this.ctx.storage.delete(`w:${ils}:${sid}`);
+    return { ok: true };
+  }
+
+  async wappenSperre(sid, gesperrt) {
+    if (!(await this.ctx.storage.get('s:' + sid))) return { ok: false, grund: 'unbekannt' };
+    if (gesperrt) {
+      const eigene = [...(await this.ctx.storage.list({ prefix: 'w:' })).keys()].filter((k) => k.endsWith(':' + sid));
+      await this.ctx.storage.delete([...eigene]);
+      await this.ctx.storage.put('wsperre:' + sid, true);
+    } else {
+      await this.ctx.storage.delete('wsperre:' + sid);
+    }
+    return { ok: true };
+  }
+
+  async wappenGesehen(ils, sids) {
+    const schreiben = {};
+    for (const sid of sids) {
+      const w = await this.ctx.storage.get(`w:${ils}:${sid}`);
+      if (w && !w.gesehen) schreiben[`w:${ils}:${sid}`] = { ...w, gesehen: true };
+    }
+    if (Object.keys(schreiben).length) await this.ctx.storage.put(schreiben);
+    return { ok: true, markiert: Object.keys(schreiben).length };
   }
 
   async allesLoeschen() {

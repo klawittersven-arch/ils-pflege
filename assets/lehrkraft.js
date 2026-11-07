@@ -118,8 +118,10 @@
     klassenWahl.addEventListener('change', () => { wahl.klasse = klassenWahl.value; merken.set('ils-lk-klasse', wahl.klasse); zeichnen(); });
 
     const fehltBox = el('div', { class: 'card hidden', id: 'lk-fehlt' });
+    const wappenBox = el('div', { class: 'card hidden', id: 'lk-wappen' });
     teile = {
-      ilsWahl, klassenWahl, fehltBox,
+      ilsWahl, klassenWahl, fehltBox, wappenBox,
+      wappenKnopf: el('button', { type: 'button', class: 'btn secondary', id: 'lk-wappen-knopf', onclick: wappenGalerie }, '🛡️ Siegerwappen'),
       status: el('p', { class: 'small', id: 'lk-status', 'aria-live': 'polite' }),
       zusammenfassung: el('div', { id: 'lk-zusammenfassung' }),
       tabelle: el('div', { class: 'lk-tabelle', id: 'lk-tabelle' }),
@@ -134,10 +136,11 @@
         el('button', { type: 'button', class: 'btn secondary', onclick: () => laden(false) }, '↻ Aktualisieren'),
         el('button', { type: 'button', class: 'btn secondary', id: 'lk-wer-fehlt', onclick: werFehlt }, 'Wer fehlt noch?'),
         el('button', { type: 'button', class: 'btn secondary', id: 'lk-csv', onclick: csv }, 'Excel-Datei (CSV)'),
-        el('button', { type: 'button', class: 'btn secondary', id: 'lk-siegerehrung', onclick: siegerehrung }, '🏆 Siegerehrung')));
+        el('button', { type: 'button', class: 'btn secondary', id: 'lk-siegerehrung', onclick: siegerehrung }, '🏆 Siegerehrung'),
+        teile.wappenKnopf));
 
     app.append(el('div', { id: 'lk-haupt' },
-      leiste, teile.status, fehltBox, teile.zusammenfassung, teile.tabelle,
+      leiste, teile.status, fehltBox, wappenBox, teile.zusammenfassung, teile.tabelle,
       el('p', { class: 'small' }, 'Tipp: Ein Klick auf ein Feld der Tabelle trägt eine Übung von Hand ein oder entfernt den Haken – z. B. wenn jemand die Übung analog vorgezeigt hat. ' +
         '⚠2 = zwei Neustarts (zu viele Fehler oder zu schnell getippt – Hinweis auf Raten). ✍5/8 = Examens-Training: selbst abgehakte Punkte. Details: Maus auf das Feld halten.'),
       verwaltung()));
@@ -174,6 +177,12 @@
     if (!a) { teile.tabelle.append(el('div', { class: 'card' }, 'Kein ILS-Auftrag ausgewählt.')); return; }
 
     const liste = alle.filter((s) => !wahl.klasse || s.klasse === wahl.klasse);
+
+    // Knopf „Siegerwappen“ mit Zahl der noch nicht angesehenen Wappen
+    const neueWappen = liste.filter((s) => s.wappen && s.wappen[a.id] && !s.wappen[a.id].gesehen).length;
+    teile.wappenKnopf.textContent = neueWappen ? `🛡️ Siegerwappen (${neueWappen} neu)` : '🛡️ Siegerwappen';
+    teile.wappenKnopf.classList.toggle('neu', neueWappen > 0);
+    teile.wappenKnopf.classList.toggle('hidden', !a.challenge);
 
     // Zusammenfassung je Klasse
     for (const k of klassen.filter((x) => !wahl.klasse || x === wahl.klasse)) {
@@ -220,7 +229,10 @@
         mitKlasse ? el('td', {}, s.klasse) : null,
         zellen,
         el('td', { class: 'stand' }, statusText),
-        a.challenge ? el('td', { class: 'challenge-zelle' }, ((s.challenge || {})[a.id] ? `${s.challenge[a.id].punkte} P.` : '–')) : null);
+        a.challenge ? el('td', { class: 'challenge-zelle' }, ((s.challenge || {})[a.id] ? `${s.challenge[a.id].punkte} P.` : '–'),
+          s.wappen && s.wappen[a.id] ? el('span', { class: 'wappen-hinweis' + (s.wappen[a.id].gesehen ? '' : ' neu'),
+            title: s.wappen[a.id].gesehen ? 'Siegerwappen vorhanden (angesehen)' : 'neues Siegerwappen – noch nicht angesehen' }, s.wappen[a.id].gesehen ? ' 🛡️' : ' 🛡️ neu') : null,
+          s.malenGesperrt ? el('span', { class: 'wappen-hinweis', title: 'vom Malen eines Siegerwappens ausgeschlossen' }, ' 🚫') : null) : null);
     });
     teile.tabelle.append(el('table', { class: 'lk' }, el('thead', {}, kopf), el('tbody', {}, zeilen)));
   }
@@ -272,7 +284,7 @@
   /* ---------- Siegerehrung (ILS-Challenge) am Beamer ---------- */
   function rangliste(a, klasse) {
     return stand.schueler.filter((s) => s.klasse === klasse && s.challenge && s.challenge[a.id])
-      .map((s) => ({ name: s.name, ...s.challenge[a.id] }))
+      .map((s) => ({ sid: s.sid, name: s.name, ...s.challenge[a.id] }))
       .sort((x, y) => y.punkte - x.punkte || x.sekunden - y.sekunden || x.um - y.um)
       .slice(0, 12);
   }
@@ -281,6 +293,12 @@
     const a = auftrag();
     if (!a || !stand) return;
     const klassen = [...new Set(stand.schueler.map((s) => s.klasse))].sort();
+    // Nur Siegerwappen, die die Lehrkraft angesehen hat, erscheinen am Beamer
+    let bilder = new Map();
+    const bilderLaden = api('/api/lehrkraft/wappen?ils=' + encodeURIComponent(a.id))
+      .then((r) => { if (r.status === 200) bilder = new Map(r.d.wappen.filter((w) => w.gesehen).map((w) => [w.sid, w.bild])); })
+      .catch(() => {});
+    const wappen = (e, cls) => (e && bilder.get(e.sid) ? el('img', { class: cls, src: bilder.get(e.sid), alt: `Siegerwappen von ${e.name}` }) : null);
     const ov = el('div', { class: 'se-overlay', id: 'se-overlay', tabindex: '-1' });
     const schliessen = () => { document.removeEventListener('keydown', taste); if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); ov.remove(); };
     let abspielen = () => {};
@@ -299,7 +317,8 @@
         el('button', { type: 'button', class: 'btn secondary', onclick: schliessen }, 'Schließen')));
     }
 
-    function zeigen(klasse) {
+    async function zeigen(klasse) {
+      await bilderLaden;
       const liste = rangliste(a, klasse);
       ov.innerHTML = '';
       const kopf = el('div', { class: 'se-kopf' }, el('div', { class: 'se-titel' }, '🏆 Siegerehrung'), el('div', { class: 'se-unter' }, `ILS-Challenge „${a.titel}“ · ${klasse}`));
@@ -315,13 +334,14 @@
       const stufe = (platz) => {
         const e = liste[platz - 1];
         return el('div', { class: `se-stufe se-p${platz}` + (e ? '' : ' leer') },
+          wappen(e, 'se-wappen'),
           el('div', { class: 'se-name' }, e ? (platz === 1 ? '🏆 ' : '') + e.name : ''),
           el('div', { class: 'se-punkte' }, e ? `${e.punkte} Punkte` : ''),
           el('div', { class: 'se-block' }, String(platz)));
       };
       const stufen = { 2: stufe(2), 1: stufe(1), 3: stufe(3) };
       buehne.append(stufen[2], stufen[1], stufen[3]);
-      const zeilen = liste.slice(3).map((e) => el('li', {}, el('span', {}, e.name), el('strong', {}, `${e.punkte} P.`)));
+      const zeilen = liste.slice(3).map((e) => el('li', {}, wappen(e, 'se-wappen-klein'), el('span', {}, e.name), el('strong', {}, `${e.punkte} P.`)));
       rest.append(...zeilen);
       let timer = [];
       abspielen = () => {
@@ -347,6 +367,64 @@
       ziel.append(k);
       setTimeout(() => k.remove(), 5500);
     }
+  }
+
+  /* ---------- Siegerwappen: ansehen, löschen, Person vom Malen ausschließen ---------- */
+  async function wappenGalerie() {
+    const a = auftrag();
+    if (!a || !stand) return;
+    const box = teile.wappenBox;
+    const titel = `🛡️ Siegerwappen – ${a.titel}` + (wahl.klasse ? ` · ${wahl.klasse}` : '');
+    if (box.classList.contains('hidden')) {
+      box.innerHTML = '';
+      box.append(el('div', { class: 'q-text' }, titel), el('p', { class: 'small' }, 'wird geladen …'));
+      box.classList.remove('hidden');
+    }
+    const r = await api('/api/lehrkraft/wappen?ils=' + encodeURIComponent(a.id)).catch(() => null);
+    box.innerHTML = '';
+    const schliessen = el('button', { type: 'button', class: 'btn secondary', onclick: () => box.classList.add('hidden') }, 'Schließen');
+    if (!r || r.status !== 200) {
+      box.append(el('div', { class: 'q-text' }, titel), el('div', { class: 'fb show bad' }, 'Die Siegerwappen konnten nicht geladen werden.'), schliessen);
+      return;
+    }
+    const personen = new Map(stand.schueler.map((s) => [s.sid, s]));
+    const liste = r.d.wappen.filter((w) => !wahl.klasse || w.klasse === wahl.klasse);
+    const gesperrt = r.d.gesperrt.map((sid) => personen.get(sid)).filter((s) => s && (!wahl.klasse || s.klasse === wahl.klasse)).sort(vergleich);
+    const neu = liste.filter((w) => !w.gesehen);
+    const fb = el('div', { class: 'fb' });
+    const aktion = async (weg, daten, frage) => {
+      if (frage && !window.confirm(frage)) return;
+      const x = await api(weg, daten).catch(() => null);
+      if (!x || x.status !== 200) { fb.className = 'fb show bad'; fb.textContent = 'Das hat nicht geklappt. Bitte erneut versuchen.'; return; }
+      await wappenGalerie();
+      await laden(false);
+    };
+    const gesehen = (sids) => aktion('/api/lehrkraft/wappen-gesehen', { ils: a.id, sids });
+    const loeschen = (w) => aktion('/api/lehrkraft/wappen-loeschen', { sid: w.sid, ils: a.id }, `Siegerwappen von ${w.name} löschen? ${w.name} kann danach ein neues malen.`);
+    const sperre = (sid, name, an) => aktion('/api/lehrkraft/wappen-sperre', { sid, gesperrt: an },
+      an ? `${name} vom Malen ausschließen? Alle Siegerwappen von ${name} werden gelöscht und ${name} kann keine neuen malen.` : null);
+
+    box.append(...[
+      el('div', { class: 'q-text' }, titel),
+      el('p', { class: 'small' }, 'Neue Siegerwappen erscheinen sofort in der Bestenliste der Klasse auf den Handys. ' +
+        'In der 🏆 Siegerehrung am Beamer erscheinen nur Wappen, die Sie hier als angesehen markiert haben.'),
+      neu.length ? el('button', { type: 'button', class: 'btn', id: 'lk-wappen-alle', onclick: () => gesehen(neu.map((w) => w.sid)) },
+        neu.length === 1 ? '✓ Das neue Wappen als angesehen markieren' : `✓ Alle ${neu.length} neuen als angesehen markieren`) : null,
+      liste.length
+        ? el('div', { class: 'wappen-galerie' }, liste.map((w) => el('figure', { class: 'wappen-kachel' + (w.gesehen ? '' : ' neu'), 'data-sid': w.sid },
+          el('img', { src: w.bild, alt: `Siegerwappen von ${w.name}` }),
+          el('figcaption', {}, el('strong', {}, w.name), ` · ${w.klasse}`, el('br'),
+            el('span', { class: 'small' }, (w.gesehen ? '' : '🆕 neu · ') + zeit(w.um))),
+          el('div', { class: 'wappen-aktionen' },
+            w.gesehen ? null : el('button', { type: 'button', class: 'btn secondary', onclick: () => gesehen([w.sid]) }, '✓ Angesehen'),
+            el('button', { type: 'button', class: 'btn secondary gefahr', onclick: () => loeschen(w) }, 'Löschen'),
+            el('button', { type: 'button', class: 'btn secondary gefahr', onclick: () => sperre(w.sid, w.name, true) }, 'Vom Malen ausschließen')))))
+        : el('p', {}, 'Noch keine Siegerwappen' + (wahl.klasse ? ' in dieser Klasse.' : '.')),
+      gesperrt.length ? el('div', {}, el('h3', {}, 'Vom Malen ausgeschlossen'),
+        el('ul', { class: 'wappen-gesperrt' }, gesperrt.map((s) => el('li', {}, `${s.name} (${s.klasse}) `,
+          el('button', { type: 'button', class: 'btn secondary', onclick: () => sperre(s.sid, s.name, false) }, 'Wieder zulassen'))))) : null,
+      el('div', { class: 'lk-knoepfe' }, el('button', { type: 'button', class: 'btn secondary', onclick: wappenGalerie }, '↻ Neu laden'), schliessen),
+      fb].filter(Boolean));
   }
 
   /* ---------- CSV für Excel ---------- */
@@ -431,7 +509,17 @@
           (s, d) => `${s.name}: ${d.abgemeldet} Gerät(e) abgemeldet.`) }, 'Alle Geräte abmelden'),
         el('button', { type: 'button', class: 'btn secondary gefahr', onclick: () => personAktion('/api/lehrkraft/schueler-loeschen',
           (s) => `${s.name} (${s.klasse}) mit dem gesamten Fortschritt löschen? Das lässt sich nicht rückgängig machen.`,
-          (s) => `${s.name} wurde gelöscht.`) }, 'Person löschen')),
+          (s) => `${s.name} wurde gelöscht.`) }, 'Person löschen'),
+        el('button', { type: 'button', class: 'btn secondary', id: 'lk-person-malen', onclick: async () => {
+          const s = person();
+          if (!s) return meldung(personFb, 'Bitte zuerst eine Person wählen.', 'hint');
+          const an = !s.malenGesperrt;
+          if (an && !window.confirm(`${s.name} vom Malen eines Siegerwappens ausschließen? Vorhandene Wappen von ${s.name} werden gelöscht.`)) return;
+          const r = await api('/api/lehrkraft/wappen-sperre', { sid: s.sid, gesperrt: an }).catch(() => null);
+          if (!r || r.status !== 200) return meldung(personFb, fehlerText(r), 'bad');
+          meldung(personFb, an ? `${s.name} darf kein Siegerwappen mehr malen.` : `${s.name} darf wieder ein Siegerwappen malen.`);
+          laden(false);
+        } }, 'Siegerwappen: Malen aus/an')),
       personFb,
 
       el('h3', {}, 'Fortschritt eines ILS-Auftrags löschen'),
