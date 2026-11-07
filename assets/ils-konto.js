@@ -14,6 +14,29 @@ const ILSKonto = (() => {
   const el = ILS.el;
   const SERVER = String(window.ILS_SERVER || '').replace(/\/+$/, '');
   const WURZEL = new URL('..', document.currentScript.src).href;
+
+  /* ---------- Neue Fassung? Dann einmal neu laden ----------
+     Handys behalten offene Seiten oft lange im Speicher. Die Seite vergleicht ihre Version (?v= im Skript-Link)
+     mit assets/version.json und lädt sich bei einer neueren Fassung einmal neu – der Zwischenstand bleibt erhalten. */
+  const SEITEN_VERSION = new URL(document.currentScript.src).searchParams.get('v') || '';
+  let letztePruefung = 0;
+  async function versionPruefen() {
+    if (!SEITEN_VERSION || Date.now() - letztePruefung < 60000) return;
+    letztePruefung = Date.now();
+    try {
+      const r = await fetch(new URL('assets/version.json', WURZEL).href, { cache: 'no-store' });
+      if (!r.ok) return;
+      const { version } = await r.json();
+      if (!version || version === SEITEN_VERSION) return;
+      if (sessionStorage.getItem('ils-neu-geladen') === version) return;   // höchstens einmal je Fassung (keine Schleife)
+      sessionStorage.setItem('ils-neu-geladen', version);
+      await fetch(location.href, { cache: 'reload' }).catch(() => {});      // Zwischenspeicher des Browsers erneuern
+      location.reload();
+    } catch (e) { /* offline oder privater Modus: mit der vorhandenen Fassung weiterarbeiten */ }
+  }
+  versionPruefen();
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') versionPruefen(); });
+  window.addEventListener('pageshow', (ev) => { if (ev.persisted) { letztePruefung = 0; versionPruefen(); } });
   const SCHL = { konto: 'ils-konto', offen: 'ils-konto-offen', stand: 'ils-konto-stand', klasse: 'ils-konto-klasse' };
 
   /* ---------- Speicher auf dem Gerät ---------- */

@@ -145,16 +145,19 @@ Aufgabentypen: `wahl`, `rf` (mit Begründung), `mehrfach`, `reihe`, `sortieren` 
 ### Neu erzeugen (Wunddrainagen und Materialentfernung)
 
 ```
-python3 tools/grafiken_drainage.py && python3 tools/drainage_bau.py <version>   # Smartphone-Seiten drainage/
-python3 tools/ab_drainage.py && python3 tools/lehrkraft_drainage.py             # Arbeitsblatt + Lehrkraft-Info
-python3 tools/grafiken_me.py && python3 tools/me_bau.py <version>               # Smartphone-Seiten me/
+python3 tools/grafiken_drainage.py && python3 tools/grafiken_me.py   # nur wenn sich Grafiken ändern
+python3 tools/alles_bauen.py                                         # alle Smartphone-Seiten + assets/version.json
+python3 tools/ab_drainage.py && python3 tools/lehrkraft_drainage.py  # Arbeitsblatt + Lehrkraft-Info
 python3 tools/ab_me.py && python3 tools/lehrkraft_me.py
 node tests/inhalt.test.js            # spielt jede Aufgabe aller Pools einmal durch
 ```
 
 Die Inhalte stehen in `tools/drainage_inhalt.py` und `tools/me_inhalt.py`. Mit (⚑) markierte Stellen stammen nicht aus
 Pflegias (Standardwissen) – die Markierung ist für die SuS unsichtbar und in den Lehrkraft-Informationen aufgelistet.
-`<version>` ist ein beliebiger kurzer Text (Cache-Bremse für die Browser), z. B. das Datum.
+`tools/alles_bauen.py [version]` setzt in allen Seiten dieselbe Version (Cache-Bremse, ohne Angabe Datum + Uhrzeit) und
+schreibt sie nach `assets/version.json`. **Selbst-Aktualisierung:** Offene Seiten auf den Handys fragen beim Öffnen und
+beim Zurückholen des Tabs (höchstens einmal pro Minute) `assets/version.json` ab und laden sich bei einer neueren
+Fassung einmal selbst neu – der Zwischenstand bleibt erhalten. Test: `node tests/version.test.js`.
 
 ## ILS-Challenge (Highscore) – nach dem Abschlussquiz
 
