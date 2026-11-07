@@ -6,7 +6,7 @@
      abschnitt: 'Abschnitt 1 „Wozu Drainagen?“ (S. 2–3)',   // worauf sich die Übung bezieht
      ziehen: 8,             // so viele Aufgaben pro Durchgang (aus dem Pool)
      fehlerMax: 3,          // erlaubte Fehler; beim nächsten Fehler → Lesepause + Neustart
-     pauseSek: 60,          // Lesepause
+     pauseSek: 30,          // Lesepause (Abschlussquiz: 180)
      zuSchnellMax: 3,       // so oft zu schnell getippt → Lesepause + Neustart
      abschluss: false,      // true = Abschlussquiz (erst nach allen Übungen)
      pool: [ …Aufgaben… ],
@@ -30,7 +30,7 @@ const ILSLern = (() => {
   const K = ILSKonto;
   const MAIL = 'Sven.Klawitter@Karoline-Breitinger-Schule.de';
   const STANDARD = {
-    ziehen: 8, fehlerMax: 3, pauseSek: 60, zuSchnellMax: 3,
+    ziehen: 8, fehlerMax: 3, pauseSek: 30, zuSchnellMax: 3,
     leseBasisMs: 1500, leseProWortMs: 230, leseMaxMs: 14000,
     folgeBasisMs: 600, folgeProWortMs: 120,
     weiterNachFehlerSek: 4

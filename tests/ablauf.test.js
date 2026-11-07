@@ -193,8 +193,11 @@ const QUIZ = { 'Die Lehrkraft sieht': 'Richtig', 'einzelnen Antworten': 'Falsch'
     await sus.reload();
     await sus.waitForSelector('#lern-neustart');
     pruefe(await sus.isDisabled('#lern-neustart'), 'Lesepause übersteht Neuladen');
-    await sus.clock.fastForward(61000);
+    await sus.clock.fastForward(20000);
+    pruefe(await sus.isDisabled('#lern-neustart'), 'nach 20 s noch Lesepause');
+    await sus.clock.fastForward(11000);
     await sus.waitForSelector('#lern-neustart:not([disabled])');
+    pruefe(true, 'nach 30 s ist die Lesepause vorbei');
     await sus.click('#lern-neustart');
     await sus.waitForSelector('.lern-karte');
     pruefe(/Aufgabe 1 von 4/.test(await sus.textContent('.lern-kopf')), 'nach der Pause: neuer Durchgang von vorn');
