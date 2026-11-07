@@ -130,8 +130,8 @@ const POOLS = [
    "Das starre Schlauchende kann Gewebe schädigen.",
    "Der Anblick kann Angst vor der Mobilisation auslösen.",
    "Offene Drainagen können die Haut aufweichen (Mazeration).",
-   "Sie verhindert jede Mobilisation.",
-   "Sie erhöht den Blutdruck."
+   "Sie verhindert, dass die Patientin vor der Entfernung aufstehen darf.",
+   "Sie erhöht dauerhaft den Blutdruck der Patientin."
   ],
   "richtig": [
    0,
@@ -148,8 +148,8 @@ const POOLS = [
   "begruendung": {
    "optionen": [
     "Der Unterdruck saugt Blut und Sekret ab und zieht die Wundflächen zusammen.",
-    "Die Flasche drückt von außen auf die Wunde.",
-    "Die Schwerkraft zieht die Wundränder nach unten."
+    "Die Flasche drückt von außen auf die Wunde und presst die Wundränder so zusammen.",
+    "Die Schwerkraft zieht das Sekret nach unten – der Sog spielt dabei keine Rolle."
    ],
    "richtig": 0
   },
@@ -161,9 +161,9 @@ const POOLS = [
   "richtig": false,
   "begruendung": {
    "optionen": [
-    "Die Robinson ist eine passive Drainage: Das Sekret fließt durch Schwerkraft in den Beutel.",
-    "Die Robinson hat einen eingebauten Motor.",
-    "Die Robinson leitet gar kein Sekret ab."
+    "Die Robinson ist passiv: Das Sekret fließt durch Schwerkraft in den Beutel.",
+    "Die Robinson hat eine eigene elektrische Pumpe, die den Sog ohne Flasche erzeugt.",
+    "Die Robinson leitet kein Sekret ab, sie hält nur die Wunde offen."
    ],
    "richtig": 0
   },
@@ -175,9 +175,9 @@ const POOLS = [
   "frage": "Wo kann eine Redon-Drainage liegen?",
   "optionen": [
    "im Gelenk, unter einer Muskelfaszie oder im Unterhautfettgewebe",
-   "nur in der Bauchhöhle",
-   "in der Harnblase",
-   "in einer Vene"
+   "nur in der Bauchhöhle, z. B. nach einer Gallenblasen-OP",
+   "in der Harnblase, um den Urin nach der OP abzuleiten",
+   "in einer großen Vene, damit das Blut aus dem Wundgebiet abgesaugt wird"
   ],
   "richtig": 0,
   "behalten": true,
@@ -188,10 +188,10 @@ const POOLS = [
   "gruppe": "Abschnitt 1 „Wozu Wunddrainagen?“:lage",
   "frage": "Frau Kramers Redon hängt an einer Flasche mit <b>hohem Sog</b>. Warum passt das?",
   "optionen": [
-   "In der Orthopädie wird meist hoher Sog verwendet, niedriger Sog z. B. in der Neurochirurgie.",
-   "Hoher Sog wird bei allen Drainagen verwendet.",
-   "Hoher Sog verhindert Schmerzen.",
-   "Die Flasche ist dann schneller voll."
+   "In der Orthopädie ist hoher Sog üblich, niedriger Sog z. B. in der Neurochirurgie.",
+   "Hoher Sog wird bei allen Drainagen verwendet, egal in welchem Fachgebiet operiert wurde.",
+   "Hoher Sog wird immer dann gewählt, wenn die Patientin starke Schmerzen hat.",
+   "Mit hohem Sog ist die Flasche schneller voll und muss seltener kontrolliert werden."
   ],
   "richtig": 0,
   "erklaerung": "Die Stärke des Sogs legt die Ärztin fest – in der Orthopädie meist hoch."
@@ -249,8 +249,8 @@ const POOLS = [
   "begruendung": {
    "optionen": [
     "Sie bleibt je nach Fördermenge etwa 48–72 Stunden liegen und wird dann von der Ärztin entfernt.",
-    "Sie wird schon nach einer Stunde gezogen.",
-    "Sie bleibt immer genau 7 Tage liegen."
+    "Sie wird schon nach einer Stunde gezogen, sobald die Patientin aus dem OP-Saal zurück auf Station kommt.",
+    "Sie bleibt immer genau 7 Tage liegen und wird zusammen mit den Fäden entfernt."
    ],
    "richtig": 0
   },
@@ -334,8 +334,8 @@ const POOLS = [
    "Vakuumindikator (Sog)",
    "Durchgängigkeit – kein Knick im Schlauch",
    "Austrittsstelle und Fixierung",
-   "Temperatur der Flasche",
-   "Gewicht des Schlauchs"
+   "Temperatur der Flasche (sie muss handwarm sein)",
+   "Länge des Schlauchs in Zentimetern"
   ],
   "richtig": [
    0,
@@ -352,9 +352,9 @@ const POOLS = [
   "frage": "Was bedeutet ein <b>entfalteter</b> Vakuumindikator an der Redonflasche?",
   "optionen": [
    "Es ist kein ausreichender Sog mehr da – die Flasche muss gewechselt werden.",
-   "Die Drainage fördert besonders gut.",
-   "Die Flasche ist steril.",
-   "Die Drainage kann gezogen werden."
+   "Die Drainage fördert gut – der Sog arbeitet wie vorgesehen.",
+   "Die Flasche ist randvoll – sie muss geleert und danach weiterverwendet werden.",
+   "Die Wunde ist trocken – die Drainage kann jetzt gezogen werden."
   ],
   "richtig": 0,
   "erklaerung": "Wenn die Flasche voll oder der Vakuumindikator entfaltet ist, wird die Flasche gewechselt."
@@ -365,9 +365,9 @@ const POOLS = [
   "frage": "Wann muss eine Redonflasche gewechselt werden?",
   "optionen": [
    "wenn sie voll ist oder der Vakuumindikator entfaltet ist",
-   "immer genau alle 12 Stunden",
-   "nur, wenn die Patientin es wünscht",
-   "wenn das Sekret blutig-serös ist"
+   "immer genau alle 12 Stunden, auch wenn sie noch Sog hat",
+   "nur, wenn die Patientin über Schmerzen an der Wunde klagt",
+   "sobald das Sekret von blutig zu blutig-serös wechselt"
   ],
   "richtig": 0,
   "behalten": true,
@@ -403,8 +403,8 @@ const POOLS = [
   "begruendung": {
    "optionen": [
     "Der Schlauch kann abknicken (Förderstau) und es droht ein Dekubitus.",
-    "Der Schlauch wird dabei zu warm.",
-    "Die Flasche läuft dann über."
+    "Der Schlauch wird zu warm, und das Sekret gerinnt in der Flasche.",
+    "Durch den Druck läuft die Flasche über und muss gewechselt werden."
    ],
    "richtig": 0
   },
@@ -415,9 +415,9 @@ const POOLS = [
   "frage": "Welches Sekret ist am <b>OP-Tag nach einer Hüft-TEP</b> zu erwarten?",
   "optionen": [
    "blutig bis blutig-serös, die Menge nimmt langsam ab",
-   "von Anfang an ganz klar und farblos",
-   "trüb und eitrig (purulent)",
-   "grünlich und übel riechend"
+   "von Anfang an klar und farblos, die Menge bleibt gleich",
+   "trüb und eitrig (purulent), weil die Wunde frisch ist",
+   "grünlich und übel riechend, die Menge nimmt zu"
   ],
   "richtig": 0,
   "erklaerung": "Kriterien für das Sekret: Menge, Konsistenz (serös, blutig-serös, blutig, purulent), Farbe und Geruch."
@@ -441,12 +441,12 @@ const POOLS = [
       "rueck": "Erst einschätzen – und nicht weggehen."
      },
      {
-      "t": "Ihr ein Glas Wasser holen und in 30 Minuten wiederkommen.",
+      "t": "Ihr ein Glas Wasser holen, das Bett frisch beziehen und in 30 Minuten wiederkommen.",
       "richtig": false,
       "rueck": "„Komisch“ und „nass“ können eine Nachblutung bedeuten. Sie müssen sofort nachsehen."
      },
      {
-      "t": "Die Redon abklemmen, damit kein Blut mehr verloren geht.",
+      "t": "Die Redon sofort abklemmen, damit Frau Kramer kein Blut mehr über die Drainage verliert.",
       "richtig": false,
       "rueck": "Eigenmächtiges Abklemmen ist nicht erlaubt: Das Blut sammelt sich dann im Gewebe, und die Blutung bleibt unbemerkt."
      }
@@ -462,12 +462,12 @@ const POOLS = [
       "rueck": "Puls über 100, Blutdruck noch normal, blass, feucht, unruhig: typisch für die Frühphase."
      },
      {
-      "t": "normaler Verlauf am 2. Tag nach der OP",
+      "t": "normaler Verlauf am 2. Tag nach der OP – kein Grund zur Sorge",
       "richtig": false,
       "rueck": "130 ml hellrotes Blut in einer Stunde ist nicht normal – siehe Anordnung."
      },
      {
-      "t": "Wundinfektion",
+      "t": "beginnende Wundinfektion – Puls und Haut sind deshalb verändert",
       "richtig": false,
       "rueck": "Für eine Infektion fehlen Fieber, trübes Sekret und Entzündungszeichen."
      }
@@ -482,12 +482,12 @@ const POOLS = [
       "rueck": "Die Person nicht allein lassen!"
      },
      {
-      "t": "Selbst ins Arztzimmer laufen – Frau Kramer bleibt so lange allein.",
+      "t": "Selbst ins Arztzimmer laufen und die Ärztin holen – Frau Kramer bleibt so lange allein.",
       "richtig": false,
       "rueck": "Bei Schockgefahr bleiben Sie bei der Patientin."
      },
      {
-      "t": "Erst die Dokumentation vollständig schreiben.",
+      "t": "Erst die Dokumentation vollständig schreiben, damit die Ärztin alle Werte sofort sieht.",
       "richtig": false,
       "rueck": "Dokumentiert wird – aber erst nach den Sofortmaßnahmen."
      }
@@ -502,12 +502,12 @@ const POOLS = [
       "rueck": "Genau so – und nichts essen oder trinken lassen, bis die Ärztin entschieden hat."
      },
      {
-      "t": "Frau Kramer aufsetzen und ihr einen Kaffee geben.",
+      "t": "Frau Kramer im Bett aufsetzen, ihr einen Kaffee geben und das Fenster öffnen, damit sie Luft bekommt.",
       "richtig": false,
       "rueck": "Aufsetzen verschlechtert den Kreislauf. Kaffee ist keine Schockbehandlung."
      },
      {
-      "t": "Die Redonflasche über die Wunde hängen, damit weniger herausläuft.",
+      "t": "Die Redonflasche über Wundniveau hängen, damit weniger Blut herausläuft, und Frau Kramer zudecken.",
       "richtig": false,
       "rueck": "Das verdeckt die Blutung nur – das Blut sammelt sich dann im Gewebe."
      }
@@ -612,10 +612,10 @@ const POOLS = [
   "typ": "wahl",
   "frage": "Sie haben die Redonflasche gewechselt. Nach 10 Minuten ist der Vakuumindikator <b>schon wieder entfaltet</b>. Was ist wahrscheinlich?",
   "optionen": [
-   "Das System ist irgendwo undicht oder die Drainage ist verrutscht – Verbindungen prüfen und die Ärztin informieren.",
-   "Die Drainage fördert besonders gut – alles in Ordnung.",
-   "Die neue Flasche war zu groß.",
-   "Frau Kramer hat Fieber."
+   "Das System ist undicht oder die Drainage ist verrutscht – Verbindungen prüfen, Ärztin informieren.",
+   "Die Drainage fördert besonders gut – in den ersten Stunden ist das normal, alles in Ordnung.",
+   "Die neue Flasche war zu groß – beim nächsten Wechsel eine kleinere Flasche nehmen.",
+   "Frau Kramer hat Fieber – die warme Luft dehnt den Indikator aus, also Temperatur messen."
   ],
   "richtig": 0,
   "erklaerung": "Zieht das System Luft, z. B. an einer Verbindung oder weil seitliche Öffnungen außerhalb der Haut liegen, geht der Sog sofort verloren."
@@ -626,9 +626,9 @@ const POOLS = [
   "richtig": false,
   "begruendung": {
    "optionen": [
-    "Eigenmächtig abklemmen ist nicht erlaubt: Das Blut sammelt sich im Gewebe (Hämatom) und die Blutung bleibt unbemerkt.",
-    "Abklemmen ist erlaubt, aber erst nach 10 Minuten.",
-    "Abklemmen macht die Flasche kaputt."
+    "Eigenmächtig abklemmen ist verboten: Das Blut sammelt sich im Gewebe (Hämatom), die Blutung bleibt unbemerkt.",
+    "Abklemmen ist erlaubt, wenn Sie die Klemme nach spätestens 10 Minuten wieder öffnen.",
+    "Abklemmen ist falsch, weil dann der Sog in der Flasche verloren geht und sie gewechselt werden muss."
    ],
    "richtig": 0
   },
@@ -639,9 +639,9 @@ const POOLS = [
   "frage": "Die Redon ist bei der Mobilisation <b>herausgerutscht</b>. Was tun Sie?",
   "optionen": [
    "Austrittsstelle steril abdecken, Ärztin informieren, Drainage zur Kontrolle aufbewahren, dokumentieren",
-   "Die Drainage vorsichtig wieder hineinschieben",
-   "Nichts – sie wäre bald sowieso gezogen worden",
-   "Die Stelle mit einem Pflaster zukleben und nichts sagen"
+   "Die Drainage unter sterilen Bedingungen vorsichtig wieder hineinschieben und neu fixieren",
+   "Nichts weiter – sie wäre bald sowieso gezogen worden, nur die Flasche entsorgen",
+   "Die Stelle mit einem Pflaster abkleben und beim nächsten Verbandwechsel nachsehen"
   ],
   "richtig": 0,
   "erklaerung": "Nie wieder einschieben (Infektion, Verletzung). Die Ärztin prüft, ob die Drainage vollständig ist."
@@ -739,8 +739,8 @@ const POOLS = [
    "nach Kontakt mit potenziell infektiösem Material, z. B. Wundsekret",
    "nach dem Kontakt mit der Patientin",
    "nach Kontakt mit der direkten Umgebung der Patientin",
-   "nur, wenn die Hände sichtbar schmutzig sind",
-   "nur am Ende der Schicht"
+   "nur, wenn die Patientin eine bekannte Infektion hat (z. B. MRSA)",
+   "nur einmal zu Beginn der Schicht, danach reichen Handschuhe"
   ],
   "richtig": [
    0,
@@ -763,17 +763,17 @@ const POOLS = [
     "frage": "Was antworten Sie?",
     "optionen": [
      {
-      "t": "Das verstehe ich gut. Der Schlauch ist angenäht und fixiert. Ich zeige Ihnen, wie wir die Flasche beim Gehen befestigen.",
+      "t": "Das verstehe ich. Der Schlauch ist angenäht und fixiert. Ich zeige Ihnen, wie wir die Flasche beim Gehen befestigen.",
       "richtig": true,
       "rueck": "Sorgen ernst nehmen und konkret erklären nimmt die Angst."
      },
      {
-      "t": "Da kann nichts passieren – stellen Sie sich nicht so an.",
+      "t": "Da kann gar nichts passieren – stellen Sie sich nicht so an, andere Patientinnen schaffen das auch.",
       "richtig": false,
       "rueck": "Das nimmt die Sorge nicht ernst und erklärt nichts."
      },
      {
-      "t": "Dann bleiben Sie besser im Bett, bis die Drainage gezogen ist.",
+      "t": "Dann bleiben Sie zur Sicherheit im Bett, bis die Drainage gezogen ist – das sind nur ein, zwei Tage.",
       "richtig": false,
       "rueck": "Frühe Mobilisation beugt z. B. Thrombose und Pneumonie vor – die Drainage soll sie nicht verhindern."
      }
@@ -790,14 +790,14 @@ const POOLS = [
       "rueck": "Sicher fixieren, nicht abknicken, nicht darauf liegen."
      },
      {
-      "t": "Legen Sie sie auf Ihren Bauch, dann haben Sie sie im Blick.",
+      "t": "Legen Sie die Flasche zu sich ins Bett auf den Bauch, dann haben Sie sie immer im Blick.",
       "richtig": false,
       "rueck": "So kann sie herunterfallen und am Schlauch ziehen."
      },
      {
-      "t": "Das ist egal, Hauptsache sie ist da.",
+      "t": "Das ist egal, wo sie hängt – Hauptsache, die Flasche hat noch Sog und ist nicht voll.",
       "richtig": false,
-      "rueck": "Ein Knick führt zum Förderstau."
+      "rueck": "Auch die Lage zählt: Liegt sie auf dem Schlauch, knickt er ab – das führt zum Förderstau."
      }
     ]
    },
@@ -812,12 +812,12 @@ const POOLS = [
       "rueck": "Klingel in Reichweite – und konkret sagen, worauf sie achten soll."
      },
      {
-      "t": "Dann warten Sie bis zur nächsten Runde.",
+      "t": "Dann warten Sie bitte bis zur nächsten Runde – ich schaue alle zwei Stunden nach Ihnen und der Flasche.",
       "richtig": false,
       "rueck": "Veränderungen sollen sofort gemeldet werden."
      },
      {
-      "t": "Schauen Sie dann selbst in die Flasche.",
+      "t": "Schauen Sie dann selbst in die Flasche und schreiben Sie die Menge auf – das besprechen wir später.",
       "richtig": false,
       "rueck": "Die Beobachtung ist Ihre Aufgabe – Frau Kramer soll sich melden."
      }
@@ -832,9 +832,9 @@ const POOLS = [
   "frage": "In Ihrem Haus wird das Ziehen von Redon-Drainagen an Pflegefachpersonen delegiert. Die Ärztin hat es für Frau Kramer schriftlich angeordnet. Sie haben das noch nie gemacht. Was ist richtig?",
   "optionen": [
    "Ich lehne ab und sage es der Ärztin (Remonstration) – ich führe nur aus, was ich sicher beherrsche.",
-   "Ich muss es machen, weil es angeordnet ist.",
-   "Ich lasse es eine Pflegehelferin machen.",
-   "Ich schaue mir ein Video an und mache es dann sofort."
+   "Ich muss es machen, weil es schriftlich angeordnet ist – die Verantwortung trägt dann allein die Ärztin.",
+   "Ich gebe die Aufgabe an eine Pflegehelferin weiter, die schon öfter dabei zugesehen hat.",
+   "Ich schaue mir vorher ein Video dazu an und ziehe die Drainage dann selbst."
   ],
   "richtig": 0,
   "erklaerung": "Die Pflegefachperson trägt die Durchführungsverantwortung. Wer sich nicht befähigt fühlt, muss das sagen (Remonstration, möglichst schriftlich). In Pflegias entfernt die Ärztin die Redon."
@@ -882,8 +882,8 @@ const POOLS = [
   "begruendung": {
    "optionen": [
     "Das Ziehen kann schmerzhaft sein, und das Mittel braucht Zeit, bis es wirkt.",
-    "Das Schmerzmittel desinfiziert die Austrittsstelle.",
-    "Damit fördert die Drainage noch einmal mehr."
+    "Das Schmerzmittel verengt die Blutgefäße und verhindert so eine Nachblutung.",
+    "Damit fördert die Drainage vor dem Ziehen noch einmal mehr Sekret."
    ],
    "richtig": 0
   },
@@ -898,8 +898,8 @@ const POOLS = [
    "ob die Drainage vollständig ist (Spitze intakt)",
    "Austrittsstelle und Verband (Nachblutung, Sekret)",
    "Schmerzen der Patientin",
-   "Farbe der Bettwäsche",
-   "Name der Mitpatientin"
+   "Gewicht der Patientin vor und nach dem Ziehen",
+   "wie lange die Patientin danach geschlafen hat"
   ],
   "richtig": [
    0,
@@ -914,10 +914,10 @@ const POOLS = [
   "typ": "wahl",
   "frage": "Herr Yilmaz' Robinson-Beutel ist halb voll. Wie leeren Sie ihn?",
   "optionen": [
-   "Mit Handschuhen über den Ablaufstutzen in einen Messbecher entleeren, Stutzen desinfizieren und schließen, Menge dokumentieren.",
-   "Den Beutel abschneiden und einen neuen anschließen.",
-   "Den Beutel über die Wunde heben und ausgießen.",
-   "Gar nicht – der Beutel wird nie geleert."
+   "Mit Handschuhen über den Ablaufstutzen in einen Messbecher leeren, Stutzen desinfizieren, schließen, Menge dokumentieren.",
+   "Den vollen Beutel von der Drainage abschneiden, einen neuen Beutel anschließen und die Menge schätzen.",
+   "Den Beutel kurz über Wundniveau anheben, damit alles zum Stutzen läuft, und ins Waschbecken ausgießen.",
+   "Gar nicht – der Beutel bleibt bis zur Entfernung der Drainage zu, damit keine Keime eindringen."
   ],
   "richtig": 0,
   "erklaerung": "Die Robinson ist ein geschlossenes System: Geleert wird über den Ablaufstutzen, ohne die Verbindung zur Drainage zu öffnen."
@@ -1010,8 +1010,8 @@ const POOLS = [
   "begruendung": {
    "optionen": [
     "Es fehlen ein messbares Kriterium und ein Zeitpunkt.",
-    "Es ist zu kurz.",
-    "Es nennt keinen Arzt."
+    "Es ist zu kurz – ein Ziel braucht mindestens zwei Sätze.",
+    "Es nennt nicht, welche Ärztin das Ziel festlegt."
    ],
    "richtig": 0
   },
@@ -1023,9 +1023,9 @@ const POOLS = [
   "frage": "Welches Pflegeziel ist <b>überprüfbar</b> formuliert?",
   "optionen": [
    "Frau Kramer ist bis zur Entfernung der Redon kreislaufstabil (Puls unter 100/min, RR systolisch über 100 mmHg).",
-   "Die Pflegefachperson misst den Blutdruck.",
-   "Frau Kramer hat weniger Angst.",
-   "Eine Nachblutung soll möglichst vermieden werden."
+   "Die Pflegefachperson misst bis zur Entfernung der Redon 4-stündlich Puls und Blutdruck.",
+   "Frau Kramer hat insgesamt weniger Angst und fühlt sich auf Station wohler.",
+   "Eine Nachblutung soll durch gute Beobachtung der Wunde und der Redon möglichst vermieden werden."
   ],
   "richtig": 0,
   "erklaerung": "„Die Pflegefachperson misst …“ ist eine Maßnahme, kein Ziel. Ziele beschreiben den gewünschten Zustand der Patientin."
@@ -1036,8 +1036,8 @@ const POOLS = [
   "optionen": [
    "Die Pflegefachperson liest bis 20 Uhr stündlich die Fördermenge der Redon ab und dokumentiert Menge und Aussehen in der Kurve.",
    "Die Pflegefachperson misst 4-stündlich Puls und Blutdruck und informiert bei Puls über 100/min sofort die Ärztin.",
-   "Drainage beobachten.",
-   "Auf Nachblutung achten."
+   "Die Drainage wird regelmäßig gut beobachtet, Auffälligkeiten werden an die Ärztin weitergegeben.",
+   "Die Pflegefachperson achtet während des Dienstes besonders auf Zeichen einer Nachblutung."
   ],
   "richtig": [
    0,
@@ -1073,9 +1073,9 @@ const POOLS = [
   "frage": "Was unterscheidet ein <b>potenzielles</b> von einem aktuellen Pflegeproblem?",
   "optionen": [
    "Ein potenzielles Problem kann entstehen (Risiko), ein aktuelles ist schon da.",
-   "Ein potenzielles Problem ist weniger wichtig.",
-   "Ein aktuelles Problem hat keine Ursache.",
-   "Es gibt keinen Unterschied."
+   "Ein potenzielles Problem ist weniger wichtig und muss deshalb nicht geplant werden.",
+   "Ein aktuelles Problem hat keine Ursache, ein potenzielles hat immer eine.",
+   "Es gibt keinen Unterschied – beide Begriffe meinen dasselbe Pflegeproblem."
   ],
   "richtig": 0,
   "erklaerung": "„Gefahr einer Nachblutung“ ist potenziell, „akute Schmerzen“ sind aktuell. Bei potenziellen Problemen beschreiben Sie statt Symptomen die Risikofaktoren aus dem Fall."
@@ -1102,8 +1102,8 @@ const POOLS = [
   "begruendung": {
    "optionen": [
     "Über Wundniveau kann Sekret zurückfließen und Erreger in die Wunde tragen.",
-    "Der Beutel ist zu schwer.",
-    "Der Beutel wird dann warm."
+    "Der Beutel ist zu schwer und drückt auf die frische Bauchwunde.",
+    "Der Beutel wird durch die Körperwärme warm, dann vermehren sich die Keime darin."
    ],
    "richtig": 0
   },
@@ -1114,9 +1114,9 @@ const POOLS = [
   "frage": "Im Robinson-Beutel von Herrn Yilmaz ist heute <b>grünlich-braunes</b> Sekret. Was tun Sie?",
   "optionen": [
    "Die Ärztin informieren – grünliches Sekret kann Galle sein.",
-   "Nichts – das ist nach einer Gallen-OP immer so.",
-   "Den Beutel austauschen, dann ist es weg.",
-   "Herrn Yilmaz mehr trinken lassen."
+   "Nichts – nach einer Gallen-OP ist grünliches Sekret immer normal.",
+   "Den Beutel austauschen und beim nächsten Leeren noch einmal nachsehen.",
+   "Herrn Yilmaz mehr trinken lassen, damit das Sekret wieder heller wird."
   ],
   "richtig": 0,
   "erklaerung": "Eine Veränderung von Farbe oder Beschaffenheit melden Sie – die Ärztin klärt die Ursache."
@@ -1178,9 +1178,9 @@ const POOLS = [
   "frage": "Welche Kombination passt zur <b>Frühphase</b> eines Schocks?",
   "optionen": [
    "Puls über 100/min, Blutdruck noch normal, Haut blass und feucht, unruhig",
-   "Puls 70/min, Blutdruck normal, Haut rosig",
-   "Puls 60/min, Blutdruck hoch, Haut warm",
-   "teilnahmslos, kein Urin, Blutdruck unter 80 mmHg"
+   "Puls 70/min, Blutdruck normal, Haut rosig und warm, ruhig und wach",
+   "Puls 60/min, Blutdruck deutlich erhöht, Haut warm und gerötet, unruhig",
+   "teilnahmslos, kaum noch Urin, Blutdruck unter 80 mmHg, Puls kaum tastbar"
   ],
   "richtig": 0,
   "erklaerung": "Der Blutdruck fällt erst in der Spätphase."
@@ -1209,9 +1209,9 @@ const POOLS = [
   "frage": "Wann wird eine Redonflasche gewechselt?",
   "optionen": [
    "wenn sie voll oder der Vakuumindikator entfaltet ist",
-   "jeden Morgen",
-   "nach jeder Mahlzeit",
-   "nur bei Fieber"
+   "jeden Morgen bei der Grundpflege, auch wenn sie noch Sog hat",
+   "nach jeder Mobilisation, weil dabei Luft in die Flasche kommt",
+   "nur bei Fieber, weil die Flasche dann verkeimt sein kann"
   ],
   "richtig": 0,
   "behalten": true,
@@ -1243,8 +1243,8 @@ const POOLS = [
   "begruendung": {
    "optionen": [
     "Das ist eine aseptische Tätigkeit – eine der 5 Indikationen der Händedesinfektion.",
-    "Damit die Handschuhe besser rutschen.",
-    "Das ist nur bei Fieber nötig."
+    "Das schützt vor allem Sie selbst vor dem Wundsekret – danach ist keine Desinfektion nötig.",
+    "Das ist nur bei Patientinnen mit Fieber oder einer bekannten Infektion nötig."
    ],
    "richtig": 0
   },
@@ -1266,12 +1266,12 @@ const POOLS = [
       "rueck": "Begründen und Sicherheit geben."
      },
      {
-      "t": "Das steht so im Plan, also machen wir das.",
+      "t": "Das steht so im Pflegeplan und ist ärztlich angeordnet, also machen wir das jetzt auch.",
       "richtig": false,
       "rueck": "Das erklärt nichts und nimmt die Sorge nicht ernst."
      },
      {
-      "t": "Dann bleiben Sie liegen, bis die Drainage raus ist.",
+      "t": "Dann bleiben Sie heute noch liegen, bis die Drainage raus ist – morgen versuchen wir es wieder.",
       "richtig": false,
       "rueck": "Die Drainage soll die Mobilisation nicht verhindern."
      }
@@ -1285,9 +1285,9 @@ const POOLS = [
   "frage": "Pflegeproblem „Gefahr einer Wundinfektion“ bei Herrn Yilmaz: Was ist ein <b>Einflussfaktor (E)</b>?",
   "optionen": [
    "liegende Robinson-Drainage als Eintrittspforte",
-   "ist motiviert und selbstständig",
-   "Temperatur 36,8 °C",
-   "möchte bald nach Hause"
+   "ist motiviert und wäscht sich selbstständig",
+   "Temperatur 38,5 °C und gerötete Austrittsstelle",
+   "möchte bald nach Hause und fragt nach der Entlassung"
   ],
   "richtig": 0,
   "erklaerung": "Motivation ist eine Ressource, die Temperatur ein Kennzeichen."
@@ -1297,9 +1297,9 @@ const POOLS = [
   "frage": "Welches Pflegeziel für Herrn Yilmaz ist <b>überprüfbar</b>?",
   "optionen": [
    "Die Austrittsstelle ist bis zur Entfernung der Drainage reizlos (keine Rötung, Schwellung, Überwärmung).",
-   "Herr Yilmaz fühlt sich wohl.",
-   "Die Pflegefachperson wechselt den Verband.",
-   "Infektionen sollen nicht vorkommen."
+   "Herr Yilmaz fühlt sich bis zur Entlassung wohl und ist mit der Pflege zufrieden.",
+   "Die Pflegefachperson wechselt den Verband an der Austrittsstelle täglich unter streng aseptischen Bedingungen.",
+   "Infektionen an der Austrittsstelle sollen durch gute Hygiene möglichst nicht vorkommen."
   ],
   "richtig": 0,
   "erklaerung": "Beobachtbares Kriterium + Zeitpunkt."
@@ -1336,9 +1336,9 @@ const POOLS = [
   "frage": "Was dokumentieren Sie bei einem Flaschenwechsel?",
   "optionen": [
    "den Wechsel und die Fördermenge der entfernten Flasche",
-   "nur die Uhrzeit",
-   "nur die neue Flaschennummer",
-   "nichts – das steht ja auf der Flasche"
+   "nur die Uhrzeit und Ihr Handzeichen auf der neuen Flasche",
+   "nur die Nummer der neuen Flasche und die Sogstärke",
+   "nichts – die Menge steht ja auf der entsorgten Flasche"
   ],
   "richtig": 0,
   "erklaerung": "Sonst stimmt die Gesamtmenge nicht."
@@ -1361,9 +1361,9 @@ const POOLS = [
   "frage": "SBAR: Wofür steht das <b>A</b>?",
   "optionen": [
    "Assessment – Ihre Einschätzung der Lage",
-   "Anordnung der Ärztin",
-   "Atmung",
-   "Abschluss"
+   "Anordnung – was die Ärztin tun soll",
+   "Atmung – Atemfrequenz und Sauerstoffsättigung",
+   "Anamnese – die Vorgeschichte der Patientin"
   ],
   "richtig": 0,
   "erklaerung": "S = Situation, B = Hintergrund, A = Einschätzung, R = Empfehlung."
@@ -1390,9 +1390,9 @@ const POOLS = [
   "frage": "Der Redonschlauch liegt abgeknickt unter dem Bein der Patientin. Wozu kann das führen?",
   "optionen": [
    "Förderstau – Sekret staut sich im Wundgebiet (Hämatom)",
-   "zu starkem Sog",
-   "Fieber durch den Schlauch",
-   "gar nichts"
+   "zu starkem Sog – das Gewebe wird in den Schlauch gesaugt",
+   "Fieber, weil der Schlauch die Haut reizt",
+   "gar nichts, solange die Flasche noch Sog hat"
   ],
   "richtig": 0,
   "erklaerung": "Knicke sofort beseitigen und weiter beobachten."
@@ -1417,8 +1417,8 @@ const POOLS = [
   "begruendung": {
    "optionen": [
     "Bei Herzinfarkt und Atemnot ist die Schocklagerung kontraindiziert.",
-    "Die Beine werden immer 90° hochgelagert.",
-    "Schocklagerung gibt es nicht mehr."
+    "Die Beine werden bei jedem Schock mindestens 90° hochgelagert.",
+    "Schocklagerung gibt es nicht mehr, man lagert heute alle Patienten flach."
    ],
    "richtig": 0
   },

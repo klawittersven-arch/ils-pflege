@@ -80,8 +80,8 @@ const POOL = [
    "nach Kontakt mit potenziell infektiösem Material, z. B. Wundsekret",
    "nach dem Kontakt mit der Patientin",
    "nach Kontakt mit der direkten Umgebung der Patientin",
-   "nur, wenn die Hände sichtbar schmutzig sind",
-   "nur am Ende der Schicht"
+   "nur, wenn die Patientin eine bekannte Infektion hat (z. B. MRSA)",
+   "nur einmal zu Beginn der Schicht, danach reichen Handschuhe"
   ],
   "richtig": [
    0,
@@ -104,17 +104,17 @@ const POOL = [
     "frage": "Was antworten Sie?",
     "optionen": [
      {
-      "t": "Das verstehe ich gut. Der Schlauch ist angenäht und fixiert. Ich zeige Ihnen, wie wir die Flasche beim Gehen befestigen.",
+      "t": "Das verstehe ich. Der Schlauch ist angenäht und fixiert. Ich zeige Ihnen, wie wir die Flasche beim Gehen befestigen.",
       "richtig": true,
       "rueck": "Sorgen ernst nehmen und konkret erklären nimmt die Angst."
      },
      {
-      "t": "Da kann nichts passieren – stellen Sie sich nicht so an.",
+      "t": "Da kann gar nichts passieren – stellen Sie sich nicht so an, andere Patientinnen schaffen das auch.",
       "richtig": false,
       "rueck": "Das nimmt die Sorge nicht ernst und erklärt nichts."
      },
      {
-      "t": "Dann bleiben Sie besser im Bett, bis die Drainage gezogen ist.",
+      "t": "Dann bleiben Sie zur Sicherheit im Bett, bis die Drainage gezogen ist – das sind nur ein, zwei Tage.",
       "richtig": false,
       "rueck": "Frühe Mobilisation beugt z. B. Thrombose und Pneumonie vor – die Drainage soll sie nicht verhindern."
      }
@@ -131,14 +131,14 @@ const POOL = [
       "rueck": "Sicher fixieren, nicht abknicken, nicht darauf liegen."
      },
      {
-      "t": "Legen Sie sie auf Ihren Bauch, dann haben Sie sie im Blick.",
+      "t": "Legen Sie die Flasche zu sich ins Bett auf den Bauch, dann haben Sie sie immer im Blick.",
       "richtig": false,
       "rueck": "So kann sie herunterfallen und am Schlauch ziehen."
      },
      {
-      "t": "Das ist egal, Hauptsache sie ist da.",
+      "t": "Das ist egal, wo sie hängt – Hauptsache, die Flasche hat noch Sog und ist nicht voll.",
       "richtig": false,
-      "rueck": "Ein Knick führt zum Förderstau."
+      "rueck": "Auch die Lage zählt: Liegt sie auf dem Schlauch, knickt er ab – das führt zum Förderstau."
      }
     ]
    },
@@ -153,12 +153,12 @@ const POOL = [
       "rueck": "Klingel in Reichweite – und konkret sagen, worauf sie achten soll."
      },
      {
-      "t": "Dann warten Sie bis zur nächsten Runde.",
+      "t": "Dann warten Sie bitte bis zur nächsten Runde – ich schaue alle zwei Stunden nach Ihnen und der Flasche.",
       "richtig": false,
       "rueck": "Veränderungen sollen sofort gemeldet werden."
      },
      {
-      "t": "Schauen Sie dann selbst in die Flasche.",
+      "t": "Schauen Sie dann selbst in die Flasche und schreiben Sie die Menge auf – das besprechen wir später.",
       "richtig": false,
       "rueck": "Die Beobachtung ist Ihre Aufgabe – Frau Kramer soll sich melden."
      }
@@ -173,9 +173,9 @@ const POOL = [
   "frage": "In Ihrem Haus wird das Ziehen von Redon-Drainagen an Pflegefachpersonen delegiert. Die Ärztin hat es für Frau Kramer schriftlich angeordnet. Sie haben das noch nie gemacht. Was ist richtig?",
   "optionen": [
    "Ich lehne ab und sage es der Ärztin (Remonstration) – ich führe nur aus, was ich sicher beherrsche.",
-   "Ich muss es machen, weil es angeordnet ist.",
-   "Ich lasse es eine Pflegehelferin machen.",
-   "Ich schaue mir ein Video an und mache es dann sofort."
+   "Ich muss es machen, weil es schriftlich angeordnet ist – die Verantwortung trägt dann allein die Ärztin.",
+   "Ich gebe die Aufgabe an eine Pflegehelferin weiter, die schon öfter dabei zugesehen hat.",
+   "Ich schaue mir vorher ein Video dazu an und ziehe die Drainage dann selbst."
   ],
   "richtig": 0,
   "erklaerung": "Die Pflegefachperson trägt die Durchführungsverantwortung. Wer sich nicht befähigt fühlt, muss das sagen (Remonstration, möglichst schriftlich). In Pflegias entfernt die Ärztin die Redon."
@@ -223,8 +223,8 @@ const POOL = [
   "begruendung": {
    "optionen": [
     "Das Ziehen kann schmerzhaft sein, und das Mittel braucht Zeit, bis es wirkt.",
-    "Das Schmerzmittel desinfiziert die Austrittsstelle.",
-    "Damit fördert die Drainage noch einmal mehr."
+    "Das Schmerzmittel verengt die Blutgefäße und verhindert so eine Nachblutung.",
+    "Damit fördert die Drainage vor dem Ziehen noch einmal mehr Sekret."
    ],
    "richtig": 0
   },
@@ -239,8 +239,8 @@ const POOL = [
    "ob die Drainage vollständig ist (Spitze intakt)",
    "Austrittsstelle und Verband (Nachblutung, Sekret)",
    "Schmerzen der Patientin",
-   "Farbe der Bettwäsche",
-   "Name der Mitpatientin"
+   "Gewicht der Patientin vor und nach dem Ziehen",
+   "wie lange die Patientin danach geschlafen hat"
   ],
   "richtig": [
    0,
@@ -255,10 +255,10 @@ const POOL = [
   "typ": "wahl",
   "frage": "Herr Yilmaz' Robinson-Beutel ist halb voll. Wie leeren Sie ihn?",
   "optionen": [
-   "Mit Handschuhen über den Ablaufstutzen in einen Messbecher entleeren, Stutzen desinfizieren und schließen, Menge dokumentieren.",
-   "Den Beutel abschneiden und einen neuen anschließen.",
-   "Den Beutel über die Wunde heben und ausgießen.",
-   "Gar nicht – der Beutel wird nie geleert."
+   "Mit Handschuhen über den Ablaufstutzen in einen Messbecher leeren, Stutzen desinfizieren, schließen, Menge dokumentieren.",
+   "Den vollen Beutel von der Drainage abschneiden, einen neuen Beutel anschließen und die Menge schätzen.",
+   "Den Beutel kurz über Wundniveau anheben, damit alles zum Stutzen läuft, und ins Waschbecken ausgießen.",
+   "Gar nicht – der Beutel bleibt bis zur Entfernung der Drainage zu, damit keine Keime eindringen."
   ],
   "richtig": 0,
   "erklaerung": "Die Robinson ist ein geschlossenes System: Geleert wird über den Ablaufstutzen, ohne die Verbindung zur Drainage zu öffnen."

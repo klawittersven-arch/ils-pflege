@@ -37,12 +37,12 @@ const POOL = [
       "rueck": "Erst einschätzen – und nicht weggehen."
      },
      {
-      "t": "Ihr ein Glas Wasser holen und in 30 Minuten wiederkommen.",
+      "t": "Ihr ein Glas Wasser holen, das Bett frisch beziehen und in 30 Minuten wiederkommen.",
       "richtig": false,
       "rueck": "„Komisch“ und „nass“ können eine Nachblutung bedeuten. Sie müssen sofort nachsehen."
      },
      {
-      "t": "Die Redon abklemmen, damit kein Blut mehr verloren geht.",
+      "t": "Die Redon sofort abklemmen, damit Frau Kramer kein Blut mehr über die Drainage verliert.",
       "richtig": false,
       "rueck": "Eigenmächtiges Abklemmen ist nicht erlaubt: Das Blut sammelt sich dann im Gewebe, und die Blutung bleibt unbemerkt."
      }
@@ -58,12 +58,12 @@ const POOL = [
       "rueck": "Puls über 100, Blutdruck noch normal, blass, feucht, unruhig: typisch für die Frühphase."
      },
      {
-      "t": "normaler Verlauf am 2. Tag nach der OP",
+      "t": "normaler Verlauf am 2. Tag nach der OP – kein Grund zur Sorge",
       "richtig": false,
       "rueck": "130 ml hellrotes Blut in einer Stunde ist nicht normal – siehe Anordnung."
      },
      {
-      "t": "Wundinfektion",
+      "t": "beginnende Wundinfektion – Puls und Haut sind deshalb verändert",
       "richtig": false,
       "rueck": "Für eine Infektion fehlen Fieber, trübes Sekret und Entzündungszeichen."
      }
@@ -78,12 +78,12 @@ const POOL = [
       "rueck": "Die Person nicht allein lassen!"
      },
      {
-      "t": "Selbst ins Arztzimmer laufen – Frau Kramer bleibt so lange allein.",
+      "t": "Selbst ins Arztzimmer laufen und die Ärztin holen – Frau Kramer bleibt so lange allein.",
       "richtig": false,
       "rueck": "Bei Schockgefahr bleiben Sie bei der Patientin."
      },
      {
-      "t": "Erst die Dokumentation vollständig schreiben.",
+      "t": "Erst die Dokumentation vollständig schreiben, damit die Ärztin alle Werte sofort sieht.",
       "richtig": false,
       "rueck": "Dokumentiert wird – aber erst nach den Sofortmaßnahmen."
      }
@@ -98,12 +98,12 @@ const POOL = [
       "rueck": "Genau so – und nichts essen oder trinken lassen, bis die Ärztin entschieden hat."
      },
      {
-      "t": "Frau Kramer aufsetzen und ihr einen Kaffee geben.",
+      "t": "Frau Kramer im Bett aufsetzen, ihr einen Kaffee geben und das Fenster öffnen, damit sie Luft bekommt.",
       "richtig": false,
       "rueck": "Aufsetzen verschlechtert den Kreislauf. Kaffee ist keine Schockbehandlung."
      },
      {
-      "t": "Die Redonflasche über die Wunde hängen, damit weniger herausläuft.",
+      "t": "Die Redonflasche über Wundniveau hängen, damit weniger Blut herausläuft, und Frau Kramer zudecken.",
       "richtig": false,
       "rueck": "Das verdeckt die Blutung nur – das Blut sammelt sich dann im Gewebe."
      }
@@ -208,10 +208,10 @@ const POOL = [
   "typ": "wahl",
   "frage": "Sie haben die Redonflasche gewechselt. Nach 10 Minuten ist der Vakuumindikator <b>schon wieder entfaltet</b>. Was ist wahrscheinlich?",
   "optionen": [
-   "Das System ist irgendwo undicht oder die Drainage ist verrutscht – Verbindungen prüfen und die Ärztin informieren.",
-   "Die Drainage fördert besonders gut – alles in Ordnung.",
-   "Die neue Flasche war zu groß.",
-   "Frau Kramer hat Fieber."
+   "Das System ist undicht oder die Drainage ist verrutscht – Verbindungen prüfen, Ärztin informieren.",
+   "Die Drainage fördert besonders gut – in den ersten Stunden ist das normal, alles in Ordnung.",
+   "Die neue Flasche war zu groß – beim nächsten Wechsel eine kleinere Flasche nehmen.",
+   "Frau Kramer hat Fieber – die warme Luft dehnt den Indikator aus, also Temperatur messen."
   ],
   "richtig": 0,
   "erklaerung": "Zieht das System Luft, z. B. an einer Verbindung oder weil seitliche Öffnungen außerhalb der Haut liegen, geht der Sog sofort verloren."
@@ -222,9 +222,9 @@ const POOL = [
   "richtig": false,
   "begruendung": {
    "optionen": [
-    "Eigenmächtig abklemmen ist nicht erlaubt: Das Blut sammelt sich im Gewebe (Hämatom) und die Blutung bleibt unbemerkt.",
-    "Abklemmen ist erlaubt, aber erst nach 10 Minuten.",
-    "Abklemmen macht die Flasche kaputt."
+    "Eigenmächtig abklemmen ist verboten: Das Blut sammelt sich im Gewebe (Hämatom), die Blutung bleibt unbemerkt.",
+    "Abklemmen ist erlaubt, wenn Sie die Klemme nach spätestens 10 Minuten wieder öffnen.",
+    "Abklemmen ist falsch, weil dann der Sog in der Flasche verloren geht und sie gewechselt werden muss."
    ],
    "richtig": 0
   },
@@ -235,9 +235,9 @@ const POOL = [
   "frage": "Die Redon ist bei der Mobilisation <b>herausgerutscht</b>. Was tun Sie?",
   "optionen": [
    "Austrittsstelle steril abdecken, Ärztin informieren, Drainage zur Kontrolle aufbewahren, dokumentieren",
-   "Die Drainage vorsichtig wieder hineinschieben",
-   "Nichts – sie wäre bald sowieso gezogen worden",
-   "Die Stelle mit einem Pflaster zukleben und nichts sagen"
+   "Die Drainage unter sterilen Bedingungen vorsichtig wieder hineinschieben und neu fixieren",
+   "Nichts weiter – sie wäre bald sowieso gezogen worden, nur die Flasche entsorgen",
+   "Die Stelle mit einem Pflaster abkleben und beim nächsten Verbandwechsel nachsehen"
   ],
   "richtig": 0,
   "erklaerung": "Nie wieder einschieben (Infektion, Verletzung). Die Ärztin prüft, ob die Drainage vollständig ist."

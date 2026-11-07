@@ -40,8 +40,8 @@ const POOL = [
   "begruendung": {
    "optionen": [
     "Über Wundniveau kann Sekret zurückfließen und Erreger in die Wunde tragen.",
-    "Der Beutel ist zu schwer.",
-    "Der Beutel wird dann warm."
+    "Der Beutel ist zu schwer und drückt auf die frische Bauchwunde.",
+    "Der Beutel wird durch die Körperwärme warm, dann vermehren sich die Keime darin."
    ],
    "richtig": 0
   },
@@ -52,9 +52,9 @@ const POOL = [
   "frage": "Im Robinson-Beutel von Herrn Yilmaz ist heute <b>grünlich-braunes</b> Sekret. Was tun Sie?",
   "optionen": [
    "Die Ärztin informieren – grünliches Sekret kann Galle sein.",
-   "Nichts – das ist nach einer Gallen-OP immer so.",
-   "Den Beutel austauschen, dann ist es weg.",
-   "Herrn Yilmaz mehr trinken lassen."
+   "Nichts – nach einer Gallen-OP ist grünliches Sekret immer normal.",
+   "Den Beutel austauschen und beim nächsten Leeren noch einmal nachsehen.",
+   "Herrn Yilmaz mehr trinken lassen, damit das Sekret wieder heller wird."
   ],
   "richtig": 0,
   "erklaerung": "Eine Veränderung von Farbe oder Beschaffenheit melden Sie – die Ärztin klärt die Ursache."
@@ -116,9 +116,9 @@ const POOL = [
   "frage": "Welche Kombination passt zur <b>Frühphase</b> eines Schocks?",
   "optionen": [
    "Puls über 100/min, Blutdruck noch normal, Haut blass und feucht, unruhig",
-   "Puls 70/min, Blutdruck normal, Haut rosig",
-   "Puls 60/min, Blutdruck hoch, Haut warm",
-   "teilnahmslos, kein Urin, Blutdruck unter 80 mmHg"
+   "Puls 70/min, Blutdruck normal, Haut rosig und warm, ruhig und wach",
+   "Puls 60/min, Blutdruck deutlich erhöht, Haut warm und gerötet, unruhig",
+   "teilnahmslos, kaum noch Urin, Blutdruck unter 80 mmHg, Puls kaum tastbar"
   ],
   "richtig": 0,
   "erklaerung": "Der Blutdruck fällt erst in der Spätphase."
@@ -147,9 +147,9 @@ const POOL = [
   "frage": "Wann wird eine Redonflasche gewechselt?",
   "optionen": [
    "wenn sie voll oder der Vakuumindikator entfaltet ist",
-   "jeden Morgen",
-   "nach jeder Mahlzeit",
-   "nur bei Fieber"
+   "jeden Morgen bei der Grundpflege, auch wenn sie noch Sog hat",
+   "nach jeder Mobilisation, weil dabei Luft in die Flasche kommt",
+   "nur bei Fieber, weil die Flasche dann verkeimt sein kann"
   ],
   "richtig": 0,
   "behalten": true,
@@ -181,8 +181,8 @@ const POOL = [
   "begruendung": {
    "optionen": [
     "Das ist eine aseptische Tätigkeit – eine der 5 Indikationen der Händedesinfektion.",
-    "Damit die Handschuhe besser rutschen.",
-    "Das ist nur bei Fieber nötig."
+    "Das schützt vor allem Sie selbst vor dem Wundsekret – danach ist keine Desinfektion nötig.",
+    "Das ist nur bei Patientinnen mit Fieber oder einer bekannten Infektion nötig."
    ],
    "richtig": 0
   },
@@ -204,12 +204,12 @@ const POOL = [
       "rueck": "Begründen und Sicherheit geben."
      },
      {
-      "t": "Das steht so im Plan, also machen wir das.",
+      "t": "Das steht so im Pflegeplan und ist ärztlich angeordnet, also machen wir das jetzt auch.",
       "richtig": false,
       "rueck": "Das erklärt nichts und nimmt die Sorge nicht ernst."
      },
      {
-      "t": "Dann bleiben Sie liegen, bis die Drainage raus ist.",
+      "t": "Dann bleiben Sie heute noch liegen, bis die Drainage raus ist – morgen versuchen wir es wieder.",
       "richtig": false,
       "rueck": "Die Drainage soll die Mobilisation nicht verhindern."
      }
@@ -223,9 +223,9 @@ const POOL = [
   "frage": "Pflegeproblem „Gefahr einer Wundinfektion“ bei Herrn Yilmaz: Was ist ein <b>Einflussfaktor (E)</b>?",
   "optionen": [
    "liegende Robinson-Drainage als Eintrittspforte",
-   "ist motiviert und selbstständig",
-   "Temperatur 36,8 °C",
-   "möchte bald nach Hause"
+   "ist motiviert und wäscht sich selbstständig",
+   "Temperatur 38,5 °C und gerötete Austrittsstelle",
+   "möchte bald nach Hause und fragt nach der Entlassung"
   ],
   "richtig": 0,
   "erklaerung": "Motivation ist eine Ressource, die Temperatur ein Kennzeichen."
@@ -235,9 +235,9 @@ const POOL = [
   "frage": "Welches Pflegeziel für Herrn Yilmaz ist <b>überprüfbar</b>?",
   "optionen": [
    "Die Austrittsstelle ist bis zur Entfernung der Drainage reizlos (keine Rötung, Schwellung, Überwärmung).",
-   "Herr Yilmaz fühlt sich wohl.",
-   "Die Pflegefachperson wechselt den Verband.",
-   "Infektionen sollen nicht vorkommen."
+   "Herr Yilmaz fühlt sich bis zur Entlassung wohl und ist mit der Pflege zufrieden.",
+   "Die Pflegefachperson wechselt den Verband an der Austrittsstelle täglich unter streng aseptischen Bedingungen.",
+   "Infektionen an der Austrittsstelle sollen durch gute Hygiene möglichst nicht vorkommen."
   ],
   "richtig": 0,
   "erklaerung": "Beobachtbares Kriterium + Zeitpunkt."
@@ -274,9 +274,9 @@ const POOL = [
   "frage": "Was dokumentieren Sie bei einem Flaschenwechsel?",
   "optionen": [
    "den Wechsel und die Fördermenge der entfernten Flasche",
-   "nur die Uhrzeit",
-   "nur die neue Flaschennummer",
-   "nichts – das steht ja auf der Flasche"
+   "nur die Uhrzeit und Ihr Handzeichen auf der neuen Flasche",
+   "nur die Nummer der neuen Flasche und die Sogstärke",
+   "nichts – die Menge steht ja auf der entsorgten Flasche"
   ],
   "richtig": 0,
   "erklaerung": "Sonst stimmt die Gesamtmenge nicht."
@@ -299,9 +299,9 @@ const POOL = [
   "frage": "SBAR: Wofür steht das <b>A</b>?",
   "optionen": [
    "Assessment – Ihre Einschätzung der Lage",
-   "Anordnung der Ärztin",
-   "Atmung",
-   "Abschluss"
+   "Anordnung – was die Ärztin tun soll",
+   "Atmung – Atemfrequenz und Sauerstoffsättigung",
+   "Anamnese – die Vorgeschichte der Patientin"
   ],
   "richtig": 0,
   "erklaerung": "S = Situation, B = Hintergrund, A = Einschätzung, R = Empfehlung."
@@ -328,9 +328,9 @@ const POOL = [
   "frage": "Der Redonschlauch liegt abgeknickt unter dem Bein der Patientin. Wozu kann das führen?",
   "optionen": [
    "Förderstau – Sekret staut sich im Wundgebiet (Hämatom)",
-   "zu starkem Sog",
-   "Fieber durch den Schlauch",
-   "gar nichts"
+   "zu starkem Sog – das Gewebe wird in den Schlauch gesaugt",
+   "Fieber, weil der Schlauch die Haut reizt",
+   "gar nichts, solange die Flasche noch Sog hat"
   ],
   "richtig": 0,
   "erklaerung": "Knicke sofort beseitigen und weiter beobachten."
@@ -355,8 +355,8 @@ const POOL = [
   "begruendung": {
    "optionen": [
     "Bei Herzinfarkt und Atemnot ist die Schocklagerung kontraindiziert.",
-    "Die Beine werden immer 90° hochgelagert.",
-    "Schocklagerung gibt es nicht mehr."
+    "Die Beine werden bei jedem Schock mindestens 90° hochgelagert.",
+    "Schocklagerung gibt es nicht mehr, man lagert heute alle Patienten flach."
    ],
    "richtig": 0
   },

@@ -36,6 +36,33 @@ function pruefePool(name, pool) {
   return fehler;
 }
 
+// Antwortlängen: Man soll die richtige Antwort nicht an ihrer Länge erkennen können (wie tools/laengen_check.py).
+const LAENGE = { faktor: 1.2, anteil: 0.4, mehrfach: 1.3 };
+function laengen(name, pool) {
+  const faelle = [];
+  const fehler = [];
+  pool.forEach((a, i) => {
+    const w = `${name} #${i + 1}`;
+    const fall = (ort, opt, r) => {
+      const L = opt.map((o) => ohneTags(o).length);
+      const andere = L.filter((_, j) => j !== r);
+      faelle.push({ laengste: L[r] > Math.max(...andere), kuerzeste: L[r] < Math.min(...andere) });
+      if (L[r] > LAENGE.faktor * Math.max(...andere)) fehler.push(`${ort}: richtige Antwort ${(L[r] / Math.max(...andere)).toFixed(2)}× so lang wie die längste falsche`);
+    };
+    if (a.typ === 'wahl') fall(w, a.optionen, a.richtig);
+    if (a.typ === 'rf' && a.begruendung) fall(w + ' (Begründung)', a.begruendung.optionen, a.begruendung.richtig);
+    if (a.typ === 'dialog') a.knoten.forEach((k, j) => fall(`${w} Schritt ${j + 1}`, k.optionen.map((o) => o.t), k.optionen.findIndex((o) => o.richtig)));
+    if (a.typ === 'mehrfach') {
+      const L = a.optionen.map((o) => ohneTags(o).length);
+      const mittel = (x) => x.reduce((u, v) => u + v, 0) / x.length;
+      const r = mittel(a.richtig.map((j) => L[j]));
+      const f = mittel(L.filter((_, j) => !a.richtig.includes(j)));
+      if (r > LAENGE.mehrfach * f) fehler.push(`${w}: richtige Antworten im Mittel ${(r / f).toFixed(2)}× so lang wie die falschen`);
+    }
+  });
+  return { faelle, fehler };
+}
+
 (async () => {
   const worker = await workerStarten(8700 + Math.floor(Math.random() * 80), PASSWORT);
   const { server, basis } = await serverStarten(worker.url);
@@ -54,12 +81,16 @@ function pruefePool(name, pool) {
     await s.waitForSelector('.konto-leiste');
     for (const auftrag of AUFTRAEGE) {
       console.log(`\n${auftrag.titel}`);
+      const alleFaelle = [];
       for (const schritt of auftrag.schritte) {
         await s.goto(basis + schritt.pfad);
         await s.waitForSelector('#lern-los');
         const pool = await s.evaluate(() => POOL);
         const statisch = pruefePool(schritt.titel, pool);
         pruefe(!statisch.length, `${schritt.titel}: Pool (${pool.length} Aufgaben) formal in Ordnung`, statisch);
+        const lg = laengen(schritt.titel, pool);
+        alleFaelle.push(...lg.faelle);
+        pruefe(!lg.fehler.length, `${schritt.titel}: richtige Antwort nicht an der Länge erkennbar`, lg.fehler);
         // Durchgang mit ALLEN Aufgaben vorbereiten
         await s.evaluate(([ils, sch]) => {
           const konto = JSON.parse(localStorage.getItem('ils-konto'));
@@ -98,6 +129,11 @@ function pruefePool(name, pool) {
         await s.waitForSelector('.lern-fertig .meldung.ok', { timeout: 8000 });
         pruefe(true, `${schritt.titel}: abgeschlossen und eingetragen`);
       }
+      const n = alleFaelle.length;
+      const lang = alleFaelle.filter((f) => f.laengste).length;
+      const kurz = alleFaelle.filter((f) => f.kuerzeste).length;
+      pruefe(lang <= LAENGE.anteil * n && kurz <= LAENGE.anteil * n,
+        `${auftrag.titel}: richtige Antwort in ${lang} von ${n} Fällen die längste (${Math.round(100 * lang / n)} %), in ${kurz} die kürzeste (${Math.round(100 * kurz / n)} %) – je höchstens 40 %`);
     }
     pruefe(protokoll.konsole.length === 0, 'keine JavaScript-Fehler', protokoll.konsole);
     pruefe(protokoll.extern.length === 0, 'keine Anfragen an fremde Adressen', protokoll.extern);
