@@ -140,6 +140,10 @@ function laengen(name, pool) {
           pruefe(await s.isDisabled('#lern-geschrieben'), `${schritt.titel}: Schreibzeit läuft`);
           await vor(s, 31000);   // Mindest-Schreibzeit 30 s
           await s.click('#lern-geschrieben', { timeout: 5000 });
+          await s.waitForSelector('.checkliste');
+          const muster = (await s.$('.musterantwort')) ? await s.textContent('.musterantwort') : '';
+          pruefe(/Frau Kramer|Herrn? Brandt/.test(muster) && !/\*\*|⚑/.test(muster), `${schritt.titel}: Musterantwort mit konkretem Fallbezug`, muster.slice(0, 80));
+          if (BILDER) await s.screenshot({ path: path.join(BILDER, `${auftrag.id}-${schritt.id}-muster.png`), fullPage: true });
           for (const h of await s.$$('.checkliste input')) await h.check();
           await s.click('#lern-verglichen');
         }

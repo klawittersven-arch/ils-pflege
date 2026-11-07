@@ -11,7 +11,7 @@
      tempoPauseSek: 15,     // Länge dieser Lesepause (auch im Abschlussquiz)
      abschluss: false,      // true = Abschlussquiz (erst nach allen Übungen)
      pool: [ …Aufgaben… ],
-     schreiben: { auftrag, ort, minSek, punkte: [...] }   // optional: Examens-Training mit Checkliste
+     schreiben: { auftrag, ort, minSek, punkte: [...], muster: [...], hinweis }   // optional: Examens-Training mit Musterantwort und Checkliste
    })
 
    Aufgabentypen (Feld typ) – alle mit frage (HTML), erklaerung, optional thema, gruppe, fest, bild:
@@ -588,12 +588,30 @@ const ILSLern = (() => {
       uhr = setInterval(ticken, 1000);
     }
 
+    // Musterantwort: Zeilen mit „• “ werden Aufzählungspunkte, **…** wird fett
+    function musterHtml(zeilen) {
+      const fett = (t) => String(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      let html = '';
+      let liste = false;
+      for (const z of zeilen) {
+        if (z.startsWith('• ')) { if (!liste) { html += '<ul>'; liste = true; } html += `<li>${fett(z.slice(2))}</li>`; continue; }
+        if (liste) { html += '</ul>'; liste = false; }
+        html += `<p>${fett(z)}</p>`;
+      }
+      return html + (liste ? '</ul>' : '');
+    }
+
     function checklisteZeigen() {
       const sch = cfg.schreiben;
       const haken = sch.punkte.map((p, i) => el('input', { type: 'checkbox', id: `lern-p${i}` }));
       const karte = titelKarte('✍️ Vergleichen Sie mit dem Erwartungshorizont',
         el('div', { class: 'lern-auftrag small', html: sch.auftrag }),
-        el('p', {}, 'Haken Sie ehrlich ab, was Sie (sinngemäß) aufgeschrieben haben. Was fehlt, ergänzen Sie auf dem Arbeitsblatt in einer anderen Farbe.'),
+        sch.muster ? el('div', { class: 'musterantwort' },
+          el('div', { class: 'muster-titel' }, '📝 Musterantwort – so hätte eine sehr gute Antwort im Examen ausgesehen'),
+          el('div', { class: 'muster-text', html: musterHtml(sch.muster) })) : null,
+        el('p', {}, sch.muster ? 'Vergleichen Sie Ihre Antwort damit und haken Sie ehrlich ab, was Sie (sinngemäß) aufgeschrieben haben. Was fehlt, ergänzen Sie auf dem Arbeitsblatt in einer anderen Farbe.'
+          : 'Haken Sie ehrlich ab, was Sie (sinngemäß) aufgeschrieben haben. Was fehlt, ergänzen Sie auf dem Arbeitsblatt in einer anderen Farbe.'),
+        sch.muster ? el('div', { class: 'q-text checkliste-titel' }, 'Erwartungshorizont zum Abhaken') : null,
         el('div', { class: 'checkliste' }, sch.punkte.map((p, i) => el('label', { class: 'opt', for: `lern-p${i}` }, haken[i], span(p)))),
         sch.hinweis ? el('p', { class: 'small', html: sch.hinweis }) : null);
       const knopf = el('button', { type: 'button', class: 'btn block', id: 'lern-verglichen' }, 'Fertig verglichen');

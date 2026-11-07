@@ -138,7 +138,8 @@ Neue ILS-Übungen laufen im Lernmodus (`ILSLern.uebung({...})`, Beispiel: `probe
 - **Antwortlängen:** Die richtige Antwort ist höchstens 20 % länger als die längste falsche und je Auftrag in höchstens
   40 % der Fälle die längste (bzw. kürzeste) – Prüfung: `python3 tools/laengen_check.py` und Inhaltstest.
 - **Zwischenstand** (aktuelle Aufgabe, Fehler, laufende Lesepause, Schreibzeit) bleibt auf dem Gerät gespeichert.
-- **Examens-Training** (optional `schreiben`): Schreibauftrag auf Papier mit Mindestzeit (`minSek`, in beiden Aufträgen 30 s), danach Checkliste
+- **Examens-Training** (optional `schreiben`, mit `muster` = Musterantwort mit konkretem Fallbezug, die vor der
+  Checkliste erscheint): Schreibauftrag auf Papier mit Mindestzeit (`minSek`, in beiden Aufträgen 30 s), danach Checkliste
   (Erwartungshorizont) zum Selbstabhaken, Hinweis auf Eigenverantwortung und E-Mail an die Lehrkraft mit Betreff.
 - **Abschlussquiz** (`abschluss: true`): erst nach allen Übungen – das prüft auch der Server.
 - **Lehrkraft-Tabelle:** ⚠n = Neustarts wegen Fehlern, ⏳n = Warnungen „zu schnell“, ✍x/y = selbst abgehakte Punkte im Examens-Training.

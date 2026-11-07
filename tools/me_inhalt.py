@@ -80,10 +80,22 @@ SCHREIBEN1 = {
     "auftrag": "<strong>Erläutern Sie</strong> je 2 Gründe, die für und die gegen eine Materialentfernung sprechen. Beziehen Sie sich auf Herrn Brandt.",
     "ort": "in den Kasten „Examens-Training 1“ auf dem Arbeitsblatt",
     "minSek": 30,
-    "punkte": ["dafür: Lockerung oder Entzündung am Material", "dafür: Beschwerden durch das Material (Druck, Schmerz) oder eingeschränkte Beweglichkeit",
-               "dagegen: eine zweite OP wäre ein sehr großes Risiko (Alter, Vorerkrankungen)", "dagegen: das Material stört nicht und schmerzt nicht",
-               "Fallbezug: Herr Brandt ist jung, hat Druckschmerzen, der Bruch ist nach 18 Monaten verheilt → Entfernung sinnvoll",
-               "Gründe jeweils erläutert (nicht nur genannt)"],
+    "punkte": [
+        "dafür: Beschwerden durch das Material – die Platte am rechten Außenknöchel drückt und schmerzt, vor allem in Fußballschuhen",
+        "dafür: Lockerung oder Entzündung am Material (bei Herrn Brandt nicht beschrieben)",
+        "dagegen: eine zweite OP wäre ein großes Risiko (z. B. hohes Alter, schwere Vorerkrankungen) – bei Herrn Brandt (24, sportlich) gering",
+        "dagegen: das Material stört nicht und schmerzt nicht – trifft bei Herrn Brandt nicht zu",
+        "Fallbezug: Knochen nach 18 Monaten verheilt → richtiger Zeitpunkt; Fazit: Entfernung sinnvoll",
+    ],
+    "muster": [
+        "**Für eine Materialentfernung spricht:**",
+        "• **Beschwerden durch das Material:** Die Platte am rechten Außenknöchel drückt und schmerzt Herrn Brandt seit Monaten, vor allem in Fußballschuhen. Das schränkt ihn beim Sport ein.",
+        "• **Lockerung oder Entzündung am Material:** Das ist bei Herrn Brandt nicht beschrieben – bei ihm sind die Beschwerden der Grund. Sein Knochen ist laut Röntgenbild nach 18 Monaten verheilt, der Zeitpunkt ist also richtig.",
+        "**Gegen eine Materialentfernung spricht:**",
+        "• **Eine zweite Operation wäre ein großes Risiko**, z. B. bei hohem Alter oder schweren Vorerkrankungen. Herr Brandt ist aber erst 24 und sportlich – das Risiko ist bei ihm gering.",
+        "• **Das Material stört nicht und schmerzt nicht.** Bei Herrn Brandt ist das Gegenteil der Fall: Die Platte drückt.",
+        "**Fazit:** Bei Herrn Brandt überwiegen die Gründe dafür – die Entfernung ist sinnvoll.",
+    ],
 }
 
 # ---------------------------------------------------------------- Übung 2
@@ -175,10 +187,22 @@ SCHREIBEN2 = {
     "auftrag": "<strong>Beschreiben Sie</strong>, wie Sie bei Herrn Brandt die DMS-Kontrolle am rechten Fuß durchführen (je mindestens ein Kriterium für Durchblutung, Motorik und Sensibilität), und <strong>nennen Sie</strong>, wann Sie die Ärztin informieren.",
     "ort": "in den Kasten „Examens-Training 2“ auf dem Arbeitsblatt",
     "minSek": 30,
-    "punkte": ["Durchblutung: Hautfarbe und Temperatur der Zehen", "Durchblutung: Fußpuls tasten und/oder Nagelbettprobe (Farbe kehrt in unter 2 s zurück)",
-               "Motorik: Zehen und Fuß bewegen lassen", "Sensibilität: nach Kribbeln/Taubheit fragen, Berührung prüfen",
-               "Vergleich mit dem gesunden Fuß (⚑)", "Ärztin sofort bei: blass/kalt, kein Puls, Taubheit, Bewegungsstörung oder stark zunehmenden Schmerzen",
-               "Befund dokumentieren"],
+    "punkte": [
+        "Zeitpunkt laut Anordnung: in den ersten 6 Stunden alle 2 Stunden, danach 3-mal täglich",
+        "D: Hautfarbe und Temperatur der rechten Zehen, Fußpuls am Fußrücken, Nagelbettprobe (Farbe in unter 2 Sekunden zurück)",
+        "M: Zehen bewegen, Fuß heben und senken lassen",
+        "S: nach Kribbeln und Taubheit fragen, Berührung an den Zehen prüfen",
+        "Vergleich mit dem linken Fuß (⚑), Befund dokumentieren",
+        "Ärztin sofort bei: blassen oder kalten Zehen, fehlendem Puls, verzögerter Nagelbettprobe, Zehen/Fuß nicht beweglich, neuem Kribbeln oder Taubheit, stark zunehmenden Schmerzen",
+    ],
+    "muster": [
+        "Laut Anordnung von Dr. Sommer prüfe ich die DMS am rechten Fuß in den ersten 6 Stunden alle 2 Stunden, danach 3-mal täglich:",
+        "• **D – Durchblutung:** Ich schaue mir Hautfarbe und Temperatur der rechten Zehen an, taste den Fußpuls am Fußrücken und mache die Nagelbettprobe – die Farbe muss in unter 2 Sekunden zurückkehren.",
+        "• **M – Motorik:** Herr Brandt bewegt die Zehen und hebt und senkt den Fuß.",
+        "• **S – Sensibilität:** Ich frage nach Kribbeln oder Taubheit und prüfe, ob er eine Berührung an den Zehen spürt.",
+        "Ich vergleiche mit dem linken Fuß (⚑) und dokumentiere den Befund.",
+        "**Die Ärztin informiere ich sofort**, wenn die Zehen blass oder kalt sind, kein Fußpuls tastbar ist, die Nagelbettprobe verzögert ist, Herr Brandt Zehen oder Fuß nicht bewegen kann, neues oder zunehmendes Kribbeln oder Taubheit auftritt oder die Schmerzen trotz Schmerzmittel stark zunehmen.",
+    ],
 }
 
 # ---------------------------------------------------------------- Übung 3
@@ -247,10 +271,20 @@ SCHREIBEN3 = {
     "auftrag": "<strong>Erklären Sie</strong> die Entstehung einer Thrombose bei Herrn Brandt anhand der Virchow-Trias.",
     "ort": "in den Kasten „Examens-Training 3“ auf dem Arbeitsblatt",
     "minSek": 30,
-    "punkte": ["die drei Faktoren der Virchow-Trias genannt", "Endothelläsion: OP am Bein, Gefäßwand verletzt",
-               "Hypozirkulation: Bein wird geschont, weniger Bewegung, viel Liegen → Muskelpumpe fehlt, Blut fließt langsamer",
-               "Hyperkoagulabilität: Gerinnbarkeit während und nach der OP erhöht (ggf. wenig Trinken)",
-               "jeweils mit Bezug auf Herrn Brandt", "Folge: Ein Gerinnsel kann sich lösen → Lungenembolie"],
+    "punkte": [
+        "die drei Faktoren der Virchow-Trias benannt",
+        "Endothelläsion: Die OP am rechten Sprunggelenk hat Gewebe und Gefäßwände verletzt",
+        "Hypozirkulation: Herr Brandt schont das Bein, liegt viel, bewegt sich weniger → Wadenmuskelpumpe fehlt, Blut fließt langsamer",
+        "Hyperkoagulabilität: Gerinnbarkeit während und nach der OP erhöht, zu wenig Trinken verstärkt das",
+        "Folge: Ein Gerinnsel kann sich lösen → Lungenembolie (Atemnot, Brustschmerz → sofort 112)",
+    ],
+    "muster": [
+        "Nach der Virchow-Trias entsteht eine Thrombose durch drei Faktoren – bei Herrn Brandt kommen alle drei zusammen:",
+        "• **Endothelläsion (Schaden der Gefäßwand):** Bei der Materialentfernung am rechten Sprunggelenk wurden Gewebe und Gefäßwände verletzt.",
+        "• **Hypozirkulation (verlangsamter Blutfluss):** Herr Brandt schont das operierte Bein, liegt viel und bewegt sich weniger. Dadurch fehlt die Wadenmuskelpumpe, und das Blut fließt in den Beinvenen langsamer.",
+        "• **Hyperkoagulabilität (erhöhte Gerinnbarkeit):** Während und nach einer Operation gerinnt das Blut leichter. Trinkt er zu wenig, verstärkt sich das.",
+        "So kann sich in einer Beinvene ein Blutgerinnsel bilden. Löst es sich, droht eine **Lungenembolie** (Atemnot, Brustschmerz → sofort 112). Deshalb spritzt Herr Brandt 7 Tage Enoxaparin und soll sich viel bewegen und genug trinken.",
+    ],
 }
 
 # ---------------------------------------------------------------- Übung 4
@@ -329,12 +363,22 @@ SCHREIBEN4 = {
     "auftrag": "<strong>Leiten Sie</strong> aus dem Expertenstandard „Schmerzmanagement in der Pflege“ 3 Maßnahmen für Herrn Brandt <strong>ab</strong> und <strong>erläutern</strong> Sie diese.",
     "ort": "in den Kasten „Examens-Training 4“ auf dem Arbeitsblatt",
     "minSek": 30,
-    "punkte": ["regelmäßige Schmerzeinschätzung mit der NRS, in Ruhe und bei Bewegung (laut Anordnung 2-stündlich, später 3× täglich)",
-               "Schmerzmittel nach Anordnung, Bedarfsmedikation ab NRS 4, rechtzeitig vor der Mobilisation",
-               "Wirkung und Nebenwirkungen überprüfen und dokumentieren",
-               "nicht-medikamentöse Maßnahmen: Hochlagern, Kühlen, Ablenkung",
-               "Information/Schulung: Schmerzmittel und Verhalten zu Hause",
-               "jede Maßnahme erläutert und auf Herrn Brandt bezogen"],
+    "punkte": [
+        "Schmerz regelmäßig mit der NRS einschätzen, in Ruhe und bei Bewegung (erste 6 Stunden alle 2 Stunden, dann 3-mal täglich), dokumentieren",
+        "Schmerzmittel nach Schmerzschema, Bedarfsmedikation ab NRS 4",
+        "Schmerzmittel rechtzeitig vor der Mobilisation heute Nachmittag (ca. 30–45 Minuten vorher)",
+        "Wirkung und Nebenwirkungen überprüfen und dokumentieren",
+        "nicht-medikamentös: rechtes Bein hochlagern und kühlen (Kühlpack nie direkt auf die Haut), Ablenkung",
+        "Information und Schulung: Einnahme der Schmerzmittel und Verhalten zu Hause",
+    ],
+    "muster": [
+        "Aus dem Expertenstandard „Schmerzmanagement in der Pflege“ leite ich für Herrn Brandt ab:",
+        "• **Schmerzen regelmäßig einschätzen:** Laut Anordnung frage ich ihn in den ersten 6 Stunden alle 2 Stunden, danach 3-mal täglich, nach seiner Schmerzstärke auf der NRS (0–10) – in Ruhe und bei Bewegung – und dokumentiere den Wert. So erkenne ich, ob die Schmerztherapie ausreicht.",
+        "• **Schmerzmittel nach Anordnung geben und überprüfen:** Er bekommt seine Schmerzmittel nach Schmerzschema, ab NRS 4 die Bedarfsmedikation. Vor der Mobilisation heute Nachmittag gebe ich sie rechtzeitig (ca. 30–45 Minuten vorher), damit sie beim Aufstehen wirkt. Danach prüfe und dokumentiere ich Wirkung und Nebenwirkungen.",
+        "• **Nicht-medikamentöse Maßnahmen nutzen:** Ich lagere sein rechtes Bein hoch und kühle es nach Anordnung, das Kühlpack nie direkt auf die Haut. Das fördert den Ödemabfluss und lindert Schwellung und Schmerz.",
+        "Auch richtig: Herrn Brandt informieren und schulen, z. B. wie er seine Schmerzmittel zu Hause nimmt.",
+    ],
+    "hinweis": "Gefordert sind 3 Maßnahmen – jede erläutert: Warum? Wie genau bei Herrn Brandt?",
 }
 
 # ---------------------------------------------------------------- Übung 5
@@ -428,13 +472,23 @@ SCHREIBEN5 = {
     "auftrag": "<strong>Beschreiben Sie</strong> 4 Verhaltensweisen, über die Sie Herrn Brandt vor der Entlassung informieren, und <strong>begründen</strong> Sie diese.",
     "ort": "in den Kasten „Examens-Training 5“ auf dem Arbeitsblatt",
     "minSek": 30,
-    "punkte": ["Wunde sauber und trocken halten, nur mit Schutz duschen – Infektionsschutz",
-               "Fäden laut Arztbrief am 14. Tag beim Hausarzt ziehen lassen – Wundkontrolle",
-               "Warnzeichen kennen (Infektion, Thrombose; Atemnot/Brustschmerz → 112) – schnelle Hilfe",
-               "Enoxaparin täglich selbst spritzen bis zum angeordneten Tag, viel bewegen und trinken – Thromboseprophylaxe",
-               "Belastung mit Stützen nach Anordnung, 6 Wochen kein Fußball – Refraktur vermeiden",
-               "bei Schwellung hochlagern und kühlen, Schmerzmittel nach Plan",
-               "jede Verhaltensweise begründet"],
+    "punkte": [
+        "Wunde sauber und trocken halten, nur mit wasserdichtem Schutz (Duschpflaster) duschen – sonst Infektionsgefahr",
+        "Fäden am 14. Tag beim Hausarzt ziehen lassen – dabei wird die Wunde kontrolliert",
+        "Enoxaparin 7 Tage 1-mal täglich selbst spritzen, viel bewegen, genug trinken – Thrombosegefahr nach der OP am Bein",
+        "mit Unterarmgehstützen, Belastung schmerzadaptiert, 6 Wochen kein Fußball – Refrakturgefahr an den Schraubenlöchern",
+        "Warnzeichen: Wunde rot, warm, geschwollen oder nässend, Fieber, dicke schmerzende Wade → Arzt; Atemnot oder Brustschmerz → sofort 112",
+        "bei Schwellung hochlagern und kühlen, Schmerzmittel nach Plan",
+    ],
+    "muster": [
+        "Vor der Entlassung morgen informiere ich Herrn Brandt über:",
+        "• **Wundpflege:** Die Wunde am rechten Sprunggelenk soll sauber und trocken bleiben. Duschen darf er nur mit wasserdichtem Schutz, z. B. einem Duschpflaster – sonst weicht die Wunde auf und kann sich infizieren.",
+        "• **Fäden:** Er lässt die Fäden am 14. Tag beim Hausarzt ziehen. Dabei wird auch die Wunde kontrolliert.",
+        "• **Thromboseprophylaxe:** Er spritzt sich das Enoxaparin 7 Tage lang 1-mal täglich selbst, so wie wir es geübt haben, bewegt sich viel und trinkt genug – nach der OP am Bein ist die Thrombosegefahr erhöht.",
+        "• **Belastung und Sport:** Er geht mit den Unterarmgehstützen und belastet nur so viel, wie die Schmerzen zulassen. 6 Wochen kein Fußball – die leeren Schraubenlöcher sind anfangs Schwachstellen, es droht ein erneuter Bruch (Refraktur).",
+        "Außerdem nenne ich ihm die **Warnzeichen**: Bei roter, warmer, geschwollener oder nässender Wunde, Fieber oder einer dicken, schmerzenden Wade geht er sofort zum Arzt, bei Atemnot oder Brustschmerz ruft er die 112.",
+    ],
+    "hinweis": "Gefordert sind 4 Verhaltensweisen, jeweils mit Begründung – jede weitere richtige ist ein Plus.",
 }
 
 # ---------------------------------------------------------------- Abschlussquiz (neuer Fall: Frau Schäfer, Unterarm)

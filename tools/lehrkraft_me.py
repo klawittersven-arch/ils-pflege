@@ -44,7 +44,20 @@ def build():
     d.h2("Erwartungshorizonte Examens-Training", before=120)
     for nr, sch in enumerate([I.SCHREIBEN1, I.SCHREIBEN2, I.SCHREIBEN3, I.SCHREIBEN4, I.SCHREIBEN5], 1):
         d.p(f"**{nr}.** " + sch["auftrag"].replace("<strong>", "**").replace("</strong>", "**"), after=20, keep=True)
-        d.bullets([p.replace(" (⚑)", "") for p in sch["punkte"]], after_last=60)
+        d.bullets([p.replace(" (⚑)", "") for p in sch["punkte"]], after_last=40)
+        d.p("**Musterantwort (so sehen die SuS sie am Handy):**", size=9, after=0, keep=True)
+        block = []
+        for z in [x.replace(" (⚑)", "") for x in sch.get("muster", [])]:
+            if z.startswith("• "):
+                block.append(z[2:])
+                continue
+            if block:
+                d.bullets(block, after_last=20)
+                block = []
+            d.p(z, size=9, after=20)
+        if block:
+            d.bullets(block, after_last=20)
+        d.space(4)
 
     d.h2("Fachliche Grundlage und Ergänzungen", before=120)
     d.p("Grundlage ist **Pflegias**: Band 2 S. 474–475 (Frakturen, Osteosynthese, Materialentfernung), S. 353–359 (Gips, Fixateur, Pflege nach OP am "
