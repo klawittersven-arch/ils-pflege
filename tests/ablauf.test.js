@@ -21,9 +21,6 @@ const LISTE = [
   '3BFP2/2;Kaputt;31.02.2003'
 ].join('\n');
 
-const ANTWORTEN = {   // Abschlussquiz des Probe-Auftrags (Wahr/Falsch)
-  'Die Lehrkraft sieht': 'true', 'einzelnen Antworten': 'false', 'Ohne Internet': 'false', 'auf jedem Gerät': 'true'
-};
 
 async function foto(seite, name) {
   if (BILDER) await seite.screenshot({ path: path.join(BILDER, name + '.png'), fullPage: true });
@@ -38,18 +35,49 @@ async function anmelden(seite, klasse, vorname, t, m, j) {
   await seite.click('#konto-anmelden');
 }
 
-async function uebung1(seite) {
-  await seite.locator('.card', { hasText: 'Redon-Drainage' }).locator('label', { hasText: 'Richtig' }).click();
-  await seite.locator('.card', { hasText: 'Wie viele Übungen' }).locator('label', { hasText: 'Zwei' }).click();
-  await seite.click('button:has-text("Auswerten")');
+/* ---------- Lernmodus: Hilfen (Uhr wird im Test vorgespult, damit die Lesezeit-Kontrolle greift) ---------- */
+async function lesen(s) { await s.clock.fastForward(15000); }
+async function weiterKlicken(s) {
+  await s.waitForSelector('#lern-weiter:not(.hidden)');
+  await s.clock.fastForward(5000);
+  await s.click('#lern-weiter');
+}
+const typ = (s) => s.getAttribute('.lern-karte', 'data-typ');
+
+// Probe-Übung 1: wahl, rf (+Begründung), mehrfach, zahl, luecke
+async function probe1(s) {
+  await s.click('#lern-los');
+  await lesen(s); await s.click('.antwort:has-text("Redon-Drainage")'); await weiterKlicken(s);
+  await lesen(s); await s.click('.lern-optionen.zwei .antwort:has-text("Richtig")');
+  await lesen(s); await s.click('.antwort:has-text("kein ausreichender Sog")'); await weiterKlicken(s);
+  await lesen(s); await s.click('.antwort:has-text("Uhrzeit")'); await s.click('.antwort:has-text("Fördermenge der entfernten")');
+  await s.click('.lern-pruefen'); await weiterKlicken(s);
+  await lesen(s); await s.fill('.lern-zahl', '150'); await s.click('.lern-zahlzeile button'); await weiterKlicken(s);
+  await lesen(s); await s.click('.chip:has-text("aktive")'); await s.click('.chip:has-text("passive")'); await weiterKlicken(s);
 }
 
-async function uebung2(seite) {
-  for (const schritt of ['Anmelden', 'Infotext lesen', 'Übung lösen', 'Abschlussquiz machen']) {
-    await seite.locator('.order-pool .order-item', { hasText: schritt }).click();
+const SORT = { Redon: 'aktiv', Robinson: 'passiv', 'Easy-Flow': 'passiv' };
+// Probe-Übung 2 (ohne Fehler): reihe, sortieren, bild, dialog
+async function probe2(s) {
+  await lesen(s);
+  for (const t of ['Anmelden', 'Infotext lesen', 'Übung lösen', 'Abschlussquiz machen']) await s.click(`.order-pool .order-item:has-text("${t}")`);
+  await weiterKlicken(s);
+  await lesen(s);
+  for (let i = 0; i < 3; i++) {
+    const t = (await s.textContent('.sort-text')).trim();
+    await s.click(`.sort-knopf:has-text("${SORT[t]}")`);
+    await s.clock.fastForward(3000);
   }
-  await seite.click('button:has-text("Auswerten")');
+  await weiterKlicken(s);
+  await lesen(s); await s.locator('[data-ziel="anzeige"] .feld').click();
+  await lesen(s); await s.locator('[data-ziel="klemme"] .feld').click();
+  await weiterKlicken(s);
+  await lesen(s); await s.click('.antwort:has-text("Nein, wir befestigen")');
+  await lesen(s); await s.click('.antwort:has-text("klingeln Sie bitte sofort")');
+  await weiterKlicken(s);
 }
+
+const QUIZ = { 'Die Lehrkraft sieht': 'Richtig', 'einzelnen Antworten': 'Falsch', 'Ohne Internet': 'Falsch', 'auf jedem Gerät': 'Richtig', 'zu schnell tippt': 'Richtig' };
 
 (async () => {
   const worker = await workerStarten(8790 + Math.floor(Math.random() * 100), PASSWORT);
@@ -85,6 +113,7 @@ async function uebung2(seite) {
     /* ---------- SuS 1: Anmeldung am Handy ---------- */
     console.log('SuS: Anmeldung');
     const susKontext = await browser.newContext(MOBIL);
+    await susKontext.clock.install();
     const sus = await susKontext.newPage();
     beobachten(sus, protokoll, 'sus');
     sus.on('dialog', (d) => d.accept());
@@ -106,48 +135,112 @@ async function uebung2(seite) {
     pruefe(/🔒/.test(await sus.textContent('.schritte-liste')), 'Abschlussquiz zuerst gesperrt');
     await foto(sus, '2_uebersicht_handy');
 
-    console.log('SuS: Übungen und Abschluss');
+    console.log('SuS: Lernmodus Übung 1 (Tempo-Kontrolle, alle Typen)');
     await sus.goto(basis + 'probe/1/');
-    await sus.waitForSelector('button:has-text("Auswerten")');
-    await uebung1(sus);
-    await sus.waitForSelector('.meldung.ok');
-    pruefe(/eingetragen/.test(await sus.textContent('.meldung')), 'Übung 1: „Bei Ihrer Lehrkraft eingetragen“');
-    await foto(sus, '3_uebung_bestanden_handy');
+    await sus.waitForSelector('#lern-los');
+    pruefe(/Lesen Sie zuerst/.test(await sus.textContent('.lern-start')), 'Startkarte verweist auf das Arbeitsblatt');
+    await sus.click('#lern-los');
+    await sus.click('.antwort:has-text("Redon-Drainage")');   // sofort – zu schnell
+    pruefe(/Langsam/.test(await sus.textContent('.lern-hinweis')), 'zu schnelles Tippen wird nicht gewertet („Langsam!“)');
+    pruefe((await sus.locator('.antwort.richtig').count()) === 0, 'zu schnelle Antwort wird nicht ausgewertet');
+    await sus.goto(basis + 'probe/1/');                         // zurück zum Start: Durchgang läuft weiter
+    await sus.waitForSelector('.lern-karte');
+    pruefe((await typ(sus)) === 'wahl', 'nach Neuladen: dieselbe Aufgabe (Zwischenstand)');
+    await lesen(sus); await sus.click('.antwort:has-text("Redon-Drainage")'); await weiterKlicken(sus);
+    await lesen(sus); await sus.click('.lern-optionen.zwei .antwort:has-text("Richtig")');
+    await lesen(sus); await sus.click('.antwort:has-text("kein ausreichender Sog")'); await weiterKlicken(sus);
+    await lesen(sus); await sus.click('.antwort:has-text("Uhrzeit")'); await sus.click('.antwort:has-text("Fördermenge der entfernten")');
+    await sus.click('.lern-pruefen'); await weiterKlicken(sus);
+    await lesen(sus); await sus.fill('.lern-zahl', '150'); await sus.click('.lern-zahlzeile button'); await weiterKlicken(sus);
+    await lesen(sus); await sus.click('.chip:has-text("aktive")'); await sus.click('.chip:has-text("passive")');
+    await foto(sus, '3_uebung_luecke_handy');
+    await weiterKlicken(sus);
+    await sus.waitForSelector('.lern-fertig .meldung.ok');
+    pruefe(/5 von 5/.test(await sus.textContent('.lern-fertig')), 'Übung 1 geschafft: 5 von 5 ohne Fehler, eingetragen');
+
+    console.log('SuS: Abschluss gesperrt (Seite und Server)');
     await sus.goto(basis + 'probe/abschluss/');
     await sus.waitForSelector('.card.gesperrt');
     pruefe(/Zweite Probe/.test(await sus.textContent('.card.gesperrt')), 'Abschluss gesperrt, Übung 2 fehlt');
-    await sus.goto(basis + 'probe/1/');
-    await sus.waitForSelector('.card.erledigt');
-    pruefe(/schon erledigt/.test(await sus.textContent('.card.erledigt')), 'Übung 1 zeigt „schon erledigt“');
+    const tokenLena = await sus.evaluate(() => JSON.parse(localStorage.getItem('ils-konto')).token);
+    const direkt = await fetch(worker.url + '/api/melden', { method: 'POST', headers: { Authorization: 'Bearer ' + tokenLena },
+      body: JSON.stringify({ ils: 'probe', schritt: 'quiz', punkte: 4, max: 4 }) });
+    pruefe(direkt.status === 409, 'Server lehnt Abschluss ohne alle Übungen ab (auch direkt per API)', direkt.status);
+    const fremd = await fetch(worker.url + '/api/melden', { method: 'POST', headers: { Authorization: 'Bearer ' + tokenLena },
+      body: JSON.stringify({ ils: 'probe', schritt: 'gibtsnicht', punkte: 1, max: 1 }) });
+    pruefe(fremd.status === 400, 'Server lehnt unbekannte Schritte ab', fremd.status);
+
+    console.log('SuS: Übung 2 (Fehlerbudget, Lesepause, Neustart, Schreibaufgabe)');
     await sus.goto(basis + 'probe/2/');
-    await sus.waitForSelector('.order-pool');
-    await uebung2(sus);
-    await sus.waitForSelector('.meldung.ok');
-    pruefe(true, 'Übung 2 bestanden und eingetragen');
-    await sus.goto(basis + 'probe/abschluss/');
-    await sus.waitForSelector('button:has-text("Auswerten")');
-    // erst absichtlich falsch → „Neue Fragen“
-    for (const karte of await sus.locator('#app .card:has(.opts)').all()) await karte.locator('label', { hasText: 'Falsch' }).click();
-    await sus.click('button:has-text("Auswerten")');
-    await sus.waitForSelector('text=Neue Fragen');
-    pruefe(true, 'nicht bestanden → „Neue Fragen“');
-    await sus.click('text=Neue Fragen');
-    for (const karte of await sus.locator('#app .card:has(.opts)').all()) {
-      const text = await karte.textContent();
-      const schl = Object.keys(ANTWORTEN).find((k) => text.includes(k));
-      await karte.locator(`input[value="${ANTWORTEN[schl]}"]`).check({ force: true });
+    await sus.waitForSelector('#lern-los');
+    await sus.click('#lern-los');
+    await lesen(sus);
+    await sus.click('.order-pool .order-item:has-text("Abschlussquiz machen")');   // falsch → 1 Fehler
+    pruefe(/nächste Schritt/.test(await sus.textContent('.lern-hinweis')), 'Reihenfolge: falscher Schritt = Fehler');
+    for (const t of ['Anmelden', 'Infotext lesen', 'Übung lösen', 'Abschlussquiz machen']) await sus.click(`.order-pool .order-item:has-text("${t}")`);
+    await weiterKlicken(sus);
+    await sus.reload();
+    await sus.waitForSelector('.lern-karte');
+    pruefe((await typ(sus)) === 'sortieren' && (await sus.textContent('.herzen')).split('❤️').length - 1 === 2, 'nach Neuladen: nächste Aufgabe, Fehler bleiben gezählt (2 ❤️ übrig)');
+    await lesen(sus);
+    for (let i = 0; i < 3; i++) {   // drei falsche Zuordnungen → 4. Fehler insgesamt → Lesepause
+      const t = (await sus.textContent('.sort-text')).trim();
+      await sus.click(`.sort-knopf:has-text("${SORT[t] === 'aktiv' ? 'passiv' : 'aktiv'}")`);
     }
-    await sus.click('button:has-text("Auswerten")');
-    await sus.waitForSelector('.meldung.ok');
-    pruefe(/abgeschlossen/.test(await sus.textContent('.geschafft')), 'Abschlussquiz bestanden: „ILS-Auftrag abgeschlossen“');
+    await sus.waitForSelector('#lern-neustart');
+    pruefe(/Zu viele Fehler/.test(await sus.textContent('.lern-start')) && await sus.isDisabled('#lern-neustart'), 'zu viele Fehler → Lesepause, Neustart gesperrt');
+    await foto(sus, '4_lesepause_handy');
+    await sus.reload();
+    await sus.waitForSelector('#lern-neustart');
+    pruefe(await sus.isDisabled('#lern-neustart'), 'Lesepause übersteht Neuladen');
+    await sus.clock.fastForward(61000);
+    await sus.waitForSelector('#lern-neustart:not([disabled])');
+    await sus.click('#lern-neustart');
+    await sus.waitForSelector('.lern-karte');
+    pruefe(/Aufgabe 1 von 4/.test(await sus.textContent('.lern-kopf')), 'nach der Pause: neuer Durchgang von vorn');
+    await probe2(sus);
+    await sus.waitForSelector('#lern-geschrieben');
+    pruefe(await sus.isDisabled('#lern-geschrieben'), 'Schreibaufgabe: „aufgeschrieben“ erst nach Mindestzeit');
+    await foto(sus, '5_schreibaufgabe_handy');
+    await sus.clock.fastForward(21000);
+    await sus.waitForSelector('#lern-geschrieben:not([disabled])');
+    await sus.click('#lern-geschrieben');
+    await sus.check('#lern-p0'); await sus.check('#lern-p1');
+    await sus.click('#lern-verglichen');
+    await sus.waitForSelector('.lern-fertig .meldung.ok');
+    pruefe(/2 von 4 Punkten/.test(await sus.textContent('.lern-fertig')) && /ILS%20Probe/.test(await sus.getAttribute('.lern-fertig a[href^="mailto"]', 'href')),
+      'Selbstkontrolle 2/4, Hinweis Eigenverantwortung + E-Mail mit Betreff');
+    await foto(sus, '6_fertig_handy');
+
+    console.log('SuS: Abschlussquiz (Tempo-Neustart)');
+    await sus.goto(basis + 'probe/abschluss/');
+    await sus.waitForSelector('#lern-los');
+    await sus.click('#lern-los');
+    for (let i = 0; i < 3; i++) await sus.click('.lern-optionen.zwei .antwort >> nth=0');   // 3× zu schnell
+    await sus.waitForSelector('#lern-neustart');
+    pruefe(/Zu schnell/.test(await sus.textContent('.lern-start')), '3× zu schnell → Lesepause');
+    await sus.clock.fastForward(181000);
+    await sus.waitForSelector('#lern-neustart:not([disabled])');
+    await sus.click('#lern-neustart');
+    for (let i = 0; i < 4; i++) {
+      await sus.waitForSelector('.lern-aussage');
+      const aussage = await sus.textContent('.lern-aussage');
+      const schl = Object.keys(QUIZ).find((k) => aussage.includes(k));
+      await lesen(sus);
+      await sus.click(`.lern-optionen.zwei .antwort:has-text("${QUIZ[schl]}")`);
+      await weiterKlicken(sus);
+    }
+    await sus.waitForSelector('.lern-fertig .meldung.ok');
+    pruefe(/abgeschlossen/.test(await sus.textContent('.lern-fertig')), 'Abschlussquiz bestanden: „ILS-Auftrag abgeschlossen“');
     await sus.goto(basis + 'probe/');
     await sus.waitForSelector('.card.erledigt');
     pruefe(/3 von 3 erledigt/.test(await sus.textContent('.fortschritt')), 'Übersicht: 3 von 3 erledigt');
-    await foto(sus, '4_uebersicht_fertig_handy');
+    await foto(sus, '7_uebersicht_fertig_handy');
 
     /* ---------- SuS 2: Schreibvariante + offline ---------- */
     console.log('SuS 2: Schreibvariante und offline');
     const sus2Kontext = await browser.newContext(MOBIL);
+    await sus2Kontext.clock.install();
     const sus2 = await sus2Kontext.newPage();
     beobachten(sus2, protokoll, 'sus2');
     await sus2.goto(basis + 'probe/1/');
@@ -155,13 +248,14 @@ async function uebung2(seite) {
     await anmelden(sus2, '3BFP2/1', 'Mohammed', '01', '02', '2003');
     await sus2.waitForSelector('.konto-leiste strong');
     pruefe((await sus2.textContent('.konto-leiste strong')) === 'Mohamed A.', '„Mohammed“ findet „Mohamed A.“');
+    await sus2.waitForSelector('#lern-los');
     await sus2Kontext.setOffline(true);
-    await uebung1(sus2);
-    await sus2.waitForSelector('.meldung.hint');
-    pruefe(/Noch nicht übertragen/.test(await sus2.textContent('.meldung')), 'offline: „Noch nicht übertragen“');
+    await probe1(sus2);
+    await sus2.waitForSelector('.lern-fertig .meldung.hint');
+    pruefe(/Noch nicht übertragen/.test(await sus2.textContent('.lern-fertig .meldung')), 'offline: „Noch nicht übertragen“');
     await sus2Kontext.setOffline(false);
     await sus2.evaluate(() => window.dispatchEvent(new Event('online')));
-    await sus2.waitForSelector('.meldung.ok', { timeout: 10000 });
+    await sus2.waitForSelector('.lern-fertig .meldung.ok', { timeout: 10000 });
     pruefe(true, 'wieder online: automatisch nachgereicht');
 
     /* ---------- Lehrkraft: Tabelle ---------- */
@@ -171,6 +265,9 @@ async function uebung2(seite) {
     const zeileLena = lk.locator('table.lk tbody tr', { hasText: 'Lena M.' });
     pruefe(/✓ abgeschlossen/.test(await zeileLena.textContent()), 'Lena M.: ✓ abgeschlossen');
     pruefe(/4\/4/.test(await zeileLena.textContent()), 'Quiz-Punkte stehen in der Tabelle (4/4)');
+    const zelleU2 = await zeileLena.locator('td.zelle').nth(1).textContent();
+    pruefe(/⚠1/.test(zelleU2) && /✍2\/4/.test(zelleU2), 'Tabelle Ü2: ⚠1 Neustart und ✍2/4 Selbstkontrolle', zelleU2);
+    pruefe(/⚠1/.test(await zeileLena.locator('td.zelle').nth(2).textContent()), 'Tabelle Quiz: ⚠1 (Neustart wegen zu schnell)');
     const zeileMo = lk.locator('table.lk tbody tr', { hasText: 'Mohamed A.' });
     pruefe(/1 von 3/.test(await zeileMo.textContent()), 'Mohamed A.: 1 von 3 (offline nachgereicht)');
     pruefe(/nie angemeldet/.test(await lk.locator('table.lk tbody tr', { hasText: 'Jonas T.' }).textContent()), 'Jonas T.: nie angemeldet');
@@ -179,16 +276,16 @@ async function uebung2(seite) {
     await zeileMo.locator('td.zelle').nth(1).locator('button').click();
     await lk.waitForFunction(() => /✓ Hand/.test(document.querySelector('#lk-tabelle')?.textContent || ''));
     pruefe(/2 von 3/.test(await lk.locator('table.lk tbody tr', { hasText: 'Mohamed A.' }).textContent()), 'Haken von Hand: Mohamed A. jetzt 2 von 3');
-    await foto(lk, '5_lehrkraft_tabelle');
+    await foto(lk, '8_lehrkraft_tabelle');
     // Wer fehlt noch?
     await lk.click('#lk-wer-fehlt');
     const fehlt = await lk.inputValue('#lk-fehlt-text');
     pruefe(/Mohamed A\./.test(fehlt) && /Jonas T\./.test(fehlt) && /Anna Maria S\./.test(fehlt) && !/Lena M\./.test(fehlt), '„Wer fehlt noch?“ listet die richtigen Namen', fehlt);
-    await foto(lk, '6_lehrkraft_wer_fehlt');
+    await foto(lk, '9_lehrkraft_wer_fehlt');
     // CSV
     const [download] = await Promise.all([lk.waitForEvent('download'), lk.click('#lk-csv')]);
     const csv = fs.readFileSync(await download.path(), 'utf8');
-    pruefe(csv.charCodeAt(0) === 0xfeff && /Klasse;Name;Übung 1: Erste Probe/.test(csv) && /3BFP2\/1;Lena M\.;.*;ja/.test(csv), 'CSV für Excel (BOM, Semikolon, Inhalt)');
+    pruefe(csv.charCodeAt(0) === 0xfeff && /Klasse;Name;Übung 1: Erste Probe/.test(csv) && /3BFP2\/1;Lena M\.;.*;ja/.test(csv) && /Neustarts: 1/.test(csv), 'CSV für Excel (BOM, Semikolon, Inhalt, Neustarts)');
     // Klasse filtern
     await lk.selectOption('#lk-klasse', '3BFP2/2');
     pruefe((await lk.locator('table.lk tbody tr').count()) === 1, 'Filter Klasse 3BFP2/2: 1 Person');

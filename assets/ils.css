@@ -253,3 +253,84 @@ table.lk tr.st-nie th { color: var(--muted); }
 .lk-verwaltung > .btn, .lk-verwaltung .lk-knoepfe .btn { padding: 10px 14px; min-height: 44px; font-size: 15px; }
 .links a.schritt { display: flex; gap: 12px; }
 .btn.schritt.zu { background: #fff; color: var(--muted); border: 2px dashed var(--line); }
+
+/* ---------- Lernmodus (ils-lern.js) ---------- */
+.lern-kopf { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 700; color: var(--muted); margin: 14px 0 6px; }
+.herzen { font-size: 18px; letter-spacing: 2px; }
+.lern-balken { height: 8px; }
+.lern-karte .q-text { font-size: 18px; }
+.lern-start .q-text { font-size: 20px; }
+.lern-regeln { padding-left: 20px; }
+.lern-regeln li { margin: 6px 0; }
+.lern-optionen { display: grid; gap: 8px; }
+.lern-optionen.zwei { grid-template-columns: 1fr 1fr; }
+.antwort {
+  font: inherit; text-align: left; color: var(--ink); cursor: pointer;
+  border: 2px solid var(--line); border-radius: 10px; background: #fff;
+  padding: 10px 12px; min-height: 48px;
+}
+.lern-optionen.zwei .antwort { text-align: center; font-weight: 700; }
+.antwort[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.antwort.richtig { border-color: var(--ok); background: var(--ok-soft); color: #134d2d; }
+.antwort.falsch { border-color: var(--bad); background: var(--bad-soft); color: #7a1a14; }
+.antwort:disabled { cursor: default; }
+.antwort:disabled:not(.richtig):not(.falsch) { opacity: .6; }
+.antwort.nope, .chip.nope { animation: nope .6s; }
+.lern-aussage { font-size: 17px; padding: 12px; border-left: 4px solid var(--accent); background: #faf8f5; border-radius: 6px; margin: 0 0 12px; }
+.lern-stufe2 { margin-top: 14px; }
+.lern-pruefen { margin-top: 10px; }
+.lern-tipp { margin: 0 0 8px; }
+.lern-hinweis { display: none; margin: 10px 0; padding: 10px 12px; border-radius: 10px; font-weight: 600; font-size: 15px; }
+.lern-hinweis.zeigen { display: block; }
+.lern-hinweis.bad { background: var(--bad-soft); color: #7a1a14; }
+.lern-hinweis.hint { background: var(--hint-soft); color: #4d3a00; }
+.countdown { font-weight: 700; font-size: 18px; margin: 10px 0; text-align: center; }
+.countdown.small { font-size: 14px; font-weight: 600; color: var(--muted); }
+.lern-auftrag { padding: 12px; border: 2px dashed var(--accent); border-radius: 10px; background: #fffaf6; margin: 10px 0; }
+.checkliste { display: grid; gap: 8px; margin: 10px 0; }
+.card.selbst { background: #faf8f5; }
+.lern-fertig .geschafft { margin-bottom: 6px; }
+/* Sortieren */
+.sort-element { padding: 14px; border: 2px solid var(--accent); border-radius: 12px; background: #fffaf6; margin: 6px 0 12px; }
+.sort-text { font-weight: 700; font-size: 18px; margin-top: 2px; }
+.sort-knoepfe { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sort-knoepfe .antwort { text-align: center; font-weight: 700; }
+.sort-knoepfe.viele { grid-template-columns: 1fr 1fr; }
+.sort-ergebnis { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.sort-spalte { background: #faf8f5; border: 1px solid var(--line); border-radius: 10px; padding: 8px; font-size: 14px; min-height: 40px; }
+.sort-titel { font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+.sort-spalte ul { margin: 4px 0 0; padding-left: 18px; }
+@media (max-width: 420px) { .sort-ergebnis.drei { grid-template-columns: 1fr; } }
+/* Zahl */
+.lern-zahlzeile { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.lern-zahl { font: inherit; font-size: 20px; width: 7em; padding: 10px; border: 2px solid var(--line); border-radius: 10px; }
+.lern-zahl.ok { border-color: var(--ok); } .lern-zahl.bad { border-color: var(--bad); }
+.einheit { font-weight: 700; }
+/* Lückentext */
+.luecken-text { font-size: 17px; line-height: 2; margin-bottom: 10px; }
+.luecke { display: inline-block; min-width: 4.5em; padding: 0 6px; border-bottom: 2px solid var(--line); text-align: center; color: var(--muted); }
+.luecke.aktiv { border-bottom-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.luecke.gefuellt { color: #134d2d; background: var(--ok-soft); border-bottom-color: var(--ok); font-weight: 700; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.chip { font: inherit; font-size: 15px; padding: 8px 12px; min-height: 44px; border-radius: 999px; border: 2px solid var(--line); background: #fff; cursor: pointer; color: var(--ink); }
+.chip:disabled { opacity: .35; cursor: default; }
+/* Bild antippen */
+.hotspot { margin-top: 8px; }
+.hotspot svg { width: 100%; height: auto; display: block; background: #fff; border: 1px solid var(--line); border-radius: 10px; touch-action: manipulation; }
+.hotspot [data-ziel] { cursor: pointer; }
+.hotspot [data-ziel] .feld { fill: transparent; stroke: transparent; }
+.hotspot [data-ziel].getroffen .feld { fill: rgba(29,122,70,.18); stroke: var(--ok); stroke-width: 3; }
+.hotspot [data-ziel].daneben .feld { animation: daneben .7s; }
+@keyframes daneben { 0%, 100% { fill: transparent; } 30% { fill: rgba(179,38,30,.25); } }
+.hotspot-frage { font-weight: 700; padding: 10px 12px; border-radius: 10px; background: #fffaf6; border: 2px solid var(--accent); }
+/* Dialog / Fall */
+.dialog { display: grid; gap: 8px; }
+.blase { padding: 10px 12px; border-radius: 12px; max-width: 92%; font-size: 16px; }
+.blase.links { background: #f1efec; justify-self: start; border-bottom-left-radius: 4px; }
+.blase.rechts { background: var(--accent-soft); justify-self: end; border-bottom-right-radius: 4px; }
+.blase.info { background: #faf8f5; border: 1px dashed var(--line); justify-self: stretch; max-width: 100%; font-size: 15px; }
+.blase.info.ok { background: var(--ok-soft); border-color: var(--ok); color: #134d2d; }
+.dialog.fall .blase.links { background: #eef3f8; }
+table.lk td.zelle .neustarts { color: var(--hint); font-weight: 800; }
+table.lk td.zelle.warn button { background: var(--hint-soft); color: #4d3a00; }
+table.lk td.zelle .selbst { color: var(--muted); font-weight: 600; font-size: 12px; }

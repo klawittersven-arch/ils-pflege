@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Übung 1: Erste Probe</title>
-<link rel="stylesheet" href="../../assets/ils.css?v=ef6856eb">
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">Probe-Auftrag · Übung 1 von 2</div><h1>Übung 1: Erste Probe</h1></div></header>
@@ -13,18 +13,28 @@
 <div id="app"></div>
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
 </main>
-<script src="../../assets/ils.js?v=ef6856eb"></script>
-<script src="../../assets/ils-server.js?v=ef6856eb"></script>
-<script src="../../assets/auftraege.js?v=ef6856eb"></script>
-<script src="../../assets/ils-konto.js?v=ef6856eb"></script>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
 <script>
-ILSKonto.uebung({
+ILSLern.uebung({
   mount: '#app', ils: 'probe', schritt: '1',
-  intro: '<strong>So geht\'s:</strong> Beantworten Sie beide Aufgaben und tippen Sie auf „Auswerten“. Diese Probe-Übung dient nur zum Testen der Anmeldung.',
-  pass: 1.0,
-  questions: [
-    { type: 'tf', q: 'Eine Redon-Drainage arbeitet mit Sog (Unterdruck).', correct: true, explain: 'Die Redon-Flasche erzeugt einen Unterdruck.' },
-    { type: 'mc', q: 'Wie viele Übungen hat dieser Probe-Auftrag?', options: ['Eine', 'Zwei', 'Fünf'], correct: 1, keep: true, explain: 'Zwei Übungen und ein Abschlussquiz.' }
+  abschnitt: 'Probe-Abschnitt 1 (nur zum Testen)',
+  ziehen: 5,
+  pool: [
+    { typ: 'wahl', frage: 'Welche Drainage arbeitet mit Sog?', optionen: ['Redon-Drainage', 'Robinson-Drainage', 'Easy-Flow-Drainage'], richtig: 0,
+      erklaerung: 'Die Redon-Drainage hängt an einer Vakuumflasche (aktive Drainage).' },
+    { typ: 'rf', frage: 'Stimmt diese Aussage?', aussage: 'Wenn der Vakuumindikator entfaltet ist, muss die Redonflasche gewechselt werden.', richtig: true,
+      begruendung: { optionen: ['Dann ist kein ausreichender Sog mehr vorhanden.', 'Dann ist die Flasche zu leicht.', 'Dann ist die Drainage verstopft.'], richtig: 0 },
+      erklaerung: 'Der Indikator zeigt, ob noch genug Vakuum da ist.' },
+    { typ: 'mehrfach', frage: 'Welche Angaben gehören in die Dokumentation eines Flaschenwechsels?', optionen: ['Uhrzeit', 'Fördermenge der entfernten Flasche', 'Lieblingsessen'], richtig: [0, 1],
+      erklaerung: 'Dokumentiert werden der Wechsel und die Fördermenge der entfernten Flasche.' },
+    { typ: 'zahl', frage: 'Um 8 Uhr stand die Skala bei 120 ml, um 14 Uhr bei 270 ml. Wie viel ml hat die Drainage in dieser Zeit gefördert?', richtig: 150, einheit: 'ml',
+      erklaerung: '270 ml − 120 ml = 150 ml.' },
+    { typ: 'luecke', frage: 'Ergänzen Sie den Merksatz.', text: 'Die Redon-Drainage ist eine {{aktive}} Drainage, die Robinson-Drainage eine {{passive}}.', extra: ['offene'],
+      erklaerung: 'Aktiv = mit Sog, passiv = Schwerkraft oder Kapillarwirkung.' }
   ]
 });
 </script>

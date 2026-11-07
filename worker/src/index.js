@@ -10,7 +10,8 @@
  *     POST /api/anmelden  { klasse, vorname, geburtstag: 'JJJJ-MM-TT' }
  *                                               → { token, name, klasse }
  *     GET  /api/ich        (Authorization: Bearer <token>)  → { name, klasse, fortschritt }
- *     POST /api/melden     (Bearer) { ils, schritt, punkte, max }
+ *     POST /api/melden     (Bearer) { ils, schritt, punkte, max, neustarts?, zuSchnell?, selbst?, selbstMax? }
+ *                          nur bekannte Schritte (assets/auftraege.js); Abschluss erst nach allen Übungen
  *   Lehrkraft (Kopfzeile X-Passwort = Secret LEHRKRAFT_PASSWORT)
  *     GET  /api/lehrkraft/stand                 → alle SuS mit Fortschritt
  *     POST /api/lehrkraft/import    { text }    Zeilen „Klasse;Name;TT.MM.JJJJ“
@@ -26,6 +27,14 @@
  * Gelöscht wird nur von Hand (Lehrkraft-Seite). Cloudflare-Protokolle sind abgeschaltet.
  */
 import { DurableObject } from 'cloudflare:workers';
+import '../../assets/auftraege.js';   // legt globalThis.ILS_AUFTRAEGE an (gleiche Datei wie auf der Website)
+
+const AUFTRAEGE = globalThis.ILS_AUFTRAEGE || [];
+export function schrittFinden(ils, schritt) {
+  const a = AUFTRAEGE.find((x) => x.id === ils);
+  if (!a) return { auftrag: null, schritt: null };
+  return { auftrag: a, schritt: a.schritte.find((x) => x.id === schritt) || null };
+}
 
 const MAX_KOERPER = 40000;          // Bytes je Anfrage (Import einer Klassenliste)
 const MAX_SCHUELER = 400;
@@ -144,7 +153,7 @@ async function gleichSicher(a, b) {
   return u === 0;
 }
 
-const STATUS = { ungueltig: 400, abgemeldet: 401, 'nicht-gefunden': 401, passwort: 401, gesperrt: 429, unbekannt: 404, voll: 409, 'passwort-fehlt': 503 };
+const STATUS = { ungueltig: 400, abgemeldet: 401, 'nicht-gefunden': 401, passwort: 401, gesperrt: 429, unbekannt: 404, voll: 409, voraussetzung: 409, 'passwort-fehlt': 503 };
 const mitStatus = (erg) => antwort(erg, erg.ok ? 200 : (STATUS[erg.grund] || 400));
 
 /* ---------- Worker ---------- */
@@ -193,7 +202,20 @@ export default {
         if (!ILS_MUSTER.test(ils) || !SCHRITT_MUSTER.test(schritt) || max === null || punkte === null || punkte > max) {
           return antwort({ ok: false, grund: 'ungueltig' }, 400);
         }
-        return mitStatus(await daten.melden(token, ils, schritt, punkte, max));
+        const bekannt = schrittFinden(ils, schritt);
+        if (!bekannt.schritt) return antwort({ ok: false, grund: 'unbekannter-schritt' }, 400);
+        const zusatz = {};
+        for (const [feld, max2] of [['neustarts', 999], ['zuSchnell', 999], ['selbst', 100], ['selbstMax', 100]]) {
+          if (d[feld] === undefined || d[feld] === null) continue;
+          const w = ganzzahl(d[feld], 0, max2);
+          if (w === null) return antwort({ ok: false, grund: 'ungueltig' }, 400);
+          zusatz[feld] = w;
+        }
+        if (zusatz.selbst !== undefined && !(zusatz.selbstMax >= 1 && zusatz.selbst <= zusatz.selbstMax)) {
+          return antwort({ ok: false, grund: 'ungueltig' }, 400);
+        }
+        const voraussetzungen = bekannt.schritt.abschluss ? bekannt.auftrag.schritte.filter((x) => !x.abschluss).map((x) => x.id) : [];
+        return mitStatus(await daten.melden(token, ils, schritt, punkte, max, zusatz, voraussetzungen));
       }
 
       /* ----- Lehrkraft ----- */
@@ -318,21 +340,27 @@ export class Daten extends DurableObject {
     return { ok: true, name: s.name, klasse: s.klasse, fortschritt: (await this.ctx.storage.get('p:' + s.sid)) || {} };
   }
 
-  async melden(token, ils, schritt, punkte, max) {
+  async melden(token, ils, schritt, punkte, max, zusatz = {}, voraussetzungen = []) {
     const s = await this.schuelerZuToken(token);
     if (!s) return { ok: false, grund: 'abgemeldet' };
     const schl = 'p:' + s.sid;
     const p = (await this.ctx.storage.get(schl)) || {};
+    const fehlt = voraussetzungen.filter((v) => !(p[ils] && p[ils][v]));
+    if (fehlt.length) return { ok: false, grund: 'voraussetzung', fehlt };
     if (!p[ils] && Object.keys(p).length >= MAX_AUFTRAEGE) return { ok: false, grund: 'voll' };
     const auftrag = p[ils] || {};
     if (!auftrag[schritt] && Object.keys(auftrag).length >= MAX_SCHRITTE) return { ok: false, grund: 'voll' };
     const jetzt = Date.now();
     const alt = auftrag[schritt];
     if (!alt || alt.quelle === 'lehrkraft') {
-      auftrag[schritt] = { um: alt ? alt.um : jetzt, punkte, max, quelle: 'sus', zuletzt: jetzt };
+      auftrag[schritt] = { um: alt ? alt.um : jetzt, punkte, max, quelle: 'sus', zuletzt: jetzt, ...zusatz };
     } else {
-      // Erstes Erledigt-Datum bleibt; bestes Ergebnis zählt
+      // Erstes Erledigt-Datum bleibt; bestes Ergebnis zählt; Neustarts/Tempo-Warnungen sind Gesamtzahlen
       if (punkte / max > alt.punkte / alt.max) { alt.punkte = punkte; alt.max = max; }
+      for (const f of ['neustarts', 'zuSchnell']) if (zusatz[f] !== undefined) alt[f] = Math.max(alt[f] || 0, zusatz[f]);
+      if (zusatz.selbstMax && (!alt.selbstMax || zusatz.selbst / zusatz.selbstMax >= alt.selbst / alt.selbstMax)) {
+        alt.selbst = zusatz.selbst; alt.selbstMax = zusatz.selbstMax;
+      }
       alt.zuletzt = jetzt;
     }
     p[ils] = auftrag;

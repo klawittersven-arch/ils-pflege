@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Abschlussquiz</title>
-<link rel="stylesheet" href="../../assets/ils.css?v=ef6856eb">
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">Probe-Auftrag · Abschluss</div><h1>Abschlussquiz</h1></div></header>
@@ -13,22 +13,23 @@
 <div id="app"></div>
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
 </main>
-<script src="../../assets/ils.js?v=ef6856eb"></script>
-<script src="../../assets/ils-server.js?v=ef6856eb"></script>
-<script src="../../assets/auftraege.js?v=ef6856eb"></script>
-<script src="../../assets/ils-konto.js?v=ef6856eb"></script>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
 <script>
-const POOL = [
-  { type: 'tf', q: 'Die Lehrkraft sieht, welche Übungen Sie erledigt haben.', correct: true, explain: 'Ja – auf ihrer Übersichtsseite.' },
-  { type: 'tf', q: 'Ihre einzelnen Antworten werden an die Lehrkraft geschickt.', correct: false, explain: 'Nein – nur, ob Sie die Übung bestanden haben.' },
-  { type: 'tf', q: 'Ohne Internet geht Ihr Ergebnis verloren.', correct: false, explain: 'Nein – es wird später automatisch nachgereicht.' },
-  { type: 'tf', q: 'Sie müssen sich auf jedem Gerät einmal anmelden.', correct: true, explain: 'Ja – mit Klasse, Vorname und Geburtstag.' }
-];
-ILSKonto.abschluss({
-  mount: '#app', ils: 'probe', schritt: 'quiz',
-  intro: '<strong>Abschlussquiz:</strong> Mindestens 3 von 4 Punkten zum Bestehen.',
-  pass: 0.75,
-  fragen: () => ILS.shuffle(POOL)
+ILSLern.uebung({
+  mount: '#app', ils: 'probe', schritt: 'quiz', abschluss: true,
+  abschnitt: 'alle Probe-Abschnitte',
+  ziehen: 4, fehlerMax: 1, pauseSek: 180,
+  pool: [
+    { typ: 'rf', aussage: 'Die Lehrkraft sieht, welche Übungen Sie erledigt haben.', richtig: true, erklaerung: 'Ja – auf ihrer Übersichtsseite.' },
+    { typ: 'rf', aussage: 'Ihre einzelnen Antworten werden an die Lehrkraft geschickt.', richtig: false, erklaerung: 'Nein – nur, ob Sie die Übung geschafft haben.' },
+    { typ: 'rf', aussage: 'Ohne Internet geht Ihr Ergebnis verloren.', richtig: false, erklaerung: 'Nein – es wird später automatisch nachgereicht.' },
+    { typ: 'rf', aussage: 'Sie müssen sich auf jedem Gerät einmal anmelden.', richtig: true, erklaerung: 'Ja – mit Klasse, Vorname und Geburtstag.' },
+    { typ: 'rf', aussage: 'Wer zu schnell tippt, muss die Übung neu starten.', richtig: true, erklaerung: 'Nach drei Warnungen.' }
+  ]
 });
 </script>
 </body>

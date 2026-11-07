@@ -94,7 +94,7 @@ lösen – auf der Lehrkraft-Seite erscheint der Haken (Auftrag „Probe-Auftrag
 
 ```
 (cd worker && npm install)
-node tests/ablauf.test.js            # 40 Prüfungen; Bildschirmfotos: BILDER=/pfad node tests/ablauf.test.js
+node tests/ablauf.test.js            # 53 Prüfungen; Bildschirmfotos: BILDER=/pfad node tests/ablauf.test.js
 ```
 
 Der Test startet den Worker lokal (`wrangler dev`) mit erfundenen Namen und prüft Import, Anmeldung,
@@ -112,3 +112,27 @@ python3 tools/grafiken.py                 # Grafiken (SVG)
 python3 tools/seiten.py                   # Übungsseiten (braucht tools/bausteine.json)
 python3 tools/ab_dk.py VORLAGE.docx AB.docx
 ```
+
+---
+
+## Lernmodus (assets/ils-lern.js) – Schutz gegen Raten und Durchklicken
+
+Neue ILS-Übungen laufen im Lernmodus (`ILSLern.uebung({...})`, Beispiel: `probe/`, erzeugt mit `tools/probe_bau.py`):
+
+- **Eine Aufgabe nach der anderen**, sofortige Rückmeldung mit Erklärung. Pro Durchgang werden Aufgaben aus einem
+  größeren Pool gezogen (Varianten über `gruppe`, feste über `fest`).
+- **Fehlerbudget** (Standard 3 ❤️): Beim 4. Fehler Lesepause (Standard 60 s, Abschlussquiz 180 s) mit Hinweis auf
+  die Stellen im Arbeitsblatt, danach Neustart mit neu gezogenen Aufgaben. Jeder Fehlklick zählt – auch beim Sortieren,
+  bei der Reihenfolge, im Lückentext und beim Bild.
+- **Tempo-Kontrolle:** Jede Aufgabe hat eine Mindest-Lesezeit (nach Wortzahl). Zu frühes Tippen zählt nicht und gibt
+  eine Warnung; nach 3 Warnungen Lesepause und Neustart.
+- **Nach einem Fehler** bleibt die Erklärung 4 Sekunden stehen, bevor „Weiter“ geht.
+- **Zwischenstand** (aktuelle Aufgabe, Fehler, laufende Lesepause, Schreibzeit) bleibt auf dem Gerät gespeichert.
+- **Examens-Training** (optional `schreiben`): Schreibauftrag auf Papier mit Mindestzeit, danach Checkliste
+  (Erwartungshorizont) zum Selbstabhaken, Hinweis auf Eigenverantwortung und E-Mail an die Lehrkraft mit Betreff.
+- **Abschlussquiz** (`abschluss: true`): erst nach allen Übungen – das prüft auch der Server.
+- **Lehrkraft-Tabelle:** ⚠n = Neustarts, ✍x/y = selbst abgehakte Punkte im Examens-Training.
+
+Aufgabentypen: `wahl`, `rf` (mit Begründung), `mehrfach`, `reihe`, `sortieren` (auch PESR, Ampel), `zahl`,
+`luecke`, `bild` (Stellen im SVG antippen), `dialog` (Fallentscheidung oder Gespräch) – Felder siehe Kopf von
+`assets/ils-lern.js`.

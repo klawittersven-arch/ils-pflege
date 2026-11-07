@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Übung 2: Zweite Probe</title>
-<link rel="stylesheet" href="../../assets/ils.css?v=ef6856eb">
+<link rel="stylesheet" href="../../assets/ils.css?v=660ba382">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">Probe-Auftrag · Übung 2 von 2</div><h1>Übung 2: Zweite Probe</h1></div></header>
@@ -13,18 +13,34 @@
 <div id="app"></div>
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
 </main>
-<script src="../../assets/ils.js?v=ef6856eb"></script>
-<script src="../../assets/ils-server.js?v=ef6856eb"></script>
-<script src="../../assets/auftraege.js?v=ef6856eb"></script>
-<script src="../../assets/ils-konto.js?v=ef6856eb"></script>
+<script src="../../assets/ils.js?v=660ba382"></script>
+<script src="../../assets/ils-server.js?v=660ba382"></script>
+<script src="../../assets/auftraege.js?v=660ba382"></script>
+<script src="../../assets/ils-konto.js?v=660ba382"></script>
+<script src="../../assets/ils-lern.js?v=660ba382"></script>
 <script>
-ILSKonto.uebung({
+ILSLern.uebung({
   mount: '#app', ils: 'probe', schritt: '2',
-  intro: '<strong>So geht\'s:</strong> Bringen Sie die Schritte in die richtige Reihenfolge.',
-  pass: 1.0,
-  questions: [
-    { type: 'order', q: 'In welcher Reihenfolge arbeiten Sie diesen ILS-Auftrag durch?', items: ['Anmelden', 'Infotext lesen', 'Übung lösen', 'Abschlussquiz machen'], explain: 'Genau so.' }
-  ]
+  abschnitt: 'Probe-Abschnitt 2 (nur zum Testen)',
+  ziehen: 4,
+  pool: [
+    { typ: 'reihe', frage: 'Bringen Sie die Schritte in die richtige Reihenfolge.', schritte: ['Anmelden', 'Infotext lesen', 'Übung lösen', 'Abschlussquiz machen'], erklaerung: 'Genau so.' },
+    { typ: 'sortieren', frage: 'Ordnen Sie zu: aktive oder passive Drainage?', kategorien: ['aktiv (Sog)', 'passiv'],
+      elemente: [{ t: 'Redon', k: 0 }, { t: 'Robinson', k: 1, warum: 'Die Robinson leitet ohne Sog ab.' }, { t: 'Easy-Flow', k: 1 }], erklaerung: 'Nur die Redon arbeitet mit Sog.' },
+    { typ: 'bild', frage: 'Tippen Sie im Bild auf die gesuchten Teile.', svg: '<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Probe-Bild">\n<rect x="20" y="40" width="80" height="120" rx="10" fill="#e8eef5" stroke="#555"/><text x="60" y="105" text-anchor="middle" font-size="14">Flasche</text>\n<circle cx="200" cy="70" r="30" fill="#f6e6dc" stroke="#555"/><text x="200" y="75" text-anchor="middle" font-size="14">Anzeige</text>\n<rect x="160" y="130" width="110" height="40" fill="#eee" stroke="#555"/><text x="215" y="155" text-anchor="middle" font-size="14">Klemme</text>\n<g data-ziel="flasche"><rect class="feld" x="15" y="35" width="90" height="130"/></g>\n<g data-ziel="anzeige"><circle class="feld" cx="200" cy="70" r="36"/></g>\n<g data-ziel="klemme"><rect class="feld" x="155" y="125" width="120" height="50"/></g>\n</svg>',
+      ziele: [{ id: 'anzeige', frage: 'Tippen Sie auf die <b>Anzeige</b>.', name: 'die Anzeige' }, { id: 'klemme', frage: 'Tippen Sie auf die <b>Klemme</b>.', name: 'die Klemme' }],
+      erklaerung: 'Gut gefunden.' },
+    { typ: 'dialog', stil: 'chat', frage: 'Gespräch üben', knoten: [
+      { sprecher: 'Frau K.', text: 'Muss ich die Flasche beim Laufen in der Hand tragen?', frage: 'Was antworten Sie?', optionen: [
+        { t: 'Nein, wir befestigen sie sicher, damit der Schlauch nicht abknickt.', richtig: true, rueck: 'Sicher fixieren, nicht abknicken.' },
+        { t: 'Ja, halten Sie sie am Schlauch.', richtig: false, rueck: 'Am Schlauch zu ziehen kann die Drainage herausziehen.' }] },
+      { sprecher: 'Frau K.', text: 'Und wenn mir etwas komisch vorkommt?', frage: 'Was antworten Sie?', optionen: [
+        { t: 'Dann klingeln Sie bitte sofort.', richtig: true, rueck: 'Klingel in Reichweite.' },
+        { t: 'Dann warten Sie bis zur Visite.', richtig: false, rueck: 'Veränderungen sollen sofort gemeldet werden.' }] }
+    ], erklaerung: 'So informieren Sie verständlich.' }
+  ],
+  schreiben: { auftrag: '<strong>Nennen Sie</strong> 3 Dinge, die Sie bei einer Redon-Drainage beobachten.', ort: 'auf ein Blatt Papier', minSek: 20,
+    punkte: ['Fördermenge', 'Vakuumindikator / Sog', 'Durchgängigkeit (nicht abgeknickt)', 'Austrittsstelle'] }
 });
 </script>
 </body>
