@@ -136,6 +136,7 @@
         el('button', { type: 'button', class: 'btn secondary', onclick: () => laden(false) }, '↻ Aktualisieren'),
         el('button', { type: 'button', class: 'btn secondary', id: 'lk-wer-fehlt', onclick: werFehlt }, 'Wer fehlt noch?'),
         el('button', { type: 'button', class: 'btn secondary', id: 'lk-csv', onclick: csv }, 'Excel-Datei (CSV)'),
+        el('button', { type: 'button', class: 'btn secondary', id: 'lk-rennen', onclick: rennen }, '🏁 Live-Rennen'),
         el('button', { type: 'button', class: 'btn secondary', id: 'lk-siegerehrung', onclick: siegerehrung }, '🏆 Siegerehrung'),
         teile.wappenKnopf));
 
@@ -368,6 +369,242 @@
       ziel.append(k);
       setTimeout(() => k.remove(), 5500);
     }
+  }
+
+  /* ---------- Live-Rennen am Beamer: Wer ist wo? Wer ist zuerst im Ziel? ---------- */
+  const RENNEN_TAKT_MS = 5000;
+  const dauer = (ms) => {
+    const s = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    return (h ? `${h}:${String(m).padStart(2, '0')}` : String(m)) + ':' + String(s % 60).padStart(2, '0');
+  };
+  const uhrzeit = (ms) => new Date(ms).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  const MEDAILLE = ['🥇', '🥈', '🥉'];
+
+  function rennen() {
+    const a = auftrag();
+    if (!a || !stand) return;
+    const quiz = a.schritte.find((x) => x.abschluss);
+    const klassen = [...new Set(stand.schueler.map((s) => s.klasse))].sort();
+    let klasse = wahl.klasse || (klassen.length === 1 ? klassen[0] : '');
+    let versatz = (stand.jetzt || Date.now()) - Date.now();   // Serveruhr minus eigene Uhr
+    const serverJetzt = () => Date.now() + versatz;
+    const startSchl = () => `ils-rennen-start|${a.id}|${klasse}`;
+    const start = () => Number(merken.get(startSchl())) || 0;
+    const ov = el('div', { class: 'se-overlay rennen', id: 'rennen-overlay', tabindex: '-1' });
+    const teile2 = {};
+    let bahnen = new Map();
+    let imZiel = null;          // sids, die im Rennen schon im Ziel sind (null = erster Durchlauf, keine Einblendung)
+    let zielListe = [];
+    let ehrung = null;
+    let ehrungAbspielen = () => {};
+
+    const takt = setInterval(holen, RENNEN_TAKT_MS);
+    const sekunde = setInterval(uhrStellen, 1000);
+    function schliessen() {
+      clearInterval(takt); clearInterval(sekunde);
+      document.removeEventListener('keydown', taste);
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+      ov.remove();
+      zeichnen();
+    }
+    function taste(ev) {
+      if (ev.key === 'Escape') { if (ehrung) ehrungSchliessen(); else schliessen(); }
+      else if (ev.key === 'f' || ev.key === 'F') { if (!document.fullscreenElement) ov.requestFullscreen && ov.requestFullscreen().catch(() => {}); else document.exitFullscreen().catch(() => {}); }
+      else if ((ev.key === 'r' || ev.key === 'R') && ehrung) ehrungAbspielen();
+    }
+    document.addEventListener('keydown', taste);
+    document.body.append(ov);
+
+    // Wo steht eine Person? wert = erledigte Schritte + Anteil am aktuellen Schritt (laut Live-Meldung vom Handy)
+    function lage(s) {
+      const p = (s.fortschritt || {})[a.id] || {};
+      const fertig = a.schritte.filter((x) => p[x.id]).length;
+      const ziel = quiz && p[quiz.id] ? p[quiz.id].um : null;
+      const l = (s.live || {})[a.id];
+      const jetzt = stand.jetzt || serverJetzt();
+      let teil = 0;
+      let status;
+      if (l && !p[l.schritt] && jetzt - l.um < 15 * 60000) {
+        const x = a.schritte.find((y) => y.id === l.schritt);
+        const kurz = x ? x.kurz : '';
+        if (l.phase === 'karten' && l.n) { teil = 0.8 * (l.i / l.n); status = `${kurz} · Aufgabe ${Math.min(l.i + 1, l.n)}/${l.n}`; }
+        else if (l.phase === 'pause') { teil = l.n ? 0.8 * (l.i / l.n) : 0; status = `${kurz} · ⏸ Lesepause`; }
+        else if (l.phase === 'schreiben' || l.phase === 'checkliste') { teil = 0.9; status = `${kurz} · ✍️ schreibt`; }
+        else { teil = 0.03; status = `${kurz} · 📖 liest`; }
+      } else if (fertig) status = `${fertig} von ${a.schritte.length} erledigt`;
+      else status = s.ersteAnmeldung ? 'am Start' : 'noch nicht angemeldet';
+      return { wert: Math.min(a.schritte.length, fertig + teil), ziel, status };
+    }
+
+    function klasseWaehlen() {
+      ov.innerHTML = '';
+      ov.append(el('div', { class: 'se-wahl' }, el('h2', {}, '🏁 Live-Rennen – welche Klasse?'),
+        el('div', { class: 'se-klassen' }, klassen.map((k) => el('button', { type: 'button', class: 'btn', onclick: () => { klasse = k; aufbauen(); } }, k))),
+        el('button', { type: 'button', class: 'btn secondary', onclick: schliessen }, 'Schließen')));
+    }
+
+    function aufbauen() {
+      ov.innerHTML = '';
+      bahnen = new Map();
+      imZiel = null;
+      teile2.uhr = el('span', { class: 'rb-uhr' });
+      teile2.live = el('span', { class: 'rb-live', title: 'aktualisiert sich alle 5 Sekunden' }, '● live');
+      teile2.strecke = el('div', { class: 'rb-strecke' });
+      teile2.ziel = el('div', { class: 'rb-ziel', id: 'rb-ziel' });
+      teile2.toast = el('div', { class: 'rb-toast', 'aria-live': 'polite' });
+      teile2.startKnopf = el('button', { type: 'button', class: 'btn secondary', id: 'rb-start', onclick: starten });
+      teile2.ehrungKnopf = el('button', { type: 'button', class: 'btn secondary', id: 'rb-ehrung', onclick: siegerehrungTop5 }, '🏆 Siegerehrung Top 5');
+      const n = a.schritte.length;
+      const marken = el('div', { class: 'rb-raster rb-marken' }, el('span', {}), el('span', {}),
+        el('div', { class: 'rb-marken-spur' }, el('span', { style: 'left:0%' }, 'Start'),
+          a.schritte.map((x, i) => el('span', { style: `left:${((i + 1) / n) * 100}%` }, x.abschluss ? '🏁 Ziel' : x.kurz))),
+        el('span', {}));
+      ov.append(
+        el('div', { class: 'se-kopf rb-kopf' }, el('div', { class: 'se-titel' }, '🏁 ILS-Rennen'),
+          el('div', { class: 'se-unter' }, `${a.titel} · ${klasse}`), el('div', { class: 'rb-zeile' }, teile2.uhr, teile2.live)),
+        el('div', { class: 'rb-haupt' }, el('div', { class: 'rb-links' }, marken, el('div', { class: 'rb-strecke-box' }, teile2.strecke)), teile2.ziel),
+        teile2.toast,
+        el('div', { class: 'se-knoepfe' }, teile2.startKnopf, teile2.ehrungKnopf,
+          el('button', { type: 'button', class: 'btn secondary', onclick: () => taste({ key: 'f' }) }, '⛶ Vollbild (F)'),
+          klassen.length > 1 ? el('button', { type: 'button', class: 'btn secondary', onclick: klasseWaehlen }, 'Klasse wechseln') : null,
+          el('button', { type: 'button', class: 'btn secondary', onclick: schliessen }, 'Schließen (Esc)')));
+      uhrStellen();
+      aktualisieren();
+    }
+
+    function uhrStellen() {
+      if (!teile2.uhr) return;
+      teile2.uhr.textContent = start() ? `⏱ ${dauer(serverJetzt() - start())}` : `🕒 ${uhrzeit(serverJetzt())} Uhr – Rennen noch nicht gestartet`;
+      if (teile2.startKnopf) teile2.startKnopf.textContent = start() ? '↻ Rennen neu starten' : '▶ Rennen starten';
+    }
+
+    function starten() {
+      if (start() && !window.confirm('Rennen neu starten? Die Zeit beginnt wieder bei 0. Wer schon im Ziel ist, zählt dann als „vorher fertig“.')) return;
+      merken.set(startSchl(), String(serverJetzt()));
+      imZiel = null;
+      teile2.toast.textContent = '🏁 Los geht’s!';
+      teile2.toast.classList.remove('zeigen'); void teile2.toast.offsetWidth; teile2.toast.classList.add('zeigen');
+      uhrStellen();
+      aktualisieren();
+    }
+
+    async function holen() {
+      try {
+        const r = await api('/api/lehrkraft/stand');
+        if (r.status !== 200) throw new Error(String(r.status));
+        stand = r.d;
+        versatz = (stand.jetzt || Date.now()) - Date.now();
+        if (teile2.live) teile2.live.classList.remove('aus');
+        if (klasse && teile2.strecke) aktualisieren();
+      } catch (e) {
+        if (teile2.live) teile2.live.classList.add('aus');
+      }
+    }
+
+    function aktualisieren() {
+      if (!teile2.strecke || !teile2.strecke.isConnected) return;
+      const st = start();
+      const liste = stand.schueler.filter((s) => s.klasse === klasse).map((s) => ({ s, ...lage(s) }));
+      const imRennen = (x) => !!x.ziel && (!st || x.ziel >= st);
+      liste.sort((x, y) => (imRennen(y) - imRennen(x)) || (imRennen(x) && imRennen(y) ? x.ziel - y.ziel : 0)
+        || (!!y.ziel - !!x.ziel) || (y.wert - x.wert) || x.s.name.localeCompare(y.s.name, 'de'));
+      zielListe = liste.filter(imRennen);
+      // neue Zieleinläufe groß einblenden
+      if (imZiel) zielListe.forEach((x, i) => { if (!imZiel.has(x.s.sid)) einlauf(x, i + 1); });
+      imZiel = new Set(zielListe.map((x) => x.s.sid));
+      // Bahnen: jede Person behält ihr Element, damit Überholen weich animiert wird
+      const hoehe = Math.max(30, Math.min(64, Math.floor((window.innerHeight * 0.6) / Math.max(1, liste.length))));
+      teile2.strecke.style.height = `${liste.length * hoehe}px`;
+      const n = a.schritte.length;
+      liste.forEach((x, idx) => {
+        let b = bahnen.get(x.s.sid);
+        if (!b) {
+          b = { platz: el('span', { class: 'rb-platz' }), name: el('span', { class: 'rb-name' }, x.s.name), fuellung: el('div', { class: 'rb-fuellung' }),
+            figur: el('span', { class: 'rb-figur' }), status: el('span', { class: 'rb-status' }) };
+          b.el = el('div', { class: 'rb-raster rb-bahn', 'data-sid': x.s.sid }, b.platz, b.name,
+            el('div', { class: 'rb-spur' }, a.schritte.map((_, i) => el('i', { class: 'rb-linie', style: `left:${((i + 1) / n) * 100}%` })), b.fuellung, b.figur),
+            b.status);
+          bahnen.set(x.s.sid, b);
+          teile2.strecke.append(b.el);
+        }
+        const pct = (x.wert / n) * 100;
+        const platz = imRennen(x) ? zielListe.indexOf(x) + 1 : 0;
+        b.el.style.height = `${hoehe}px`;
+        b.el.style.transform = `translateY(${idx * hoehe}px)`;
+        b.el.classList.toggle('im-ziel', !!x.ziel);
+        b.el.classList.toggle('vorher', !!x.ziel && !platz);
+        b.fuellung.style.width = `${pct}%`;
+        b.figur.style.left = `${pct}%`;
+        b.figur.textContent = x.ziel ? '🏁' : '🏃';
+        b.platz.textContent = platz ? (MEDAILLE[platz - 1] || `${platz}.`) : x.ziel ? '✓' : `${idx + 1}.`;
+        b.status.textContent = platz ? `Platz ${platz} · ${st ? dauer(x.ziel - st) : uhrzeit(x.ziel) + ' Uhr'}` : x.ziel ? 'schon vorher fertig' : x.status;
+      });
+      for (const [sid, b] of bahnen) if (!liste.some((x) => x.s.sid === sid)) { b.el.remove(); bahnen.delete(sid); }
+      // Zieleinlauf-Liste rechts
+      teile2.ziel.innerHTML = '';
+      teile2.ziel.append(el('div', { class: 'rb-ziel-titel' }, '🏁 Im Ziel'),
+        zielListe.length
+          ? el('ol', {}, zielListe.slice(0, 10).map((x, i) => el('li', {}, el('span', {}, `${MEDAILLE[i] || `${i + 1}.`} ${x.s.name}`),
+            el('strong', {}, st ? dauer(x.ziel - st) : uhrzeit(x.ziel)))))
+          : el('p', { class: 'rb-leer' }, 'Noch niemand – wer ist zuerst da?'),
+        el('p', { class: 'rb-anzahl' }, `${zielListe.length} von ${liste.length} im Ziel`));
+      teile2.ehrungKnopf.disabled = !zielListe.length;
+    }
+
+    function einlauf(x, platz) {
+      teile2.toast.textContent = `🎉 ${x.s.name} ist im Ziel – Platz ${platz}!`;
+      teile2.toast.classList.remove('zeigen'); void teile2.toast.offsetWidth; teile2.toast.classList.add('zeigen');
+      konfetti(ov);
+    }
+
+    // Siegerehrung der schnellsten 5 (Treppchen 2–1–3, dann Plätze 4 und 5)
+    function siegerehrungTop5() {
+      const st = start();
+      const top = zielListe.slice(0, 5);
+      if (!top.length) return;
+      const zeitText = (x) => (st ? `nach ${dauer(x.ziel - st)}` : `um ${uhrzeit(x.ziel)} Uhr`);
+      const buehne = el('div', { class: 'se-treppchen' });
+      const stufe = (platz) => {
+        const x = top[platz - 1];
+        return el('div', { class: `se-stufe se-p${platz}` + (x ? '' : ' leer') },
+          el('div', { class: 'se-name' }, x ? (platz === 1 ? '🏆 ' : '') + x.s.name : ''),
+          el('div', { class: 'se-punkte' }, x ? zeitText(x) : ''),
+          el('div', { class: 'se-block' }, String(platz)));
+      };
+      const stufen = { 2: stufe(2), 1: stufe(1), 3: stufe(3) };
+      buehne.append(stufen[2], stufen[1], stufen[3]);
+      const zeilen = top.slice(3).map((x) => el('li', {}, el('span', {}, x.s.name), el('strong', {}, zeitText(x))));
+      ehrung = el('div', { class: 'rb-ehrung', id: 'rb-ehrung-ebene' },
+        el('div', { class: 'se-kopf' }, el('div', { class: 'se-titel' }, '🏆 Siegerehrung'),
+          el('div', { class: 'se-unter' }, `ILS-Rennen „${a.titel}“ · ${klasse} · die schnellsten ${top.length}`)),
+        buehne, el('ol', { class: 'se-rest rb-rest', start: '4' }, zeilen),
+        el('div', { class: 'se-knoepfe' },
+          el('button', { type: 'button', class: 'btn secondary', onclick: () => ehrungAbspielen() }, '↻ Nochmal (R)'),
+          el('button', { type: 'button', class: 'btn secondary', onclick: () => taste({ key: 'f' }) }, '⛶ Vollbild (F)'),
+          el('button', { type: 'button', class: 'btn secondary', id: 'rb-zurueck', onclick: ehrungSchliessen }, '← Zurück zum Rennen (Esc)')));
+      ov.append(ehrung);
+      let timer = [];
+      ehrungAbspielen = () => {
+        timer.forEach(clearTimeout); timer = [];
+        [stufen[1], stufen[2], stufen[3], ...zeilen].forEach((z) => z.classList.remove('zeigen'));
+        let t = 300;
+        [...zeilen].reverse().forEach((z) => { timer.push(setTimeout(() => z.classList.add('zeigen'), t)); t += 400; });
+        timer.push(setTimeout(() => stufen[3].classList.add('zeigen'), t + 300));
+        timer.push(setTimeout(() => stufen[2].classList.add('zeigen'), t + 1100));
+        timer.push(setTimeout(() => { stufen[1].classList.add('zeigen'); konfetti(ehrung); }, t + 2600));
+      };
+      ehrungAbspielen();
+    }
+    function ehrungSchliessen() {
+      if (ehrung) ehrung.remove();
+      ehrung = null;
+      aktualisieren();
+    }
+
+    if (klasse) aufbauen(); else klasseWaehlen();
+    holen();
   }
 
   /* ---------- Siegerwappen: ansehen, löschen, Person vom Malen ausschließen ---------- */

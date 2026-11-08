@@ -28,6 +28,7 @@ def build():
         "Übersicht für Sie: **klawittersven-arch.github.io/ils-pflege/lehrkraft/** → ILS-Auftrag „Materialentfernung“ wählen",
         "E-Mails der SuS zum Examens-Training kommen mit dem Betreff **„ILS Metallentfernung“**.",
         "**ILS-Challenge** (freiwillig, nach dem Abschlussquiz): 20 Aufgaben, 150 Punkte je Aufgabe + Zeitbonus (wie die Klausur-Challenge der Lernkarten), Bestenliste je Klasse mit Vorname + Initial. Auf der Lehrkraft-Seite: Spalte „🏁 Challenge“ und **🏆 Siegerehrung** am Beamer (Taste F = Vollbild, R = nochmal, Esc = schließen). **Siegerwappen:** Wer ein Ergebnis hat, darf ein kleines Bild malen, das sofort neben dem Namen in der Bestenliste erscheint. Knopf **🛡️ Siegerwappen** = Galerie: ansehen, löschen oder Person vom Malen ausschließen. In der Siegerehrung erscheinen nur Wappen, die Sie als angesehen markiert haben.",
+        "**🏁 Live-Rennen** am Beamer (ILS im Klassenraum): Jede Person hat eine Bahn mit Namen und rückt mit jeder Übung vor – auch innerhalb einer Übung („Ü3 · Aufgabe 4/8“). **▶ Rennen starten** setzt die Uhr auf 0; wer zuerst das Abschlussquiz besteht, wird mit Platz eingeblendet. Danach **🏆 Siegerehrung Top 5** (Taste F = Vollbild, Esc = zurück).",
         "Begriff: Pflegias schreibt **Materialentfernung**; das Arbeitsblatt nennt beim ersten Mal auch „Metallentfernung (ME)“.",
     ], after_last=60)
 

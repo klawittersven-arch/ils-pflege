@@ -424,6 +424,8 @@ const ILSLern = (() => {
     function zeigen() {
       leeren();
       if (S.phase === 'karten' && S.i >= S.ziehung.length) S.phase = cfg.schreiben ? 'schreiben' : 'fertig';
+      // Live-Stand für das Live-Rennen der Lehrkraft (Übung, Phase, Aufgabe i von n)
+      if (K.live) K.live(cfg.ils, cfg.schritt, { phase: S.phase, i: Math.min(S.i, S.ziehung.length), n: S.ziehung.length });
       ({ start: startZeigen, karten: karteZeigen, pause: pauseZeigen, schreiben: schreibenZeigen, checkliste: checklisteZeigen, fertig: fertigZeigen }[S.phase] || startZeigen)();
     }
 

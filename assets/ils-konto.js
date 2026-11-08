@@ -81,6 +81,20 @@ const ILSKonto = (() => {
     return { status: r.status, d };
   }
 
+  // Live-Stand für das Live-Rennen am Beamer: Wo ist die Person gerade? Schickt nichts doppelt
+  // (gleiche Meldung höchstens einmal pro Minute), Fehler und Offline werden ignoriert.
+  let liveLetzte = '';
+  let liveUm = 0;
+  function live(ils, schritt, { phase, i = 0, n = 0 } = {}) {
+    const k = konto();
+    if (!k || !k.token || !SERVER) return;
+    const inhalt = JSON.stringify([ils, schritt, phase, i, n]);
+    if (inhalt === liveLetzte && Date.now() - liveUm < 60000) return;
+    liveLetzte = inhalt;
+    liveUm = Date.now();
+    api('/api/live', { methode: 'POST', token: k.token, daten: { ils, schritt: String(schritt), phase, i, n } }).catch(() => {});
+  }
+
   // Bekannter Stand = zuletzt vom Server geholter Stand + noch nicht übertragene Ergebnisse dieses Geräts
   function bekannterStand() {
     const st = JSON.parse(JSON.stringify(lesen(SCHL.stand) || {}));
@@ -420,6 +434,6 @@ const ILSKonto = (() => {
 
   return {
     uebersicht, uebung, abschluss, konto, melden, nachreichen, standHolen, bekannterStand,
-    bereich, rahmen, auftrag, link, datum, weiterKnopf, werIst, meldungsZeile, api
+    bereich, rahmen, auftrag, link, datum, weiterKnopf, werIst, meldungsZeile, api, live
   };
 })();

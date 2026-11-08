@@ -186,6 +186,22 @@ beliebig oft – wie die Klausur-Challenge der Lernkarten:
 - „Fortschritt eines Auftrags löschen“, „Person löschen“ und „Alles löschen“ löschen auch die Challenge-Ergebnisse und Siegerwappen.
 - Test: `node tests/challenge.test.js`
 
+### Live-Rennen am Beamer
+
+Für ILS im Klassenraum: Lehrkraft-Seite → ILS-Auftrag und Klasse wählen → **🏁 Live-Rennen**.
+
+- Jede Person hat eine Bahn mit Namen: Start → Ü1 … Ü5 → 🏁 Ziel (Abschlussquiz). Die Figur rückt mit jeder erledigten
+  Übung vor und auch **innerhalb** einer Übung: Das Handy meldet bei jedem Wechsel kurz den Stand
+  (`POST /api/live` { ils, schritt, phase, i, n } – z. B. „Ü3 · Aufgabe 4/8“, „⏸ Lesepause“, „✍️ schreibt“).
+  Aktualisierung alle 5 Sekunden; wer vorne liegt, rutscht nach oben (Überhol-Animation).
+- **▶ Rennen starten** setzt die Uhr auf 0 (gespeichert im Browser der Lehrkraft, je Auftrag und Klasse). Gewertet werden
+  nur Zieleinläufe ab dem Start; wer schon vorher fertig war, steht als „schon vorher fertig“ ohne Platz in der Liste.
+- Jeder neue Zieleinlauf wird groß eingeblendet („Anna A. ist im Ziel – Platz 2!“) mit Konfetti; rechts die Zielliste.
+- **🏆 Siegerehrung Top 5**: Treppchen 2–1–3, dann Plätze 4 und 5, mit Zeit seit dem Start. Tasten: F Vollbild,
+  R nochmal, Esc zurück/schließen.
+- Speicher im Worker: `live:<ils>:<sid>` = { schritt, phase, i, n, um } (wird mit Person/Auftrag gelöscht).
+- Test: `node tests/rennen.test.js`
+
 ### Siegerwappen
 
 Wer ein Challenge-Ergebnis hat, darf mit dem Finger ein kleines **Siegerwappen** malen (je ILS-Auftrag eines, jederzeit neu malbar).

@@ -426,3 +426,52 @@ table.lk td.challenge-zelle { font-weight: 700; color: #1f3a5f; white-space: now
 .muster-text li { margin: 5px 0; }
 .checkliste-titel { margin-top: 14px; font-size: 16px; }
 .ch-ergebnis .gespeichert { color: var(--ok, #1d7a46); font-weight: 700; margin: 4px 0 0; }
+
+/* ---------- Live-Rennen am Beamer ---------- */
+.rennen .rb-kopf { margin-bottom: 1.2vh; }
+.rb-zeile { display: flex; gap: 18px; justify-content: center; align-items: center; margin-top: 6px; font-size: clamp(16px, 2vw, 26px); }
+.rb-uhr { font-variant-numeric: tabular-nums; font-weight: 800; }
+.rb-live { color: #5be37d; font-size: .75em; font-weight: 700; animation: rb-puls 2s infinite; }
+.rb-live.aus { color: #f08a80; animation: none; }
+.rb-live.aus::after { content: " (keine Verbindung)"; }
+@keyframes rb-puls { 50% { opacity: .35; } }
+.rb-haupt { display: flex; gap: 2vw; width: min(1700px, 100%); flex: 1; min-height: 0; padding-bottom: 64px; }
+.rb-links { flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 0; }
+.rb-raster { display: grid; grid-template-columns: 3em minmax(7em, 13em) 1fr minmax(9em, 15em); gap: 12px; align-items: center; }
+.rb-marken { margin-bottom: 6px; }
+.rb-marken-spur { position: relative; height: 1.5em; }
+.rb-marken-spur span { position: absolute; top: 0; transform: translateX(-50%); font-size: clamp(11px, 1.1vw, 16px); opacity: .85; white-space: nowrap; font-weight: 700; }
+.rb-marken-spur span:first-child { transform: none; }
+.rb-marken-spur span:last-child { transform: translateX(-100%); color: #f1c232; }
+.rb-strecke-box { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+.rb-strecke { position: relative; }
+.rb-bahn { position: absolute; left: 0; right: 0; top: 0; transition: transform .9s ease; border-bottom: 1px solid rgba(255,255,255,.08); }
+.rb-platz { text-align: center; font-weight: 800; font-size: clamp(14px, 1.6vw, 24px); }
+.rb-name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: clamp(14px, 1.7vw, 24px); }
+.rb-spur { position: relative; height: 46%; min-height: 12px; border-radius: 999px; background: rgba(255,255,255,.09); }
+.rb-linie { position: absolute; top: -4px; bottom: -4px; width: 2px; margin-left: -1px; background: rgba(255,255,255,.22); }
+.rb-fuellung { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 999px; background: linear-gradient(90deg, #2e7d5b, #4cc38a); transition: width .9s ease; }
+.rb-figur { position: absolute; top: 50%; left: 0; transform: translate(-50%, -55%); font-size: clamp(18px, 2.2vw, 32px); line-height: 1; transition: left .9s ease; filter: drop-shadow(0 2px 3px rgba(0,0,0,.4)); }
+.rb-status { font-size: clamp(12px, 1.35vw, 19px); opacity: .9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rb-bahn.im-ziel .rb-fuellung { background: linear-gradient(90deg, #c99a06, #f1c232); }
+.rb-bahn.im-ziel .rb-name, .rb-bahn.im-ziel .rb-status { color: #f1c232; }
+.rb-bahn.vorher { opacity: .55; }
+.rb-ziel { width: clamp(190px, 22vw, 360px); background: rgba(255,255,255,.07); border-radius: 16px; padding: 14px 18px; align-self: flex-start; }
+.rb-ziel-titel { font-weight: 800; font-size: clamp(18px, 2.1vw, 30px); margin-bottom: 8px; }
+.rb-ziel ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 7px; font-size: clamp(14px, 1.6vw, 22px); }
+.rb-ziel li { display: flex; justify-content: space-between; gap: 10px; }
+.rb-ziel li span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rb-ziel li strong { color: #f1c232; font-variant-numeric: tabular-nums; }
+.rb-leer { opacity: .75; margin: 0; }
+.rb-anzahl { opacity: .8; margin: 12px 0 0; font-size: clamp(13px, 1.3vw, 18px); }
+.rb-toast { position: fixed; left: 50%; top: 42%; transform: translate(-50%, -50%) scale(.6); opacity: 0; background: #f1c232; color: #1f1d1b;
+  font-weight: 800; font-size: clamp(22px, 3.6vw, 52px); padding: 18px 32px; border-radius: 22px; pointer-events: none; box-shadow: 0 12px 40px rgba(0,0,0,.45); z-index: 10; text-align: center; }
+.rb-toast.zeigen { animation: rb-toast 3.8s ease forwards; }
+@keyframes rb-toast { 10% { opacity: 1; transform: translate(-50%, -50%) scale(1.06); } 20% { transform: translate(-50%, -50%) scale(1); }
+  80% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -62%) scale(1); } }
+.rb-ehrung { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, #2a4a75, #0f1f36); display: flex; flex-direction: column;
+  align-items: center; padding: 3vh 4vw; z-index: 5; overflow: hidden; }
+.rb-rest { columns: 1; text-align: left; width: auto; }
+.btn:disabled { opacity: .45; cursor: default; }
+.rb-toast { white-space: nowrap; max-width: 94vw; overflow: hidden; text-overflow: ellipsis; }
+.rb-spur { margin-right: 18px; }

@@ -11,6 +11,7 @@
  *                                               → { token, name, klasse }
  *     GET  /api/ich        (Authorization: Bearer <token>)  → { name, klasse, fortschritt }
  *     POST /api/melden     (Bearer) { ils, schritt, punkte, max, neustarts?, zuSchnell?, selbst?, selbstMax? }
+ *     POST /api/live       (Bearer) { ils, schritt, phase, i, n }   aktueller Stand am Handy (für das Live-Rennen)
  *                          nur bekannte Schritte (assets/auftraege.js); Abschluss erst nach allen Übungen
  *   ILS-Challenge (nach bestandenem Abschlussquiz, Bestenliste je ILS-Auftrag und Klasse)
  *     POST /api/challenge/start (Bearer) { ils }            → { laufId }   (Zeit misst der Server)
@@ -63,6 +64,7 @@ const TOKEN_MUSTER = /^[A-Za-z0-9]{32}$/;
 const SID_MUSTER = /^[a-z0-9]{12}$/;
 const DATUM_ISO = /^(\d{4})-(\d{2})-(\d{2})$/;
 const LAUF_MUSTER = /^[A-Za-z0-9]{16}$/;
+const LIVE_PHASEN = new Set(['start', 'karten', 'pause', 'schreiben', 'checkliste', 'fertig']);
 // ILS-Challenge: wie die Klausur-Challenge der Lernkarten – 150 Punkte je Aufgabe, Zeitbonus bis 750 Punkte,
 // der in 15 Minuten linear auf 0 sinkt und nur anteilig zu den richtigen Antworten zählt.
 const CH_PUNKTE_JE_AUFGABE = 150;
@@ -250,6 +252,23 @@ export default {
         return mitStatus(await daten.melden(token, ils, schritt, punkte, max, zusatz, voraussetzungen));
       }
 
+      // Live-Stand: Wo ist die Person gerade? (Übung, Phase, Aufgabe i von n) – für das Live-Rennen am Beamer
+      if (weg === '/api/live' && methode === 'POST') {
+        const token = bearer(request);
+        if (!token) return antwort({ ok: false, grund: 'abgemeldet' }, 401);
+        const d = await jsonLesen(request);
+        const ils = String(d?.ils ?? '');
+        const schritt = String(d?.schritt ?? '');
+        const phase = String(d?.phase ?? '');
+        const i = ganzzahl(d?.i, 0, 200);
+        const n = ganzzahl(d?.n, 0, 200);
+        if (!ILS_MUSTER.test(ils) || !SCHRITT_MUSTER.test(schritt) || !schrittFinden(ils, schritt).schritt || !LIVE_PHASEN.has(phase)
+          || i === null || n === null || i > n) {
+          return antwort({ ok: false, grund: 'ungueltig' }, 400);
+        }
+        return mitStatus(await daten.live(token, ils, schritt, phase, i, n));
+      }
+
       /* ----- ILS-Challenge ----- */
       if (weg.startsWith('/api/challenge/')) {
         const token = bearer(request);
@@ -357,6 +376,7 @@ export default {
  *   lauf:<ils>:<sid> { laufId, start }  laufende Challenge (Zeit misst der Server)
  *   w:<ils>:<sid>   { bild, um, gesehen }  Siegerwappen (PNG als data:-Adresse)
  *   wsperre:<sid>   true                  Person darf kein Siegerwappen malen
+ *   live:<ils>:<sid> { schritt, phase, i, n, um }  zuletzt gemeldeter Stand am Handy (Live-Rennen)
  *   fehl:<klasse>   { start, anzahl }  fehlgeschlagene Anmeldungen
  *   lkfehl          { start, anzahl }  falsche Lehrkraft-Passwörter */
 export class Daten extends DurableObject {
@@ -471,15 +491,28 @@ export class Daten extends DurableObject {
     return { ok: false, grund: 'passwort' };
   }
 
+  async live(token, ils, schritt, phase, i, n) {
+    const s = await this.schuelerZuToken(token);
+    if (!s) return { ok: false, grund: 'abgemeldet' };
+    await this.ctx.storage.put(`live:${ils}:${s.sid}`, { schritt, phase, i, n, um: Date.now() });
+    return { ok: true };
+  }
+
   async stand() {
-    const [schueler, fortschritte, tokens, challenges, wappen, sperren] = await Promise.all([
+    const [schueler, fortschritte, tokens, challenges, wappen, sperren, lives] = await Promise.all([
       this.alleSchueler(),
       this.ctx.storage.list({ prefix: 'p:' }),
       this.ctx.storage.list({ prefix: 't:' }),
       this.ctx.storage.list({ prefix: 'c:' }),
       this.ctx.storage.list({ prefix: 'w:' }),
-      this.ctx.storage.list({ prefix: 'wsperre:' })
+      this.ctx.storage.list({ prefix: 'wsperre:' }),
+      this.ctx.storage.list({ prefix: 'live:' })
     ]);
+    const liveInfo = {};
+    for (const [k, l] of lives) {
+      const [, ils, sid] = k.split(':');
+      (liveInfo[sid] = liveInfo[sid] || {})[ils] = l;
+    }
     const wappenInfo = {};
     for (const [k, w] of wappen) {
       const [, ils, sid] = k.split(':');
@@ -502,7 +535,8 @@ export class Daten extends DurableObject {
         fortschritt: fortschritte.get('p:' + s.sid) || {},
         challenge: challenge[s.sid] || {},
         wappen: wappenInfo[s.sid] || {},
-        malenGesperrt: sperren.has('wsperre:' + s.sid)
+        malenGesperrt: sperren.has('wsperre:' + s.sid),
+        live: liveInfo[s.sid] || {}
       }))
     };
   }
@@ -572,14 +606,15 @@ export class Daten extends DurableObject {
   async schuelerLoeschen(sid) {
     const weg = await this.tokensVon(sid);
     const ch = [...(await this.ctx.storage.list({ prefix: 'c:' })).keys(), ...(await this.ctx.storage.list({ prefix: 'lauf:' })).keys(),
-      ...(await this.ctx.storage.list({ prefix: 'w:' })).keys()].filter((k) => k.endsWith(':' + sid));
+      ...(await this.ctx.storage.list({ prefix: 'w:' })).keys(), ...(await this.ctx.storage.list({ prefix: 'live:' })).keys()]
+      .filter((k) => k.endsWith(':' + sid));
     await this.ctx.storage.delete([...weg, ...ch, 's:' + sid, 'p:' + sid, 'wsperre:' + sid]);
     return { ok: true };
   }
 
   async auftragLoeschen(ils) {
     const ch = [...(await this.ctx.storage.list({ prefix: `c:${ils}:` })).keys(), ...(await this.ctx.storage.list({ prefix: `lauf:${ils}:` })).keys(),
-      ...(await this.ctx.storage.list({ prefix: `w:${ils}:` })).keys()];
+      ...(await this.ctx.storage.list({ prefix: `w:${ils}:` })).keys(), ...(await this.ctx.storage.list({ prefix: `live:${ils}:` })).keys()];
     for (let i = 0; i < ch.length; i += 100) await this.ctx.storage.delete(ch.slice(i, i + 100));
     const alle = await this.ctx.storage.list({ prefix: 'p:' });
     const schreiben = {};
