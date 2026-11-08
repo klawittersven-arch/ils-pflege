@@ -475,3 +475,4 @@ table.lk td.challenge-zelle { font-weight: 700; color: #1f3a5f; white-space: now
 .btn:disabled { opacity: .45; cursor: default; }
 .rb-toast { white-space: nowrap; max-width: 94vw; overflow: hidden; text-overflow: ellipsis; }
 .rb-spur { margin-right: 18px; }
+.rb-figur.laeuft { transform: translate(-50%, -55%) scaleX(-1); }

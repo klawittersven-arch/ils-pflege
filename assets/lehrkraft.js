@@ -538,6 +538,7 @@
         b.fuellung.style.width = `${pct}%`;
         b.figur.style.left = `${pct}%`;
         b.figur.textContent = x.ziel ? '🏁' : '🏃';
+        b.figur.classList.toggle('laeuft', !x.ziel);   // 🏃 schaut nach links – gespiegelt läuft sie Richtung Ziel
         b.platz.textContent = platz ? (MEDAILLE[platz - 1] || `${platz}.`) : x.ziel ? '✓' : `${idx + 1}.`;
         b.status.textContent = platz ? `Platz ${platz} · ${st ? dauer(x.ziel - st) : uhrzeit(x.ziel) + ' Uhr'}` : x.ziel ? 'schon vorher fertig' : x.status;
       });
