@@ -483,3 +483,23 @@ table.lk td.challenge-zelle { font-weight: 700; color: #1f3a5f; white-space: now
 .rb-sprite.ziel { background-image: var(--rb-jubel); background-size: 100% 100%; animation: none; }
 @keyframes rb-lauf { from { background-position: 0% 0; } to { background-position: 133.333% 0; } }
 .rb-sieger-figur { width: 57px; height: 90px; image-rendering: pixelated; margin-bottom: 6px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.4)); }
+/* Live-Rennen: Größen wachsen mit der Bahnhöhe (--zeile), Kopf einzeilig, Knöpfe rechts */
+.se-overlay.rennen { padding: 1.6vh 1.8vw; }
+.rb-kopf { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 4px 24px; margin-bottom: 1vh; }
+.rb-titel { font-size: clamp(24px, 2.8vw, 46px); font-weight: 800; }
+.rb-unter { font-size: clamp(15px, 1.5vw, 26px); opacity: .85; }
+.rb-kopf .rb-uhr { font-size: clamp(17px, 1.8vw, 30px); }
+.rb-kopf .rb-live { font-size: clamp(13px, 1.2vw, 20px); }
+.rb-haupt { width: 100%; max-width: none; padding-bottom: 0; gap: 1.6vw; }
+.rb-links { --zeile: 40px; }
+.rb-links .rb-raster { grid-template-columns: calc(var(--zeile) * 1.5) calc(var(--zeile) * 7.5) 1fr calc(var(--zeile) * 6.5); gap: calc(var(--zeile) * .3); }
+.rb-links .rb-platz, .rb-links .rb-name { font-size: max(15px, calc(var(--zeile) * .56)); }
+.rb-links .rb-status { font-size: max(12px, calc(var(--zeile) * .42)); }
+.rb-links .rb-spur { height: max(10px, calc(var(--zeile) * .4)); }
+.rb-links .rb-marken-spur { height: max(18px, calc(var(--zeile) * .55)); }
+.rb-links .rb-marken-spur span { font-size: max(12px, calc(var(--zeile) * .38)); }
+.rb-links .rb-figur:not(.rb-sprite) { font-size: max(16px, calc(var(--zeile) * .7)); }
+.rb-rechts { width: clamp(200px, 19vw, 340px); display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.rb-rechts .rb-ziel { width: auto; align-self: stretch; }
+.rb-knoepfe { display: grid; gap: 8px; margin-top: auto; }
+.rb-knoepfe .btn { padding: 8px 12px; min-height: 40px; font-size: clamp(13px, 1vw, 16px); width: 100%; }

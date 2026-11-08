@@ -408,8 +408,11 @@
 
     const takt = setInterval(holen, RENNEN_TAKT_MS);
     const sekunde = setInterval(uhrStellen, 1000);
+    const beiGroesse = () => aktualisieren();
+    window.addEventListener('resize', beiGroesse);
     function schliessen() {
       clearInterval(takt); clearInterval(sekunde);
+      window.removeEventListener('resize', beiGroesse);
       document.removeEventListener('keydown', taste);
       if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
       ov.remove();
@@ -469,15 +472,19 @@
         el('div', { class: 'rb-marken-spur' }, el('span', { style: 'left:0%' }, 'Start'),
           a.schritte.map((x, i) => el('span', { style: `left:${((i + 1) / n) * 100}%` }, x.abschluss ? '🏁 Ziel' : x.kurz))),
         el('span', {}));
+      teile2.box = el('div', { class: 'rb-strecke-box' }, teile2.strecke);
+      teile2.links = el('div', { class: 'rb-links' }, marken, teile2.box);
       ov.append(
-        el('div', { class: 'se-kopf rb-kopf' }, el('div', { class: 'se-titel' }, '🏁 ILS-Rennen'),
-          el('div', { class: 'se-unter' }, `${a.titel} · ${klasse}`), el('div', { class: 'rb-zeile' }, teile2.uhr, teile2.live)),
-        el('div', { class: 'rb-haupt' }, el('div', { class: 'rb-links' }, marken, el('div', { class: 'rb-strecke-box' }, teile2.strecke)), teile2.ziel),
-        teile2.toast,
-        el('div', { class: 'se-knoepfe' }, teile2.startKnopf, teile2.stoppKnopf, teile2.ehrungKnopf,
-          el('button', { type: 'button', class: 'btn secondary', onclick: () => taste({ key: 'f' }) }, '⛶ Vollbild (F)'),
-          klassen.length > 1 ? el('button', { type: 'button', class: 'btn secondary', onclick: klasseWaehlen }, 'Klasse wechseln') : null,
-          el('button', { type: 'button', class: 'btn secondary', onclick: schliessen }, 'Schließen (Esc)')));
+        // einzeiliger Kopf, damit die Bahnen möglichst viel Höhe bekommen
+        el('div', { class: 'rb-kopf' }, el('span', { class: 'rb-titel' }, '🏁 ILS-Rennen'),
+          el('span', { class: 'rb-unter' }, `${a.titel} · ${klasse}`), teile2.uhr, teile2.live),
+        el('div', { class: 'rb-haupt' }, teile2.links,
+          el('div', { class: 'rb-rechts' }, teile2.ziel,
+            el('div', { class: 'rb-knoepfe' }, teile2.startKnopf, teile2.stoppKnopf, teile2.ehrungKnopf,
+              el('button', { type: 'button', class: 'btn secondary', onclick: () => taste({ key: 'f' }) }, '⛶ Vollbild (F)'),
+              klassen.length > 1 ? el('button', { type: 'button', class: 'btn secondary', onclick: klasseWaehlen }, 'Klasse wechseln') : null,
+              el('button', { type: 'button', class: 'btn secondary', onclick: schliessen }, 'Schließen (Esc)')))),
+        teile2.toast);
       uhrStellen();
       aktualisieren();
     }
@@ -533,7 +540,10 @@
       if (imZiel) zielListe.forEach((x, i) => { if (!imZiel.has(x.s.sid)) einlauf(x, i + 1); });
       imZiel = new Set(zielListe.map((x) => x.s.sid));
       // Bahnen: jede Person behält ihr Element, damit Überholen weich animiert wird
-      const hoehe = Math.max(30, Math.min(64, Math.floor((window.innerHeight * 0.6) / Math.max(1, liste.length))));
+      // Bahnhöhe: die ganze freie Höhe nutzen; Schrift und Figur wachsen mit (CSS-Variable --zeile)
+      const frei = (teile2.box && teile2.box.clientHeight) || window.innerHeight * 0.7;
+      const hoehe = Math.max(28, Math.min(96, Math.floor(frei / Math.max(1, liste.length))));
+      teile2.links.style.setProperty('--zeile', `${hoehe}px`);
       teile2.strecke.style.height = `${liste.length * hoehe}px`;
       const n = a.schritte.length;
       liste.forEach((x, idx) => {
@@ -558,7 +568,7 @@
         if (figur) {
           // läuft (4 Bilder wie im Spiel), steht still (noch nicht dabei) oder jubelt (im Ziel)
           const g = x.ziel ? figur.jubel : figur.lauf;
-          const mass = Math.max(1, Math.floor((hoehe * 0.95) / figur.lauf.hoehe));
+          const mass = Math.max(1, Math.floor(((hoehe * 0.92) / figur.lauf.hoehe) * 4) / 4);
           b.figur.classList.toggle('ziel', !!x.ziel);
           b.figur.classList.toggle('steht', !x.ziel && !x.aktiv);
           b.figur.style.width = `${g.breite * mass}px`;
