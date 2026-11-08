@@ -476,3 +476,10 @@ table.lk td.challenge-zelle { font-weight: 700; color: #1f3a5f; white-space: now
 .rb-toast { white-space: nowrap; max-width: 94vw; overflow: hidden; text-overflow: ellipsis; }
 .rb-spur { margin-right: 18px; }
 .rb-figur.laeuft { transform: translate(-50%, -55%) scaleX(-1); }
+/* Live-Rennen: Pixel-Krankenschwester aus „Diabetes Run!“ */
+.rb-sprite { font-size: 0; background-image: var(--rb-lauf); background-repeat: no-repeat; background-size: 400% 100%; image-rendering: pixelated;
+  transform: translate(-50%, -60%); animation: rb-lauf .6s steps(4) infinite; filter: drop-shadow(0 2px 2px rgba(0,0,0,.45)); }
+.rb-sprite.steht { animation-play-state: paused; }
+.rb-sprite.ziel { background-image: var(--rb-jubel); background-size: 100% 100%; animation: none; }
+@keyframes rb-lauf { from { background-position: 0% 0; } to { background-position: 133.333% 0; } }
+.rb-sieger-figur { width: 57px; height: 90px; image-rendering: pixelated; margin-bottom: 6px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.4)); }

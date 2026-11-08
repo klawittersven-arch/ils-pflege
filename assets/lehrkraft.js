@@ -393,6 +393,12 @@
     const startSchl = () => `ils-rennen-start|${a.id}|${klasse}`;
     const start = () => Number(merken.get(startSchl())) || 0;
     const ov = el('div', { class: 'se-overlay rennen', id: 'rennen-overlay', tabindex: '-1' });
+    // Pixel-Krankenschwester aus „Diabetes Run!“ (assets/schwester.js); ohne sie läuft ein Emoji
+    const figur = window.ILSSchwester ? { lauf: ILSSchwester.lauf(), jubel: ILSSchwester.jubel() } : null;
+    if (figur) {
+      ov.style.setProperty('--rb-lauf', `url("${figur.lauf.url}")`);
+      ov.style.setProperty('--rb-jubel', `url("${figur.jubel.url}")`);
+    }
     const teile2 = {};
     let bahnen = new Map();
     let imZiel = null;          // sids, die im Rennen schon im Ziel sind (null = erster Durchlauf, keine Einblendung)
@@ -426,7 +432,8 @@
       const jetzt = stand.jetzt || serverJetzt();
       let teil = 0;
       let status;
-      if (l && !p[l.schritt] && jetzt - l.um < 15 * 60000) {
+      const aktiv = !!(l && !p[l.schritt] && jetzt - l.um < 15 * 60000);
+      if (aktiv) {
         const x = a.schritte.find((y) => y.id === l.schritt);
         const kurz = x ? x.kurz : '';
         if (l.phase === 'karten' && l.n) { teil = 0.8 * (l.i / l.n); status = `${kurz} · Aufgabe ${Math.min(l.i + 1, l.n)}/${l.n}`; }
@@ -435,7 +442,7 @@
         else { teil = 0.03; status = `${kurz} · 📖 liest`; }
       } else if (fertig) status = `${fertig} von ${a.schritte.length} erledigt`;
       else status = s.ersteAnmeldung ? 'am Start' : 'noch nicht angemeldet';
-      return { wert: Math.min(a.schritte.length, fertig + teil), ziel, status };
+      return { wert: Math.min(a.schritte.length, fertig + teil), ziel, status, aktiv };
     }
 
     function klasseWaehlen() {
@@ -522,7 +529,7 @@
         let b = bahnen.get(x.s.sid);
         if (!b) {
           b = { platz: el('span', { class: 'rb-platz' }), name: el('span', { class: 'rb-name' }, x.s.name), fuellung: el('div', { class: 'rb-fuellung' }),
-            figur: el('span', { class: 'rb-figur' }), status: el('span', { class: 'rb-status' }) };
+            figur: el('span', { class: 'rb-figur' + (figur ? ' rb-sprite' : '') }), status: el('span', { class: 'rb-status' }) };
           b.el = el('div', { class: 'rb-raster rb-bahn', 'data-sid': x.s.sid }, b.platz, b.name,
             el('div', { class: 'rb-spur' }, a.schritte.map((_, i) => el('i', { class: 'rb-linie', style: `left:${((i + 1) / n) * 100}%` })), b.fuellung, b.figur),
             b.status);
@@ -537,8 +544,18 @@
         b.el.classList.toggle('vorher', !!x.ziel && !platz);
         b.fuellung.style.width = `${pct}%`;
         b.figur.style.left = `${pct}%`;
-        b.figur.textContent = x.ziel ? '🏁' : '🏃';
-        b.figur.classList.toggle('laeuft', !x.ziel);   // 🏃 schaut nach links – gespiegelt läuft sie Richtung Ziel
+        if (figur) {
+          // läuft (4 Bilder wie im Spiel), steht still (noch nicht dabei) oder jubelt (im Ziel)
+          const g = x.ziel ? figur.jubel : figur.lauf;
+          const mass = Math.max(1, Math.floor((hoehe * 0.95) / figur.lauf.hoehe));
+          b.figur.classList.toggle('ziel', !!x.ziel);
+          b.figur.classList.toggle('steht', !x.ziel && !x.aktiv);
+          b.figur.style.width = `${g.breite * mass}px`;
+          b.figur.style.height = `${g.hoehe * mass}px`;
+        } else {
+          b.figur.textContent = x.ziel ? '🏁' : '🏃';
+          b.figur.classList.toggle('laeuft', !x.ziel);   // 🏃 schaut nach links – gespiegelt läuft sie Richtung Ziel
+        }
         b.platz.textContent = platz ? (MEDAILLE[platz - 1] || `${platz}.`) : x.ziel ? '✓' : `${idx + 1}.`;
         b.status.textContent = platz ? `Platz ${platz} · ${st ? dauer(x.ziel - st) : uhrzeit(x.ziel) + ' Uhr'}` : x.ziel ? 'schon vorher fertig' : x.status;
       });
@@ -570,6 +587,7 @@
       const stufe = (platz) => {
         const x = top[platz - 1];
         return el('div', { class: `se-stufe se-p${platz}` + (x ? '' : ' leer') },
+          figur && x ? el('img', { class: 'rb-sieger-figur', src: figur.jubel.url, alt: '' }) : null,
           el('div', { class: 'se-name' }, x ? (platz === 1 ? '🏆 ' : '') + x.s.name : ''),
           el('div', { class: 'se-punkte' }, x ? zeitText(x) : ''),
           el('div', { class: 'se-block' }, String(platz)));

@@ -73,6 +73,14 @@ const SCHRITTE = ['1', '2', '3', '4', '5'];
     pruefe(/Ü3 · Aufgabe 4\/8/.test(await bahn('Dana D.').textContent()), 'Dana: „Ü3 · Aufgabe 4/8“ (Live-Stand)');
     pruefe(/Ü2 · Aufgabe 1/.test(await bahn('Emil E.').textContent()), 'Emil: „Ü2 · Aufgabe 1/…“ (vom Handy gemeldet)');
     pruefe(/noch nicht gestartet/.test(await lk.textContent('.rb-uhr')), 'vor dem Start: Uhr zeigt „noch nicht gestartet“');
+    const sprite = await lk.evaluate(() => {
+      const f = (n) => document.querySelector(`.rb-bahn[data-sid] .rb-name`) && [...document.querySelectorAll('.rb-bahn')].find((b) => b.querySelector('.rb-name').textContent === n).querySelector('.rb-figur');
+      const dana = f('Dana D.'), anna = f('Anna A.'), cem = f('Cem C.');
+      const st = (e) => getComputedStyle(e);
+      return { bild: st(dana).backgroundImage.startsWith('url("data:image/png'), laeuft: st(dana).animationName === 'rb-lauf' && st(dana).animationPlayState === 'running',
+        steht: st(anna).animationPlayState === 'paused', jubelt: cem.classList.contains('ziel') && st(cem).animationName === 'none' };
+    });
+    pruefe(sprite.bild && sprite.laeuft && sprite.steht && sprite.jubelt, 'Pixel-Krankenschwester: läuft (aktiv), steht (noch nicht dabei), jubelt (im Ziel)', sprite);
     await lk.click('#rb-start');
     await lk.waitForFunction(() => /⏱/.test(document.querySelector('.rb-uhr').textContent));
     pruefe(/schon vorher fertig/.test(await bahn('Cem C.').textContent()), 'Cem war vor dem Start fertig → „schon vorher fertig“, kein Platz');
@@ -97,6 +105,7 @@ const SCHRITTE = ['1', '2', '3', '4', '5'];
     await lk.click('#rb-ehrung');
     await lk.waitForSelector('#rb-ehrung-ebene .se-p1.zeigen', { timeout: 8000 });
     pruefe(/Ben B\./.test(await lk.textContent('#rb-ehrung-ebene .se-p1')) && /Anna A\./.test(await lk.textContent('#rb-ehrung-ebene .se-p2')), 'Siegerehrung: 1. Ben, 2. Anna');
+    pruefe((await lk.locator('#rb-ehrung-ebene .rb-sieger-figur').count()) === 2, 'Treppchen: jubelnde Krankenschwester bei jedem Platz');
     await warte(1200);
     await foto(lk, 'r3_siegerehrung');
     await lk.keyboard.press('Escape');
