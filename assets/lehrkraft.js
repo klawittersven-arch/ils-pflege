@@ -462,6 +462,7 @@
       teile2.ziel = el('div', { class: 'rb-ziel', id: 'rb-ziel' });
       teile2.toast = el('div', { class: 'rb-toast', 'aria-live': 'polite' });
       teile2.startKnopf = el('button', { type: 'button', class: 'btn secondary', id: 'rb-start', onclick: starten });
+      teile2.stoppKnopf = el('button', { type: 'button', class: 'btn secondary', id: 'rb-stopp', onclick: beenden }, '⏹ Rennen beenden');
       teile2.ehrungKnopf = el('button', { type: 'button', class: 'btn secondary', id: 'rb-ehrung', onclick: siegerehrungTop5 }, '🏆 Siegerehrung Top 5');
       const n = a.schritte.length;
       const marken = el('div', { class: 'rb-raster rb-marken' }, el('span', {}), el('span', {}),
@@ -473,7 +474,7 @@
           el('div', { class: 'se-unter' }, `${a.titel} · ${klasse}`), el('div', { class: 'rb-zeile' }, teile2.uhr, teile2.live)),
         el('div', { class: 'rb-haupt' }, el('div', { class: 'rb-links' }, marken, el('div', { class: 'rb-strecke-box' }, teile2.strecke)), teile2.ziel),
         teile2.toast,
-        el('div', { class: 'se-knoepfe' }, teile2.startKnopf, teile2.ehrungKnopf,
+        el('div', { class: 'se-knoepfe' }, teile2.startKnopf, teile2.stoppKnopf, teile2.ehrungKnopf,
           el('button', { type: 'button', class: 'btn secondary', onclick: () => taste({ key: 'f' }) }, '⛶ Vollbild (F)'),
           klassen.length > 1 ? el('button', { type: 'button', class: 'btn secondary', onclick: klasseWaehlen }, 'Klasse wechseln') : null,
           el('button', { type: 'button', class: 'btn secondary', onclick: schliessen }, 'Schließen (Esc)')));
@@ -485,6 +486,7 @@
       if (!teile2.uhr) return;
       teile2.uhr.textContent = start() ? `⏱ ${dauer(serverJetzt() - start())}` : `🕒 ${uhrzeit(serverJetzt())} Uhr – Rennen noch nicht gestartet`;
       if (teile2.startKnopf) teile2.startKnopf.textContent = start() ? '↻ Rennen neu starten' : '▶ Rennen starten';
+      if (teile2.stoppKnopf) teile2.stoppKnopf.classList.toggle('hidden', !start());
     }
 
     function starten() {
@@ -493,6 +495,15 @@
       imZiel = null;
       teile2.toast.textContent = '🏁 Los geht’s!';
       teile2.toast.classList.remove('zeigen'); void teile2.toast.offsetWidth; teile2.toast.classList.add('zeigen');
+      uhrStellen();
+      aktualisieren();
+    }
+
+    // Rennen beenden: Startzeit löschen – die Uhr steht wieder auf „noch nicht gestartet“
+    function beenden() {
+      if (!window.confirm('Rennen beenden? Die Uhr wird zurückgesetzt. Beim nächsten „Rennen starten“ beginnt sie wieder bei 0.')) return;
+      merken.set(startSchl(), '');
+      imZiel = null;
       uhrStellen();
       aktualisieren();
     }

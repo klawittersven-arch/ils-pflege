@@ -194,7 +194,7 @@ Für ILS im Klassenraum: Lehrkraft-Seite → ILS-Auftrag und Klasse wählen → 
   Übung vor und auch **innerhalb** einer Übung: Das Handy meldet bei jedem Wechsel kurz den Stand
   (`POST /api/live` { ils, schritt, phase, i, n } – z. B. „Ü3 · Aufgabe 4/8“, „⏸ Lesepause“, „✍️ schreibt“).
   Aktualisierung alle 5 Sekunden; wer vorne liegt, rutscht nach oben (Überhol-Animation).
-- **▶ Rennen starten** setzt die Uhr auf 0 (gespeichert im Browser der Lehrkraft, je Auftrag und Klasse). Gewertet werden
+- **▶ Rennen starten** setzt die Uhr auf 0 (gespeichert nur im Browser der Lehrkraft, je Auftrag und Klasse; im Hintergrund läuft nichts). **⏹ Rennen beenden** setzt sie zurück. Gewertet werden
   nur Zieleinläufe ab dem Start; wer schon vorher fertig war, steht als „schon vorher fertig“ ohne Platz in der Liste.
 - Jeder neue Zieleinlauf wird groß eingeblendet („Anna A. ist im Ziel – Platz 2!“) mit Konfetti; rechts die Zielliste.
 - **🏆 Siegerehrung Top 5**: Treppchen 2–1–3, dann Plätze 4 und 5, mit Zeit seit dem Start. Tasten: F Vollbild,

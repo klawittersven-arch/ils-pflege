@@ -110,6 +110,9 @@ const SCHRITTE = ['1', '2', '3', '4', '5'];
     await foto(lk, 'r3_siegerehrung');
     await lk.keyboard.press('Escape');
     pruefe(!(await lk.$('#rb-ehrung-ebene')) && !!(await lk.$('#rennen-overlay')), 'Esc: zurück zum Rennen');
+    await lk.click('#rb-stopp');
+    await lk.waitForFunction(() => /noch nicht gestartet/.test(document.querySelector('.rb-uhr').textContent));
+    pruefe(await lk.isHidden('#rb-stopp') && /Rennen starten/.test(await lk.textContent('#rb-start')), '„Rennen beenden“: Uhr zurückgesetzt, Knopf wieder „Rennen starten“');
     await lk.keyboard.press('Escape');
     pruefe(!(await lk.$('#rennen-overlay')), 'Esc: Rennen geschlossen');
 
