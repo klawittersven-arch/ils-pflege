@@ -197,6 +197,7 @@ Für ILS im Klassenraum: Lehrkraft-Seite → ILS-Auftrag und Klasse wählen → 
 - **▶ Rennen starten** setzt die Uhr auf 0 (gespeichert nur im Browser der Lehrkraft, je Auftrag und Klasse; im Hintergrund läuft nichts). **⏹ Rennen beenden** setzt sie zurück. Gewertet werden
   nur Zieleinläufe ab dem Start; wer schon vorher fertig war, steht als „schon vorher fertig“ ohne Platz in der Liste.
 - Jeder neue Zieleinlauf wird groß eingeblendet („Anna A. ist im Ziel – Platz 2!“) mit Konfetti; rechts die Zielliste.
+- **🔟 Nur Top 10** (Taste T): nur die ersten 10 Bahnen, dafür größer; wer nach vorn kommt, gleitet ins Bild (Wahl wird im Browser gemerkt).
 - **🏆 Siegerehrung Top 5**: Treppchen 2–1–3, dann Plätze 4 und 5, mit Zeit seit dem Start. Tasten: F Vollbild,
   R nochmal, Esc zurück/schließen.
 - Speicher im Worker: `live:<ils>:<sid>` = { schritt, phase, i, n, um } (wird mit Person/Auftrag gelöscht).

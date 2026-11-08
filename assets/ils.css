@@ -503,3 +503,14 @@ table.lk td.challenge-zelle { font-weight: 700; color: #1f3a5f; white-space: now
 .rb-rechts .rb-ziel { width: auto; align-self: stretch; }
 .rb-knoepfe { display: grid; gap: 8px; margin-top: auto; }
 .rb-knoepfe .btn { padding: 8px 12px; min-height: 40px; font-size: clamp(13px, 1vw, 16px); width: 100%; }
+/* Live-Rennen: Option „Nur Top 10“ */
+.rb-bahn { transition: transform .9s ease, opacity .6s ease; }
+.rb-bahn.weg { opacity: 0; pointer-events: none; }
+.rb-strecke.top10 { overflow: hidden; }
+/* Live-Rennen: Spalten und Schrift begrenzen, damit die Strecke immer genug Breite behält */
+.rb-links .rb-raster { grid-template-columns: min(calc(var(--zeile) * 1.5), 3.6vw) min(calc(var(--zeile) * 7.5), 18vw) minmax(30vw, 1fr) min(calc(var(--zeile) * 6.5), 15vw);
+  gap: min(calc(var(--zeile) * .3), 1.1vw); }
+.rb-links .rb-platz, .rb-links .rb-name { font-size: max(15px, min(calc(var(--zeile) * .56), 2.5vw)); }
+.rb-links .rb-status { font-size: max(12px, min(calc(var(--zeile) * .42), 1.45vw)); }
+.rb-links .rb-marken-spur { height: max(18px, min(calc(var(--zeile) * .4), 30px)); }
+.rb-links .rb-marken-spur span { font-size: max(12px, min(calc(var(--zeile) * .38), 1.3vw)); }

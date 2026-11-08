@@ -405,6 +405,7 @@
     let zielListe = [];
     let ehrung = null;
     let ehrungAbspielen = () => {};
+    let nurTop10 = merken.get('ils-rennen-top10') === '1';   // Option: nur die ersten 10 Bahnen, dafür größer
 
     const takt = setInterval(holen, RENNEN_TAKT_MS);
     const sekunde = setInterval(uhrStellen, 1000);
@@ -422,6 +423,7 @@
       if (ev.key === 'Escape') { if (ehrung) ehrungSchliessen(); else schliessen(); }
       else if (ev.key === 'f' || ev.key === 'F') { if (!document.fullscreenElement) ov.requestFullscreen && ov.requestFullscreen().catch(() => {}); else document.exitFullscreen().catch(() => {}); }
       else if ((ev.key === 'r' || ev.key === 'R') && ehrung) ehrungAbspielen();
+      else if ((ev.key === 't' || ev.key === 'T') && !ehrung) top10Umschalten();
     }
     document.addEventListener('keydown', taste);
     document.body.append(ov);
@@ -444,7 +446,7 @@
         else if (l.phase === 'schreiben' || l.phase === 'checkliste') { teil = 0.9; status = `${kurz} · ✍️ schreibt`; }
         else { teil = 0.03; status = `${kurz} · 📖 liest`; }
       } else if (fertig) status = `${fertig} von ${a.schritte.length} erledigt`;
-      else status = s.ersteAnmeldung ? 'am Start' : 'noch nicht angemeldet';
+      else status = s.ersteAnmeldung ? 'am Start' : 'nicht angemeldet';
       return { wert: Math.min(a.schritte.length, fertig + teil), ziel, status, aktiv };
     }
 
@@ -466,6 +468,7 @@
       teile2.toast = el('div', { class: 'rb-toast', 'aria-live': 'polite' });
       teile2.startKnopf = el('button', { type: 'button', class: 'btn secondary', id: 'rb-start', onclick: starten });
       teile2.stoppKnopf = el('button', { type: 'button', class: 'btn secondary', id: 'rb-stopp', onclick: beenden }, '⏹ Rennen beenden');
+      teile2.top10Knopf = el('button', { type: 'button', class: 'btn secondary', id: 'rb-top10', onclick: top10Umschalten });
       teile2.ehrungKnopf = el('button', { type: 'button', class: 'btn secondary', id: 'rb-ehrung', onclick: siegerehrungTop5 }, '🏆 Siegerehrung Top 5');
       const n = a.schritte.length;
       const marken = el('div', { class: 'rb-raster rb-marken' }, el('span', {}), el('span', {}),
@@ -480,7 +483,7 @@
           el('span', { class: 'rb-unter' }, `${a.titel} · ${klasse}`), teile2.uhr, teile2.live),
         el('div', { class: 'rb-haupt' }, teile2.links,
           el('div', { class: 'rb-rechts' }, teile2.ziel,
-            el('div', { class: 'rb-knoepfe' }, teile2.startKnopf, teile2.stoppKnopf, teile2.ehrungKnopf,
+            el('div', { class: 'rb-knoepfe' }, teile2.startKnopf, teile2.stoppKnopf, teile2.top10Knopf, teile2.ehrungKnopf,
               el('button', { type: 'button', class: 'btn secondary', onclick: () => taste({ key: 'f' }) }, '⛶ Vollbild (F)'),
               klassen.length > 1 ? el('button', { type: 'button', class: 'btn secondary', onclick: klasseWaehlen }, 'Klasse wechseln') : null,
               el('button', { type: 'button', class: 'btn secondary', onclick: schliessen }, 'Schließen (Esc)')))),
@@ -515,6 +518,12 @@
       aktualisieren();
     }
 
+    function top10Umschalten() {
+      nurTop10 = !nurTop10;
+      merken.set('ils-rennen-top10', nurTop10 ? '1' : '');
+      aktualisieren();
+    }
+
     async function holen() {
       try {
         const r = await api('/api/lehrkraft/stand');
@@ -540,11 +549,22 @@
       if (imZiel) zielListe.forEach((x, i) => { if (!imZiel.has(x.s.sid)) einlauf(x, i + 1); });
       imZiel = new Set(zielListe.map((x) => x.s.sid));
       // Bahnen: jede Person behält ihr Element, damit Überholen weich animiert wird
-      // Bahnhöhe: die ganze freie Höhe nutzen; Schrift und Figur wachsen mit (CSS-Variable --zeile)
-      const frei = (teile2.box && teile2.box.clientHeight) || window.innerHeight * 0.7;
-      const hoehe = Math.max(28, Math.min(96, Math.floor(frei / Math.max(1, liste.length))));
-      teile2.links.style.setProperty('--zeile', `${hoehe}px`);
-      teile2.strecke.style.height = `${liste.length * hoehe}px`;
+      // Bahnhöhe: die ganze freie Höhe nutzen; Schrift und Figur wachsen mit (CSS-Variable --zeile).
+      // „Nur Top 10“: nur die ersten 10 Bahnen sind zu sehen – entsprechend größer.
+      const anzahl = nurTop10 ? Math.min(10, liste.length) : liste.length;
+      let hoehe = 0;
+      // zweimal messen: die Kopfzeile der Strecke wächst mit, danach bleibt etwas weniger Höhe übrig
+      for (let runde = 0; runde < 3; runde++) {
+        const frei = (teile2.box && teile2.box.clientHeight) || window.innerHeight * 0.7;
+        const neu = Math.max(28, Math.min(nurTop10 ? 120 : 96, Math.floor(frei / Math.max(1, anzahl))));
+        if (neu === hoehe) break;
+        hoehe = neu;
+        teile2.links.style.setProperty('--zeile', `${hoehe}px`);
+        teile2.strecke.style.height = `${anzahl * hoehe}px`;
+      }
+      teile2.strecke.classList.toggle('top10', nurTop10);
+      teile2.top10Knopf.textContent = nurTop10 ? '👥 Alle anzeigen (T)' : '🔟 Nur Top 10 (T)';
+      teile2.top10Knopf.classList.toggle('hidden', liste.length <= 10 && !nurTop10);
       const n = a.schritte.length;
       liste.forEach((x, idx) => {
         let b = bahnen.get(x.s.sid);
@@ -559,8 +579,10 @@
         }
         const pct = (x.wert / n) * 100;
         const platz = imRennen(x) ? zielListe.indexOf(x) + 1 : 0;
+        const weg = idx >= anzahl;   // außerhalb der Top 10: unsichtbar unten „in der Warteschlange“
         b.el.style.height = `${hoehe}px`;
-        b.el.style.transform = `translateY(${idx * hoehe}px)`;
+        b.el.style.transform = `translateY(${Math.min(idx, anzahl) * hoehe}px)`;
+        b.el.classList.toggle('weg', weg);
         b.el.classList.toggle('im-ziel', !!x.ziel);
         b.el.classList.toggle('vorher', !!x.ziel && !platz);
         b.fuellung.style.width = `${pct}%`;
@@ -588,7 +610,8 @@
           ? el('ol', {}, zielListe.slice(0, 10).map((x, i) => el('li', {}, el('span', {}, `${MEDAILLE[i] || `${i + 1}.`} ${x.s.name}`),
             el('strong', {}, st ? dauer(x.ziel - st) : uhrzeit(x.ziel)))))
           : el('p', { class: 'rb-leer' }, 'Noch niemand – wer ist zuerst da?'),
-        el('p', { class: 'rb-anzahl' }, `${zielListe.length} von ${liste.length} im Ziel`));
+        el('p', { class: 'rb-anzahl' }, `${zielListe.length} von ${liste.length} im Ziel`),
+        nurTop10 && liste.length > 10 ? el('p', { class: 'rb-anzahl' }, `Angezeigt: die ersten 10 von ${liste.length}`) : null);
       teile2.ehrungKnopf.disabled = !zielListe.length;
     }
 

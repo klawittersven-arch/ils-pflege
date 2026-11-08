@@ -23,7 +23,8 @@ const SCHRITTE = ['1', '2', '3', '4', '5'];
   };
   try {
     await post('/api/lehrkraft/import', { text: ['3BFP2/1;Anna A.;01.01.2004', '3BFP2/1;Ben B.;02.02.2004', '3BFP2/1;Cem C.;03.03.2004',
-      '3BFP2/1;Dana D.;04.04.2004', '3BFP2/1;Emil E.;05.05.2004', '3BFP2/2;Fritz F.;06.06.2004'].join('\n') });
+      '3BFP2/1;Dana D.;04.04.2004', '3BFP2/1;Emil E.;05.05.2004', '3BFP2/2;Fritz F.;06.06.2004',
+      ...['Gina G.', 'Hugo H.', 'Ines I.', 'Jan J.', 'Kim K.', 'Leo L.', 'Mia M.'].map((n, i) => `3BFP2/1;${n};${10 + i}.07.2004`)].join('\n') });
     const anmelden = async (vorname, datum) => (await post('/api/anmelden', { klasse: '3BFP2/1', vorname, geburtstag: datum })).d.token;
     const tok = { anna: await anmelden('Anna', '2004-01-01'), ben: await anmelden('Ben', '2004-02-02'), cem: await anmelden('Cem', '2004-03-03'), dana: await anmelden('Dana', '2004-04-04') };
     const fertigMachen = async (t) => { for (const sch of [...SCHRITTE, 'quiz']) await post('/api/melden', { ils: 'drainage', schritt: sch, punkte: 8, max: 8 }, t); };
@@ -68,7 +69,7 @@ const SCHRITTE = ['1', '2', '3', '4', '5'];
     await lk.selectOption('#lk-klasse', '3BFP2/1');
     await lk.click('#lk-rennen');
     await lk.waitForSelector('.rb-bahn');
-    pruefe((await lk.locator('.rb-bahn').count()) === 5, '5 Bahnen (nur die gewählte Klasse)');
+    pruefe((await lk.locator('.rb-bahn').count()) === 12, '12 Bahnen (nur die gewählte Klasse)');
     const bahn = (name) => lk.locator('.rb-bahn', { hasText: name });
     pruefe(/Ü3 · Aufgabe 4\/8/.test(await bahn('Dana D.').textContent()), 'Dana: „Ü3 · Aufgabe 4/8“ (Live-Stand)');
     pruefe(/Ü2 · Aufgabe 1/.test(await bahn('Emil E.').textContent()), 'Emil: „Ü2 · Aufgabe 1/…“ (vom Handy gemeldet)');
@@ -100,6 +101,19 @@ const SCHRITTE = ['1', '2', '3', '4', '5'];
       .sort((p, q) => p.y - q.y).map((x) => x.name));
     pruefe(reihen[0] === 'Ben B.' && reihen[1] === 'Anna A.' && reihen[2] === 'Cem C.' && reihen[3] === 'Dana D.',
       'Bahnen sortiert: Zieleinläufe oben, dann „vorher fertig“, dann nach Fortschritt', reihen);
+    const zeile = () => lk.evaluate(() => parseFloat(getComputedStyle(document.querySelector('.rb-links')).getPropertyValue('--zeile')));
+    const vorher = await zeile();
+    await lk.click('#rb-top10');
+    await warte(1200);
+    const nachher = await zeile();
+    const sichtbar = await lk.locator('.rb-bahn:not(.weg)').count();
+    const oben = await lk.locator('.rb-bahn:not(.weg) .rb-name').allTextContents();
+    pruefe(sichtbar === 10 && nachher > vorher && oben.includes('Ben B.') && /Alle anzeigen/.test(await lk.textContent('#rb-top10'))
+      && /die ersten 10 von 12/.test(await lk.textContent('#rb-ziel')), `„Nur Top 10“: 10 Bahnen sichtbar und größer (${vorher} → ${nachher} px)`);
+    await foto(lk, 'r2b_top10');
+    await lk.keyboard.press('t');
+    await warte(1000);
+    pruefe((await lk.locator('.rb-bahn:not(.weg)').count()) === 12 && /Nur Top 10/.test(await lk.textContent('#rb-top10')), 'Taste T: wieder alle 12 Bahnen');
     await foto(lk, 'r2_rennen_ziel');
 
     await lk.click('#rb-ehrung');
