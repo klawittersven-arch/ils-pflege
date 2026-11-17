@@ -8,7 +8,9 @@
 
    Ablauf: Die SuS melden sich einmal pro Gerät an (Klasse, Vorname, Geburtstag). Das Gerät bekommt
    einen Schlüssel (Token) und meldet danach jede bestandene Übung. Ohne Netz wird gesammelt und
-   später nachgereicht. Einzelne Antworten werden nie übertragen. */
+   später nachgereicht. Einzelne Antworten werden nicht personenbezogen übertragen: Für die anonyme Fehlerstatistik
+   meldet das Handy je Aufgabe nur, ob sie gelöst wurde und welche Fehlklicks es gab – der Server speichert das
+   ohne Namen, nur als Summe aller SuS (siehe statistik()). */
 const ILSKonto = (() => {
   'use strict';
   const el = ILS.el;
@@ -37,7 +39,7 @@ const ILSKonto = (() => {
   versionPruefen();
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') versionPruefen(); });
   window.addEventListener('pageshow', (ev) => { if (ev.persisted) { letztePruefung = 0; versionPruefen(); } });
-  const SCHL = { konto: 'ils-konto', offen: 'ils-konto-offen', stand: 'ils-konto-stand', klasse: 'ils-konto-klasse' };
+  const SCHL = { konto: 'ils-konto', offen: 'ils-konto-offen', stand: 'ils-konto-stand', klasse: 'ils-konto-klasse', statistik: 'ils-statistik' };
 
   /* ---------- Speicher auf dem Gerät ---------- */
   const lesen = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
@@ -93,6 +95,40 @@ const ILSKonto = (() => {
     liveLetzte = inhalt;
     liveUm = Date.now();
     api('/api/live', { methode: 'POST', token: k.token, daten: { ils, schritt: String(schritt), phase, i, n } }).catch(() => {});
+  }
+
+  // Anonyme Fehlerstatistik je Aufgabe (Lernmodus): Einträge sammeln und gebündelt senden. Der Server zählt sie nur
+  // zusammen (ohne Namen); die Anmeldung ist nötig, damit nicht jeder Beliebige Zahlen schicken kann.
+  // Ohne Netz bleiben höchstens 100 Einträge auf dem Gerät; ohne Anmeldung wird nichts gesammelt.
+  let statistikLaeuft = false;
+  function statistik(ils, schritt, eintrag) {
+    const k = konto();
+    if (!k || !SERVER) return;
+    const nr = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);   // nur auf dem Gerät (zum Abhaken)
+    const liste = (lesen(SCHL.statistik) || []).concat([{ ...eintrag, ils, schritt: String(schritt), nr }]).slice(-100);
+    schreiben(SCHL.statistik, liste);
+    statistikSenden();
+  }
+  async function statistikSenden() {
+    const k = konto();
+    if (statistikLaeuft || !k || !SERVER) return;
+    statistikLaeuft = true;
+    try {
+      for (let runde = 0; runde < 10; runde++) {
+        const alle = lesen(SCHL.statistik) || [];
+        if (!alle.length) break;
+        const { ils, schritt } = alle[0];
+        const paket = alle.filter((e) => e.ils === ils && e.schritt === schritt).slice(0, 20);
+        let r;
+        try {
+          r = await api('/api/statistik', { methode: 'POST', token: k.token, daten: { ils, schritt, eintraege: paket.map(({ ils: _i, schritt: _s, nr: _n, ...e }) => e) } });
+        } catch (e) { break; }   // offline: später erneut
+        if (r.status >= 500) break;
+        // angekommen oder abgelehnt → nicht wiederholen
+        const weg = new Set(paket.map((e) => e.nr));
+        schreiben(SCHL.statistik, (lesen(SCHL.statistik) || []).filter((e) => !weg.has(e.nr)));
+      }
+    } finally { statistikLaeuft = false; }
   }
 
   // Bekannter Stand = zuletzt vom Server geholter Stand + noch nicht übertragene Ergebnisse dieses Geräts
@@ -162,7 +198,7 @@ const ILSKonto = (() => {
     return meine().length ? 'offline' : 'ok';
   }
 
-  window.addEventListener('online', () => nachreichen());
+  window.addEventListener('online', () => { nachreichen(); statistikSenden(); });
 
   /* Rückmeldungen nach bestandener Übung, die sich nach einer späteren Anmeldung aktualisieren */
   const meldungsZeilen = [];
@@ -424,7 +460,7 @@ const ILSKonto = (() => {
     });
   }
 
-  if (konto()) nachreichen();
+  if (konto()) { nachreichen(); statistikSenden(); }
 
   // für ils-lern.js
   function meldungsZeile(zeile, versprechen) {
@@ -434,6 +470,6 @@ const ILSKonto = (() => {
 
   return {
     uebersicht, uebung, abschluss, konto, melden, nachreichen, standHolen, bekannterStand,
-    bereich, rahmen, auftrag, link, datum, weiterKnopf, werIst, meldungsZeile, api, live
+    bereich, rahmen, auftrag, link, datum, weiterKnopf, werIst, meldungsZeile, api, live, statistik
   };
 })();

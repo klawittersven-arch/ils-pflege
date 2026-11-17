@@ -89,10 +89,11 @@ def fuss(beschriftet=True):
         s.append("<line x1='286' y1='140' x2='238' y2='140' stroke='#888'/><line x1='286' y1='360' x2='262' y2='352' stroke='#888'/>"
                  "<line x1='286' y1='290' x2='256' y2='290' stroke='#888'/>")
     else:
+        # „zehen“ umfasst auch die Großzehe; der Nagel liegt darüber (später im SVG = wird zuerst getroffen)
         s += ["<g data-ziel='verband'><rect class='feld' x='118' y='96' width='124' height='84' rx='8'/></g>",
               "<g data-ziel='puls'><circle class='feld' cx='196' cy='245' r='24'/></g>",
-              "<g data-ziel='nagel'><rect class='feld' x='106' y='332' width='44' height='38' rx='8'/></g>",
-              "<g data-ziel='zehen'><rect class='feld' x='152' y='336' width='126' height='60' rx='10'/></g>",
+              "<g data-ziel='zehen'><rect class='feld' x='104' y='334' width='174' height='62' rx='10'/></g>",
+              "<g data-ziel='nagel'><rect class='feld' x='110' y='336' width='36' height='30' rx='8'/></g>",
               "<g data-ziel='haut'><rect class='feld' x='104' y='190' width='70' height='130' rx='10'/></g>"]
     s.append("</svg>")
     return "".join(s)

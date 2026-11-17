@@ -73,7 +73,7 @@ ILSLern.uebung({
   ziehen: 4, fehlerMax: 1, pauseSek: 30,
   pool: [
     { typ: 'rf', aussage: 'Die Lehrkraft sieht, welche Übungen Sie erledigt haben.', richtig: true, erklaerung: 'Ja – auf ihrer Übersichtsseite.' },
-    { typ: 'rf', aussage: 'Ihre einzelnen Antworten werden an die Lehrkraft geschickt.', richtig: false, erklaerung: 'Nein – nur, ob Sie die Übung geschafft haben.' },
+    { typ: 'rf', aussage: 'Ihre einzelnen Antworten werden an die Lehrkraft geschickt.', richtig: false, erklaerung: 'Nein – nur, ob Sie die Übung geschafft haben. Wie oft eine Aufgabe falsch beantwortet wird, zählt die App nur anonym (ohne Namen).' },
     { typ: 'rf', aussage: 'Ohne Internet geht Ihr Ergebnis verloren.', richtig: false, erklaerung: 'Nein – es wird später automatisch nachgereicht.' },
     { typ: 'rf', aussage: 'Sie müssen sich auf jedem Gerät einmal anmelden.', richtig: true, erklaerung: 'Ja – mit Klasse, Vorname und Geburtstag.' },
     { typ: 'rf', aussage: 'Wer zu schnell tippt, bekommt eine kurze Lesepause.', richtig: true, erklaerung: 'Nach drei Warnungen – danach geht es mit derselben Aufgabe weiter.' }

@@ -8,6 +8,7 @@
   const SERVER = String(window.ILS_SERVER || '').replace(/\/+$/, '');
   const AUFTRAEGE = window.ILS_AUFTRAEGE || [];
   const app = document.getElementById('app');
+  const WURZEL = new URL('..', document.currentScript.src).href;   // Website-Wurzel (für die Aufgaben-Seiten)
 
   const sitzung = {
     get: (k) => { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
@@ -113,14 +114,18 @@
     app.innerHTML = '';
     const ilsWahl = el('select', { id: 'lk-ils', 'aria-label': 'ILS-Auftrag' }, AUFTRAEGE.map((a) => el('option', { value: a.id }, a.titel)));
     ilsWahl.value = wahl.ils || '';
-    ilsWahl.addEventListener('change', () => { wahl.ils = ilsWahl.value; merken.set('ils-lk-ils', wahl.ils); zeichnen(); });
+    ilsWahl.addEventListener('change', () => {
+      wahl.ils = ilsWahl.value; merken.set('ils-lk-ils', wahl.ils); zeichnen();
+      if (!teile.statistikBox.classList.contains('hidden')) fehlerStatistik(false);
+    });
     const klassenWahl = el('select', { id: 'lk-klasse', 'aria-label': 'Klasse' });
     klassenWahl.addEventListener('change', () => { wahl.klasse = klassenWahl.value; merken.set('ils-lk-klasse', wahl.klasse); zeichnen(); });
 
     const fehltBox = el('div', { class: 'card hidden', id: 'lk-fehlt' });
     const wappenBox = el('div', { class: 'card hidden', id: 'lk-wappen' });
+    const statistikBox = el('div', { class: 'card hidden', id: 'lk-statistik' });
     teile = {
-      ilsWahl, klassenWahl, fehltBox, wappenBox,
+      ilsWahl, klassenWahl, fehltBox, wappenBox, statistikBox,
       wappenKnopf: el('button', { type: 'button', class: 'btn secondary', id: 'lk-wappen-knopf', onclick: wappenGalerie }, '🛡️ Siegerwappen'),
       status: el('p', { class: 'small', id: 'lk-status', 'aria-live': 'polite' }),
       zusammenfassung: el('div', { id: 'lk-zusammenfassung' }),
@@ -136,14 +141,15 @@
         el('button', { type: 'button', class: 'btn secondary', onclick: () => laden(false) }, '↻ Aktualisieren'),
         el('button', { type: 'button', class: 'btn secondary', id: 'lk-wer-fehlt', onclick: werFehlt }, 'Wer fehlt noch?'),
         el('button', { type: 'button', class: 'btn secondary', id: 'lk-csv', onclick: csv }, 'Excel-Datei (CSV)'),
+        el('button', { type: 'button', class: 'btn secondary', id: 'lk-statistik-knopf', onclick: () => fehlerStatistik(true) }, '📊 Schwierige Aufgaben'),
         el('button', { type: 'button', class: 'btn secondary', id: 'lk-rennen', onclick: rennen }, '🏁 Live-Rennen'),
         el('button', { type: 'button', class: 'btn secondary', id: 'lk-siegerehrung', onclick: siegerehrung }, '🏆 Siegerehrung'),
         teile.wappenKnopf));
 
     app.append(el('div', { id: 'lk-haupt' },
-      leiste, teile.status, fehltBox, wappenBox, teile.zusammenfassung, teile.tabelle,
+      leiste, teile.status, fehltBox, statistikBox, wappenBox, teile.zusammenfassung, teile.tabelle,
       el('p', { class: 'small' }, 'Tipp: Ein Klick auf ein Feld der Tabelle trägt eine Übung von Hand ein oder entfernt den Haken – z. B. wenn jemand die Übung analog vorgezeigt hat. ' +
-        '⚠2 = zwei Neustarts wegen zu vieler Fehler. ⏳4 = viermal zu schnell getippt (Hinweis auf Raten). ✍5/8 = Examens-Training: selbst abgehakte Punkte. Details: Maus auf das Feld halten.'),
+        '⚠2 = zwei Neustarts wegen zu vieler Fehler. ⏳4 = vier Tempo-Warnungen (unmöglich schnell oder schnell und falsch – Hinweis auf Raten). 📊 Schwierige Aufgaben zeigt anonym, bei welchen Aufgaben die meisten Fehler entstehen. ✍5/8 = Examens-Training: selbst abgehakte Punkte. Details: Maus auf das Feld halten.'),
       verwaltung()));
   }
 
@@ -726,6 +732,124 @@
           el('button', { type: 'button', class: 'btn secondary', onclick: () => sperre(s.sid, s.name, false) }, 'Wieder zulassen'))))) : null,
       el('div', { class: 'lk-knoepfe' }, el('button', { type: 'button', class: 'btn secondary', onclick: wappenGalerie }, '↻ Neu laden'), schliessen),
       fb].filter(Boolean));
+  }
+
+  /* ---------- Anonyme Fehlerstatistik je Aufgabe ----------
+     Der Server kennt nur Kennungen (ILS.aufgabeId) und Zahlen. Den Klartext der Aufgaben holt diese Seite aus den
+     Übungsseiten selbst (const POOL = […]) – so steht kein Aufgabentext auf dem Server. */
+  const ohneTags = (x) => String(x == null ? '' : x).replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const kuerzen = (x, n) => { const t = ohneTags(x); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
+  const TYPNAME = { wahl: 'Auswahl', rf: 'Richtig/Falsch', mehrfach: 'Mehrfachauswahl', reihe: 'Reihenfolge', sortieren: 'Sortieren',
+    zahl: 'Zahl', luecke: 'Lückentext', bild: 'Bild', dialog: 'Gespräch' };
+  const poolSpeicher = {};
+  async function poolLaden(pfad) {
+    if (!poolSpeicher[pfad]) {
+      poolSpeicher[pfad] = fetch(new URL(pfad, WURZEL).href, { cache: 'no-store' })
+        .then((r) => r.text())
+        .then((html) => { const m = /const POOL = (\[[\s\S]*?\]);\n/.exec(html); return m ? JSON.parse(m[1]) : []; })
+        .catch(() => []);
+    }
+    return poolSpeicher[pfad];
+  }
+
+  // Fehlklick-Kennung (z. B. „e2>1“) in Klartext übersetzen
+  function fehlklickText(a, k) {
+    let m;
+    const z = (t, n = 60) => `„${kuerzen(t, n)}“`;
+    if (!a) return k;
+    if (a.typ === 'wahl' && (m = /^o(\d+)$/.exec(k)) && a.optionen[m[1]] != null) return `${z(a.optionen[m[1]])} gewählt`;
+    if (a.typ === 'mehrfach' && (m = /^o(\d+)([+-])$/.exec(k)) && a.optionen[m[1]] != null) return `${z(a.optionen[m[1]])} ${m[2] === '+' ? 'fälschlich angekreuzt' : 'nicht angekreuzt'}`;
+    if (a.typ === 'rf' && k === 'rf') return `„${a.richtig ? 'Falsch' : 'Richtig'}“ gewählt`;
+    if (a.typ === 'rf' && (m = /^b(\d+)$/.exec(k)) && a.begruendung) return `Begründung ${z(a.begruendung.optionen[m[1]])}`;
+    if (a.typ === 'zahl' && k === 'zahl') return 'falsche Zahl eingegeben';
+    if (a.typ === 'reihe' && (m = /^s(\d+)>(\d+)$/.exec(k))) return `als ${+m[1] + 1}. Schritt: ${z(a.schritte[m[2]])}`;
+    if (a.typ === 'sortieren' && (m = /^e(\d+)>(\d+)$/.exec(k)) && a.elemente[m[1]]) {
+      const e = a.elemente[m[1]];
+      return `${z(e.t)} → ${kuerzen(a.kategorien[m[2]], 40)} (richtig: ${kuerzen(a.kategorien[e.k], 40)})`;
+    }
+    if (a.typ === 'luecke' && (m = /^l(\d+)>(\d+)$/.exec(k))) {
+      const w = [...a.text.matchAll(/\{\{([^}]+)\}\}/g)].map((x) => x[1]);
+      return `Lücke ${+m[1] + 1} (${z(w[m[1]] || '?', 30)}): ${z([...w, ...(a.extra || [])][m[2]] || '?', 30)}`;
+    }
+    if (a.typ === 'bild' && (m = /^z(\d+)>([a-z0-9_]+)$/.exec(k))) {
+      const ziel = a.ziele[m[1]] || {};
+      const getippt = m[2] === 'x' ? 'daneben' : ((a.ziele.find((y) => y.id === m[2]) || {}).name || (a.namen || {})[m[2]] || m[2]);
+      return `${ziel.name || '?'} gesucht – getippt: ${getippt}`;
+    }
+    if (a.typ === 'dialog' && (m = /^k(\d+)>(\d+)$/.exec(k)) && a.knoten[m[1]]) return `Schritt ${+m[1] + 1}: ${z((a.knoten[m[1]].optionen[m[2]] || {}).t || '?')}`;
+    return k;
+  }
+
+  async function fehlerStatistik(umschalten) {
+    const a = auftrag();
+    if (!a) return;
+    const box = teile.statistikBox;
+    if (umschalten && !box.classList.contains('hidden')) { box.classList.add('hidden'); return; }
+    const titel = `📊 Schwierige Aufgaben – ${a.titel}`;
+    box.innerHTML = '';
+    box.append(el('div', { class: 'q-text' }, titel), el('p', { class: 'small' }, 'wird geladen …'));
+    box.classList.remove('hidden');
+    const r = await api('/api/lehrkraft/statistik?ils=' + encodeURIComponent(a.id)).catch(() => null);
+    const schliessen = el('button', { type: 'button', class: 'btn secondary', onclick: () => box.classList.add('hidden') }, 'Schließen');
+    if (!r || r.status !== 200) {
+      box.innerHTML = '';
+      box.append(el('div', { class: 'q-text' }, titel), el('div', { class: 'fb show bad' }, 'Die Statistik konnte nicht geladen werden.'), schliessen);
+      return;
+    }
+    const zeilen = [];
+    for (const schritt of a.schritte) {
+      const st = r.d.statistik[schritt.id] || {};
+      if (!Object.keys(st).length) continue;
+      const pool = await poolLaden(schritt.pfad);
+      const nachId = new Map(pool.map((x, i) => [ILS.aufgabeId(x), { x, i }]));
+      for (const [id, w] of Object.entries(st)) {
+        const treffer = nachId.get(id);
+        const bearbeitet = w.n + w.x;
+        if (!bearbeitet && !w.f) continue;
+        zeilen.push({
+          schritt, w, bearbeitet, alt: !treffer && pool.length > 0,
+          aufgabe: treffer ? treffer.x : null,
+          nr: treffer ? treffer.i + 1 : w.i + 1,
+          quote: w.f / Math.max(1, bearbeitet)
+        });
+      }
+    }
+    zeilen.sort((x, y) => Number(x.alt) - Number(y.alt) || y.quote - x.quote || y.w.f - x.w.f);
+    const summe = zeilen.reduce((s2, z) => s2 + z.bearbeitet, 0);
+    const prozent = (x, y) => (y ? Math.round((100 * x) / y) + ' %' : '–');
+    const tabelle = el('table', { class: 'lk lk-stat' },
+      el('thead', {}, el('tr', {}, ['Übung', 'Aufgabe', 'bearbeitet', 'ohne Fehler', 'Fehler je Bearb.', 'Neustarts', 'häufigste Fehlklicks'].map((t) => el('th', {}, t)))),
+      el('tbody', {}, zeilen.map((z) => {
+        const top = Object.entries(z.w.d || {}).sort((x, y) => y[1] - x[1]).slice(0, 4);
+        const text = z.aufgabe
+          ? `${TYPNAME[z.aufgabe.typ] || z.aufgabe.typ}: ${kuerzen(z.aufgabe.typ === 'rf' ? z.aufgabe.aussage : z.aufgabe.frage || z.aufgabe.aussage, 110)}`
+          : `Aufgabe Nr. ${z.nr}` + (z.alt ? ' (frühere Fassung – inzwischen geändert)' : '');
+        return el('tr', { class: (z.quote >= 1 ? 'warn' : '') + (z.alt ? ' alt' : '') },
+          el('td', {}, z.schritt.kurz || z.schritt.titel),
+          el('td', { class: 'stat-aufgabe' }, text),
+          el('td', {}, String(z.bearbeitet)),
+          el('td', {}, prozent(z.w.ok, z.w.n)),
+          el('td', { class: 'stat-quote' }, z.quote.toFixed(1).replace('.', ',')),
+          el('td', {}, z.w.x ? String(z.w.x) : '–'),
+          el('td', { class: 'stat-details' }, top.length ? el('ul', {}, top.map(([k, n]) => el('li', {}, `${n}× ${fehlklickText(z.aufgabe, k)}`))) : '–'));
+      })));
+    const fb = el('div', { class: 'fb' });
+    const zuruecksetzen = el('button', { type: 'button', class: 'btn secondary gefahr', id: 'lk-statistik-loeschen', onclick: async () => {
+      if (!window.confirm(`Fehlerstatistik für „${a.titel}“ zurücksetzen? (z. B. nachdem Aufgaben überarbeitet wurden)`)) return;
+      const x = await api('/api/lehrkraft/statistik-loeschen', { ils: a.id }).catch(() => null);
+      if (!x || x.status !== 200) { fb.className = 'fb show bad'; fb.textContent = 'Das hat nicht geklappt.'; return; }
+      fehlerStatistik(false);
+    } }, 'Statistik zurücksetzen');
+    box.innerHTML = '';
+    box.append(...[
+      el('div', { class: 'q-text' }, titel),
+      el('p', { class: 'small' }, 'Anonym und für alle Klassen zusammen: Wie oft wurde jede Aufgabe bearbeitet, wie viele Fehler (❤️) gab es dabei, ' +
+        'und welche falschen Antworten wurden am häufigsten gewählt? Oben stehen die Aufgaben mit den meisten Fehlern je Bearbeitung. ' +
+        'Viele gleiche Fehlklicks bei einer Aufgabe sind ein Hinweis auf eine missverständliche Formulierung oder eine falsche Lösung. ' +
+        'Gezählt wird erst seit dem 17.11.2026; wird eine Aufgabe geändert, beginnt ihre Zählung neu.'),
+      zeilen.length ? el('p', { class: 'small' }, `${summe} Bearbeitungen in ${zeilen.length} Aufgaben.`) : null,
+      zeilen.length ? el('div', { class: 'lk-tabelle' }, tabelle) : el('p', {}, 'Noch keine Daten – sobald SuS Übungen bearbeiten, erscheinen sie hier.'),
+      el('div', { class: 'lk-knoepfe' }, schliessen, zeilen.length ? zuruecksetzen : null), fb].filter(Boolean));
   }
 
   /* ---------- CSV für Excel ---------- */

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>ILS-Challenge: Wunddrainagen</title>
-<link rel="stylesheet" href="../../assets/ils.css?v=v202611081610">
+<link rel="stylesheet" href="../../assets/ils.css?v=v202611172015">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="kicker">ILS Wunddrainagen · Highscore</div><h1>ILS-Challenge: Wunddrainagen</h1></div></header>
@@ -13,12 +13,12 @@
 <div id="app"></div>
 <footer>Karoline-Breitinger-Schule · ILS-Auftrag · 3BFP2</footer>
 </main>
-<script src="../../assets/ils.js?v=v202611081610"></script>
-<script src="../../assets/ils-server.js?v=v202611081610"></script>
-<script src="../../assets/auftraege.js?v=v202611081610"></script>
-<script src="../../assets/ils-konto.js?v=v202611081610"></script>
-<script src="../../assets/ils-lern.js?v=v202611081610"></script>
-<script src="../../assets/ils-challenge.js?v=v202611081610"></script>
+<script src="../../assets/ils.js?v=v202611172015"></script>
+<script src="../../assets/ils-server.js?v=v202611172015"></script>
+<script src="../../assets/auftraege.js?v=v202611172015"></script>
+<script src="../../assets/ils-konto.js?v=v202611172015"></script>
+<script src="../../assets/ils-lern.js?v=v202611172015"></script>
+<script src="../../assets/ils-challenge.js?v=v202611172015"></script>
 <script>
 const POOLS = [
 { name: "Abschnitt 1 „Wozu Wunddrainagen?“", ziehen: 3, aufgaben: [
@@ -180,7 +180,6 @@ const POOLS = [
    "in einer großen Vene, damit das Blut aus dem Wundgebiet abgesaugt wird"
   ],
   "richtig": 0,
-  "behalten": true,
   "erklaerung": "Der Redon-Katheter wird während der OP mit dem Redonspieß platziert – z. B. nach Eingriffen am Bewegungsapparat."
  },
  {
@@ -203,6 +202,12 @@ const POOLS = [
   "extra": [
    "Urin",
    "Luft"
+  ],
+  "tausch": [
+   [
+    "Wundsekret",
+    "Blut"
+   ]
   ],
   "erklaerung": "Ein Beispiel für eine innere Drainage ist eine Schiene im Gallengang."
  },
@@ -370,7 +375,6 @@ const POOLS = [
    "sobald das Sekret von blutig zu blutig-serös wechselt"
   ],
   "richtig": 0,
-  "behalten": true,
   "erklaerung": "So steht es in Pflegias – ein fester Zeitplan ist nicht nötig."
  },
  {
@@ -380,6 +384,12 @@ const POOLS = [
   "extra": [
    "Blutgruppe",
    "neuen"
+  ],
+  "tausch": [
+   [
+    "Datum",
+    "Uhrzeit"
+   ]
   ],
   "erklaerung": "Nur so lässt sich die Gesamtmenge später nachvollziehen."
  },
@@ -393,7 +403,6 @@ const POOLS = [
    "nur bei Klingeln"
   ],
   "richtig": 0,
-  "behalten": true,
   "erklaerung": "In der Regel: erste Stunde alle 15 Minuten, in den nächsten zwei Stunden halbstündlich, danach stündlich."
  },
  {
@@ -950,11 +959,11 @@ const POOLS = [
     "k": 0
    },
    {
-    "t": "Hüft-TEP rechts gestern, Redon-Drainage im Wundgebiet",
+    "t": "Hüft-TEP rechts heute, Redon-Drainage im Wundgebiet",
     "k": 1
    },
    {
-    "t": "bekommt Enoxaparin (Heparin) zur Thromboseprophylaxe",
+    "t": "bekommt Enoxaparin (Heparin), das die Blutgerinnung hemmt",
     "k": 1,
     "warum": "Das Heparin hemmt die Gerinnung – ein Einflussfaktor für Blutungen."
    },
@@ -984,7 +993,7 @@ const POOLS = [
     "k": 0
    },
    {
-    "t": "fürchtet, die Redon-Drainage herauszureißen",
+    "t": "Hüft-TEP rechts heute, liegende Redon-Drainage",
     "k": 1
    },
    {
@@ -996,7 +1005,7 @@ const POOLS = [
     "k": 2
    },
    {
-    "t": "möchte morgen mit der Physiotherapie gehen",
+    "t": "spricht ihre Angst offen an",
     "k": 3
    }
   ],
@@ -1078,7 +1087,7 @@ const POOLS = [
    "Es gibt keinen Unterschied – beide Begriffe meinen dasselbe Pflegeproblem."
   ],
   "richtig": 0,
-  "erklaerung": "„Gefahr einer Nachblutung“ ist potenziell, „akute Schmerzen“ sind aktuell. Bei potenziellen Problemen beschreiben Sie statt Symptomen die Risikofaktoren aus dem Fall."
+  "erklaerung": "„Gefahr einer Nachblutung“ ist potenziell, „akute Schmerzen“ sind aktuell. Bei einem potenziellen Problem gibt es oft noch keine echten Symptome – unter S nennen Sie dann Hinweise aus dem Fall (bei Frau Kramer: Verband leicht durchgeblutet)."
  }
 ] },
 { name: "Abschlussquiz", ziehen: 5, aufgaben: [
@@ -1092,7 +1101,6 @@ const POOLS = [
    "durch den Blutdruck"
   ],
   "richtig": 0,
-  "behalten": true,
   "erklaerung": "Die Robinson ist eine passive Drainage."
  },
  {
@@ -1213,7 +1221,6 @@ const POOLS = [
    "keine – Klemmen sind nicht nötig"
   ],
   "richtig": 0,
-  "behalten": true,
   "erklaerung": "Erst patientennah, dann patientenfern – beim Öffnen genauso."
  },
  {
@@ -1226,7 +1233,6 @@ const POOLS = [
    "nur bei Fieber, weil die Flasche dann verkeimt sein kann"
   ],
   "richtig": 0,
-  "behalten": true,
   "erklaerung": "So steht es in Pflegias."
  },
  {
@@ -1365,7 +1371,6 @@ const POOLS = [
    "einmal"
   ],
   "richtig": 0,
-  "behalten": true,
   "erklaerung": "Erste Stunde alle 15 Minuten, dann zwei Stunden halbstündlich, danach stündlich."
  },
  {
@@ -1419,7 +1424,6 @@ const POOLS = [
    "Dokumentation"
   ],
   "richtig": 0,
-  "behalten": true,
   "erklaerung": "Möglichst schriftlich – die Ärztin muss dann eine andere Lösung finden."
  },
  {
