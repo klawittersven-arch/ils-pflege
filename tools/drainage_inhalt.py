@@ -426,7 +426,7 @@ UEBUNG5 = [
      "elemente": [
          {"t": "Gefahr einer Nachblutung", "k": 0},
          {"t": "Hüft-TEP rechts heute, Redon-Drainage im Wundgebiet", "k": 1},
-         {"t": "bekommt Enoxaparin (Heparin) zur Thromboseprophylaxe", "k": 1, "warum": "Das Heparin hemmt die Gerinnung – ein Einflussfaktor für Blutungen."},
+         {"t": "bekommt Enoxaparin (Heparin), das die Blutgerinnung hemmt", "k": 1, "warum": "Das Heparin hemmt die Gerinnung – ein Einflussfaktor für Blutungen."},
          {"t": "Verband leicht durchgeblutet, Redon fördert blutig-serös", "k": 2},
          {"t": "ist wach, orientiert und meldet sich bei Veränderungen", "k": 3},
      ],
@@ -438,7 +438,7 @@ UEBUNG5 = [
          {"t": "Hüft-TEP rechts heute, liegende Redon-Drainage", "k": 1},
          {"t": "ist noch nicht über den Umgang mit der Drainage informiert", "k": 1},
          {"t": "bewegt sich kaum, fragt immer wieder nach dem Schlauch", "k": 2},
-         {"t": "möchte morgen mit der Physiotherapie gehen", "k": 3},
+         {"t": "spricht ihre Angst offen an", "k": 3},
      ],
      "erklaerung": "Aus E ergeben sich die Maßnahmen: Information und Anleitung zum Umgang mit der Drainage."},
     {"typ": "rf", "gruppe": "ziel", "aussage": "Dieses Pflegeziel ist überprüfbar: „Frau Kramer geht es nach der OP gut.“", "richtig": False,
@@ -467,7 +467,7 @@ UEBUNG5 = [
      "optionen": ["Ein potenzielles Problem kann entstehen (Risiko), ein aktuelles ist schon da.",
                   "Ein potenzielles Problem ist weniger wichtig und muss deshalb nicht geplant werden.", "Ein aktuelles Problem hat keine Ursache, ein potenzielles hat immer eine.", "Es gibt keinen Unterschied – beide Begriffe meinen dasselbe Pflegeproblem."],
      "richtig": 0,
-     "erklaerung": "„Gefahr einer Nachblutung“ ist potenziell, „akute Schmerzen“ sind aktuell. Bei potenziellen Problemen beschreiben Sie statt Symptomen die Risikofaktoren aus dem Fall."},
+     "erklaerung": "„Gefahr einer Nachblutung“ ist potenziell, „akute Schmerzen“ sind aktuell. Bei einem potenziellen Problem gibt es oft noch keine echten Symptome – unter S nennen Sie dann Hinweise aus dem Fall (bei Frau Kramer: Verband leicht durchgeblutet)."},
 ]
 SCHREIBEN5 = {
     "auftrag": "<strong>Formulieren Sie</strong> für Frau Kramer das Pflegeproblem „Angst vor der Mobilisation“ nach dem PESR-Schema und <strong>ein</strong> überprüfbares Pflegeziel.",
