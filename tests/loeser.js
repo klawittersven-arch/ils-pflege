@@ -38,11 +38,19 @@ async function loesen(s, a, { warten = true } = {}) {
       }
       break;
     case 'zahl': await s.fill('.lern-zahl', String(a.richtig).replace('.', ',')); await s.click('.lern-zahlzeile button'); break;
-    case 'luecke':
-      for (const m of a.text.matchAll(/\{\{([^}]+)\}\}/g)) await klickText(s, '.chip', m[1]);
+    case 'luecke': {
+      // Wörter mit beliebiger Reihenfolge (tausch) absichtlich vertauscht eingeben – beides muss zählen
+      const woerter = [...a.text.matchAll(/\{\{([^}]+)\}\}/g)].map((m) => m[1]);
+      for (const g of a.tausch || []) {
+        const [i, j] = [woerter.indexOf(g[0]), woerter.indexOf(g[1])];
+        if (i >= 0 && j >= 0) [woerter[i], woerter[j]] = [woerter[j], woerter[i]];
+      }
+      for (const w of woerter) await klickText(s, '.chip', w);
       break;
+    }
     case 'bild':
-      for (const z of a.ziele) { await s.locator(`[data-ziel="${z.id}"] .feld`).click(); await vor(s, 8000); }
+      // Gibt es weitere richtige Stellen (auch), wird die erste davon angetippt
+      for (const z of a.ziele) { await s.locator(`[data-ziel="${(z.auch || [])[0] || z.id}"] .feld`).click(); await vor(s, 8000); }
       break;
     case 'dialog':
       for (const k of a.knoten) { await klickText(s, '.antwort', ohneTags(k.optionen.find((o) => o.richtig).t)); await vor(s); }

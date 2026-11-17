@@ -27,8 +27,12 @@ function pruefePool(name, pool) {
     if (a.typ === 'luecke') {
       const woerter = [...a.text.matchAll(/\{\{([^}]+)\}\}/g)].map((m) => m[1]);
       if (new Set([...woerter, ...(a.extra || [])]).size !== woerter.length + (a.extra || []).length) fehler.push(w + ': doppelte Wörter/Ablenker');
+      if (!(a.tausch || []).every((g) => g.length >= 2 && g.every((x) => woerter.includes(x)))) fehler.push(w + ': tausch nennt ein Wort, das keine Lücke ist');
     }
-    if (a.typ === 'bild' && !a.ziele.every((z) => a.svg.includes(`data-ziel='${z.id}'`) || a.svg.includes(`data-ziel="${z.id}"`))) fehler.push(w + ': Ziel fehlt im Bild');
+    const imBild = (id) => a.svg.includes(`data-ziel='${id}'`) || a.svg.includes(`data-ziel="${id}"`);
+    if (a.typ === 'bild' && !a.ziele.every((z) => imBild(z.id) && (z.auch || []).every(imBild))) fehler.push(w + ': Ziel fehlt im Bild');
+    // Feste Reihenfolge (behalten) nur, wenn die richtige Antwort nicht immer oben steht
+    if (a.typ === 'wahl' && a.behalten && a.richtig === 0) fehler.push(w + ': behalten + richtig 0 – die richtige Antwort stünde immer oben');
     if (a.typ === 'dialog' && !a.knoten.every((k) => k.optionen.filter((o) => o.richtig).length === 1)) fehler.push(w + ': nicht genau eine richtige Option');
     if (a.typ === 'rf' && a.begruendung && !(a.begruendung.richtig < a.begruendung.optionen.length)) fehler.push(w + ': Begründung');
     if (!a.erklaerung) fehler.push(w + ': Erklärung fehlt');

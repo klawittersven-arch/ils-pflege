@@ -127,10 +127,16 @@ Neue ILS-Übungen laufen im Lernmodus (`ILSLern.uebung({...})`, Beispiel: `probe
 - **Fehlerbudget** (Standard 4 ❤️): Beim 5. Fehler (Abschlussquiz: beim 3.) Lesepause von 30 s mit Hinweis auf
   die Stellen im Arbeitsblatt, danach Neustart mit neu gezogenen Aufgaben. Jeder Fehlklick zählt – auch beim Sortieren,
   bei der Reihenfolge, im Lückentext und beim Bild.
-- **Tempo-Kontrolle:** Jede Aufgabe hat eine Mindest-Lesezeit: 1 s + 0,15 s je Wort (≈ 400 Wörter/Minute), höchstens 8 s;
-  gezählt werden Frage und Antwortmöglichkeiten, beim Lückentext nur der Text bis zur ersten Lücke. Folgeschritte
-  (nächster Begriff, Begründung): 0,4 s + 0,08 s je Wort. Zu frühes Tippen zählt nicht und gibt eine Warnung; nach
-  3 Warnungen 15 s Lesepause, danach geht es mit **derselben Aufgabe** weiter (kein Neustart). Gleiche Lesezeiten in der Challenge.
+- **Tempo-Kontrolle (seit 17.11.2026 gelockert):** Jede Aufgabe hat eine Lesezeit: 0,8 s + 0,1 s je Wort (≈ 600 Wörter/Minute,
+  schnelles Lesen), höchstens 6 s; gezählt werden Frage und Antwortmöglichkeiten, beim Lückentext nur der Text bis zur
+  ersten Lücke. Folgeschritte (nächster Begriff, Begründung): 0,3 s + 0,06 s je Wort.
+  - **Richtige Antworten zählen immer**, auch wenn sie vor Ablauf der Lesezeit kommen – schnelle Leser werden nicht ausgebremst.
+  - **Schnell und falsch** (vor Ablauf der Lesezeit) = geraten: zählt als Fehler **und** gibt eine Warnung.
+  - **Unmöglich schnell** (unter 35 % der Lesezeit): zählt nicht, Warnung („Langsam!“) – Schutz gegen Durchklicken.
+  - Nach 3 Warnungen 15 s Lesepause, danach geht es weiter (kein Neustart): mit derselben Aufgabe bzw. – wenn die
+    3. Warnung bei einer abgeschlossenen Aufgabe kam – mit der nächsten. Test: `node tests/tempo.test.js`.
+  - Die Challenge hat weiterhin keine Lesezeit.
+- **Feste Reihenfolge der Antworten** (`behalten`) nur, wenn die richtige Antwort dann nicht immer oben steht (prüft der Inhaltstest).
 - **Nach einem Fehler** bleibt die Erklärung 4 Sekunden stehen, bevor „Weiter“ geht.
 - **Sortieren ohne Muster:** Die Begriffe werden zufällig gemischt, durchschaubare Reihenfolgen werden aber verworfen
   (bei zwei Kategorien kein ständiges Links-rechts-Wechseln und nicht „erst alle links, dann alle rechts“; nie mehr als
@@ -142,11 +148,13 @@ Neue ILS-Übungen laufen im Lernmodus (`ILSLern.uebung({...})`, Beispiel: `probe
   Checkliste erscheint): Schreibauftrag auf Papier mit Mindestzeit (`minSek`, in beiden Aufträgen 30 s), danach Checkliste
   (Erwartungshorizont) zum Selbstabhaken, Hinweis auf Eigenverantwortung und E-Mail an die Lehrkraft mit Betreff.
 - **Abschlussquiz** (`abschluss: true`): erst nach allen Übungen – das prüft auch der Server.
-- **Lehrkraft-Tabelle:** ⚠n = Neustarts wegen Fehlern, ⏳n = Warnungen „zu schnell“, ✍x/y = selbst abgehakte Punkte im Examens-Training.
+- **Lehrkraft-Tabelle:** ⚠n = Neustarts wegen Fehlern, ⏳n = Tempo-Warnungen (unmöglich schnell oder schnell und falsch), ✍x/y = selbst abgehakte Punkte im Examens-Training.
 
 Aufgabentypen: `wahl`, `rf` (mit Begründung), `mehrfach`, `reihe`, `sortieren` (auch PESR, Ampel), `zahl`,
 `luecke`, `bild` (Stellen im SVG antippen), `dialog` (Fallentscheidung oder Gespräch) – Felder siehe Kopf von
-`assets/ils-lern.js`.
+`assets/ils-lern.js`. Lückentext: `tausch: [["Datum", "Uhrzeit"]]` für Wörter, deren Reihenfolge egal ist („Datum und
+Uhrzeit“ = „Uhrzeit und Datum“). Bild: `auch: ["nagel"]` an einem Ziel für weitere Stellen, die ebenfalls richtig sind.
+Zahl: Es zählt die letzte Zahl der Eingabe („125 - 90 = 35“ → 35).
 
 ### Neu erzeugen (Wunddrainagen und Materialentfernung)
 
@@ -156,6 +164,7 @@ python3 tools/alles_bauen.py                                         # alle Smar
 python3 tools/ab_drainage.py && python3 tools/lehrkraft_drainage.py  # Arbeitsblatt + Lehrkraft-Info
 python3 tools/ab_me.py && python3 tools/lehrkraft_me.py
 node tests/inhalt.test.js            # spielt jede Aufgabe aller Pools einmal durch
+node tests/tempo.test.js             # Tempo-Kontrolle: richtig zählt, schnell + falsch = Warnung
 ```
 
 Die Inhalte stehen in `tools/drainage_inhalt.py` und `tools/me_inhalt.py`. Mit (⚑) markierte Stellen stammen nicht aus

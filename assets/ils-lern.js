@@ -21,7 +21,7 @@
      reihe     schritte[] (in richtiger Reihenfolge)
      sortieren kategorien[], elemente [{ t, k (Index der Kategorie), warum }]
      zahl      richtig (Zahl), toleranz, einheit
-     luecke    text mit {{Lösungswort}}, extra [Ablenker]
+     luecke    text mit {{Lösungswort}}, extra [Ablenker], optional tausch [[Wort, Wort]] (Reihenfolge egal)
      bild      svg (mit data-ziel="…"), ziele [{ id, frage, name }], namen { id: 'Name' } für weitere Stellen
      dialog    stil 'fall'|'chat', knoten [{ sprecher, text, frage, optionen [{ t, richtig, rueck }] }]
    Zwischenstand (aktuelle Aufgabe, Fehler, Lesepause) bleibt auf dem Gerät gespeichert. */
@@ -32,8 +32,11 @@ const ILSLern = (() => {
   const MAIL = 'Sven.Klawitter@Karoline-Breitinger-Schule.de';
   const STANDARD = {
     ziehen: 8, fehlerMax: 4, pauseSek: 30, zuSchnellMax: 3, tempoPauseSek: 15,
-    leseBasisMs: 1000, leseProWortMs: 150, leseMaxMs: 8000,      // ≈ 400 Wörter/Minute (zügiges Lesen)
-    folgeBasisMs: 400, folgeProWortMs: 80,
+    leseBasisMs: 800, leseProWortMs: 100, leseMaxMs: 6000,       // ≈ 600 Wörter/Minute (schnelles Lesen)
+    folgeBasisMs: 300, folgeProWortMs: 60,
+    // Unterhalb dieses Anteils der Lesezeit kann niemand Frage und Antwort gelesen haben: Dann zählt die Antwort
+    // nicht (Warnung). Darüber zählt eine richtige Antwort immer; eine falsche gilt als geraten (Fehler + Warnung).
+    mindestAnteil: 0.35,
     weiterNachFehlerSek: 4
   };
 
@@ -263,7 +266,9 @@ const ILSLern = (() => {
     const feld = el('input', { type: 'text', inputmode: 'decimal', class: 'lern-zahl', 'aria-label': 'Ihre Antwort', autocomplete: 'off' });
     const knopf = el('button', { type: 'button', class: 'btn' }, 'Prüfen');
     knopf.addEventListener('click', () => {
-      const wert = parseFloat(feld.value.replace(',', '.').replace(/[^0-9.\-]/g, ''));
+      // die letzte Zahl zählt: „35 ml“, „ca. 35“ und „125 - 90 = 35“ ergeben 35, „1,5 l“ ergibt 1,5
+      const zahlen = feld.value.match(/\d+(?:[.,]\d+)?/g);
+      const wert = zahlen ? parseFloat(zahlen[zahlen.length - 1].replace(',', '.')) : NaN;
       if (!Number.isFinite(wert)) { api.hinweis('Bitte geben Sie eine Zahl ein.'); return; }
       if (!api.versuch()) return;
       feld.disabled = true; knopf.disabled = true;
@@ -290,10 +295,16 @@ const ILSLern = (() => {
     const chips = el('div', { class: 'chips' });
     let pos = 0;
     const markieren = () => luecken.forEach((l, i) => l.s.classList.toggle('aktiv', i === pos));
+    // tausch: Wörter, deren Reihenfolge egal ist („Datum und Uhrzeit“) – dann passt jedes davon in die markierte Lücke
+    const tauschbar = (x, y) => (a.tausch || []).some((g) => g.includes(x) && g.includes(y));
     mischen([...luecken.map((l) => l.wort), ...(a.extra || [])]).forEach((w) => {
       const b = el('button', { type: 'button', class: 'chip' }, w);
       b.addEventListener('click', () => {
         if (b.disabled || !api.versuch()) return;
+        if (w !== luecken[pos].wort && tauschbar(w, luecken[pos].wort)) {
+          const spaeter = luecken.findIndex((l, j) => j > pos && l.wort === w);
+          if (spaeter > pos) { luecken[spaeter].wort = luecken[pos].wort; luecken[pos].wort = w; }
+        }
         if (w === luecken[pos].wort) {
           luecken[pos].s.textContent = w;
           luecken[pos].s.classList.add('gefuellt');
@@ -322,7 +333,8 @@ const ILSLern = (() => {
       if (pos >= a.ziele.length || !api.versuch()) return;
       const ziel = ev.target.closest('[data-ziel]');
       const gesucht = a.ziele[pos];
-      if (ziel && ziel.getAttribute('data-ziel') === gesucht.id) {
+      // auch: weitere Stellen, die ebenfalls richtig sind (z. B. der Nagel der Großzehe gehört auch zu „die Zehen“)
+      if (ziel && (ziel.getAttribute('data-ziel') === gesucht.id || (gesucht.auch || []).includes(ziel.getAttribute('data-ziel')))) {
         ziel.classList.add('getroffen');
         pos++;
         if (pos >= a.ziele.length) { aufgabe.remove(); api.geloest(); return; }
@@ -397,14 +409,14 @@ const ILSLern = (() => {
     }
 
     function durchgangStarten() {
-      Object.assign(S, { ziehung: ziehen(cfg.pool, n), i: 0, fehler: 0, zuSchnell: 0, fehlerfrei: 0, themen: [], phase: 'karten', gemeldet: false, schreibenAb: 0 });
+      Object.assign(S, { ziehung: ziehen(cfg.pool, n), i: 0, fehler: 0, zuSchnell: 0, fehlerfrei: 0, themen: [], phase: 'karten', gemeldet: false, schreibenAb: 0, tempoPauseFaellig: false });
       sichern();
       zeigen();
     }
 
-    // 3× zu schnell: kurze Lesepause, danach geht es mit derselben Aufgabe weiter (kein Neustart)
-    function tempoPause() {
-      Object.assign(S, { phase: 'pause', grund: 'tempo', zuSchnell: 0, pauseBis: Date.now() + cfg.tempoPauseSek * 1000 });
+    // 3 Warnungen: kurze Lesepause, danach geht es mit derselben (bzw. der nächsten) Aufgabe weiter (kein Neustart)
+    function tempoPause(naechste) {
+      Object.assign(S, { phase: 'pause', grund: 'tempo', zuSchnell: 0, tempoNaechste: !!naechste, pauseBis: Date.now() + cfg.tempoPauseSek * 1000 });
       sichern();
       zeigen();
     }
@@ -424,6 +436,12 @@ const ILSLern = (() => {
     function zeigen() {
       leeren();
       if (S.phase === 'karten' && S.i >= S.ziehung.length) S.phase = cfg.schreiben ? 'schreiben' : 'fertig';
+      // 3. Warnung bei einer schnellen, falschen Antwort: Lesepause vor der nächsten Aufgabe
+      if (S.tempoPauseFaellig) {
+        S.tempoPauseFaellig = false;
+        if (S.phase === 'karten') { tempoPause(true); return; }
+        sichern();
+      }
       // Live-Stand für das Live-Rennen der Lehrkraft (Übung, Phase, Aufgabe i von n)
       if (K.live) K.live(cfg.ils, cfg.schritt, { phase: S.phase, i: Math.min(S.i, S.ziehung.length), n: S.ziehung.length });
       ({ start: startZeigen, karten: karteZeigen, pause: pauseZeigen, schreiben: schreibenZeigen, checkliste: checklisteZeigen, fertig: fertigZeigen }[S.phase] || startZeigen)();
@@ -433,7 +451,7 @@ const ILSLern = (() => {
       const regeln = [
         `Sie bekommen ${n} Aufgaben, eine nach der anderen. Nach jeder Antwort sehen Sie sofort, ob sie stimmt.`,
         `Sie dürfen höchstens ${cfg.fehlerMax} Fehler machen (❤️). Beim ${cfg.fehlerMax + 1}. Fehler gibt es eine Lesepause von ${cfg.pauseSek >= 120 ? Math.round(cfg.pauseSek / 60) + ' Minuten' : cfg.pauseSek + ' Sekunden'} – danach starten Sie mit neuen Aufgaben von vorn.`,
-        `Lesen Sie jede Aufgabe in Ruhe. Wer schneller tippt, als man lesen kann, bekommt eine Warnung – nach ${cfg.zuSchnellMax} Warnungen gibt es eine Lesepause von ${cfg.tempoPauseSek} Sekunden, danach geht es mit derselben Aufgabe weiter.`,
+        `Lesen Sie jede Aufgabe in Ruhe. Richtige Antworten zählen immer – auch wenn Sie schnell lesen. Wer aber schneller tippt, als man lesen kann, oder schnell danebenliegt (Raten), bekommt eine Warnung – nach ${cfg.zuSchnellMax} Warnungen gibt es eine Lesepause von ${cfg.tempoPauseSek} Sekunden, danach geht es weiter.`,
         'Ihr Zwischenstand bleibt gespeichert, auch wenn Sie die Seite schließen.'
       ];
       inhalt.append(titelKarte(cfg.abschluss ? '🏁 Abschlussquiz' : '📄 Zuerst lesen, dann üben',
@@ -447,7 +465,8 @@ const ILSLern = (() => {
       const themen = [...new Set(S.themen)].filter(Boolean);
       const karte = titelKarte(S.grund === 'tempo' ? '⏳ Zu schnell getippt' : '📖 Zu viele Fehler',
         el('p', {}, S.grund === 'tempo'
-          ? 'Sie haben mehrmals geantwortet, bevor man die Aufgabe lesen konnte. Durchklicken bringt nichts – lesen Sie in Ruhe. Danach geht es mit derselben Aufgabe weiter.'
+          ? 'Sie haben mehrmals sehr schnell getippt – schneller, als man die Aufgabe lesen kann, oder schnell und falsch. Durchklicken und Raten bringen nichts – lesen Sie in Ruhe. ' +
+            (S.tempoNaechste ? 'Danach geht es mit der nächsten Aufgabe weiter.' : 'Danach geht es mit derselben Aufgabe weiter.')
           : 'Kein Problem – genau dafür ist die Übung da. Lesen Sie diese Stellen auf dem Arbeitsblatt noch einmal gründlich:'),
         S.grund === 'tempo' ? null : themen.length ? el('ul', {}, themen.map((t) => el('li', { html: t }))) : (cfg.abschnitt ? el('p', {}, el('strong', {}, cfg.abschnitt)) : null));
       const anzeige = el('div', { class: 'countdown', 'aria-live': 'polite' });
@@ -485,16 +504,26 @@ const ILSLern = (() => {
       let leseStart = Date.now();
       let leseNoetig = Math.min(cfg.leseMaxMs, cfg.leseBasisMs + lesetext(auf) * cfg.leseProWortMs);
       let gelesen = false;
+      let schnell = false;      // dieser Versuch kam vor Ablauf der Lesezeit (richtig → zählt, falsch → Warnung)
+      let tempoNotiz = '';
 
       const hinweisZeigen = (text, art) => {
         hinweis.className = 'lern-hinweis zeigen ' + (art || '');
         hinweis.textContent = text;
       };
 
+      // Warnung zählen; true = jetzt sind es zu viele → Lesepause
+      function tempoWarnung() {
+        S.zuSchnell += 1;
+        S.zuSchnellGesamt += 1;
+        return S.zuSchnell >= cfg.zuSchnellMax;
+      }
+      const ratenText = () => `⏳ Das ging sehr schnell – und war falsch. Raten bringt nichts, lesen Sie in Ruhe. (Warnung ${S.zuSchnell} von ${cfg.zuSchnellMax})`;
+
       function abschliessen(ok, zusatz) {
         if (abgeschlossen) return;
         abgeschlossen = true;
-        hinweis.className = 'lern-hinweis';
+        if (tempoNotiz) hinweisZeigen(tempoNotiz, 'bad'); else hinweis.className = 'lern-hinweis';
         const fehlerfrei = fehlerHier === 0 && ok;
         fb.className = 'fb show ' + (fehlerfrei ? 'ok' : ok ? 'hint' : 'bad');
         fb.innerHTML = '';
@@ -523,15 +552,19 @@ const ILSLern = (() => {
       const api = {
         karte,
         hinweis: (text) => hinweisZeigen(text, 'hint'),
+        // Darf diese Eingabe ausgewertet werden? Unmöglich schnell (unter mindestAnteil der Lesezeit) → nein, Warnung.
+        // Schnell, aber möglich → ja: Eine richtige Antwort zählt, eine falsche gilt als geraten (Fehler + Warnung).
         versuch() {
           if (abgeschlossen || S.phase !== 'karten') return false;
+          schnell = false;
           if (gelesen) return true;
-          if (Date.now() - leseStart >= leseNoetig) { gelesen = true; return true; }
-          S.zuSchnell += 1;
-          S.zuSchnellGesamt += 1;
+          const dauer = Date.now() - leseStart;
+          if (dauer >= leseNoetig) { gelesen = true; return true; }
+          if (dauer >= leseNoetig * cfg.mindestAnteil) { schnell = true; return true; }
+          const pause = tempoWarnung();
           sichern();
-          if (S.zuSchnell >= cfg.zuSchnellMax) { tempoPause(); return false; }
-          hinweisZeigen(`⏳ Langsam! Lesen Sie zuerst alles in Ruhe. Diese Antwort zählt nicht. (Warnung ${S.zuSchnell} von ${cfg.zuSchnellMax})`, 'bad');
+          if (pause) { tempoPause(); return false; }
+          hinweisZeigen(`⏳ Langsam! So schnell kann niemand die Aufgabe lesen. Diese Antwort zählt nicht. (Warnung ${S.zuSchnell} von ${cfg.zuSchnellMax})`, 'bad');
           return false;
         },
         neuerText(anzahlWoerter, leicht) {
@@ -541,24 +574,33 @@ const ILSLern = (() => {
             ? cfg.folgeBasisMs + anzahlWoerter * cfg.folgeProWortMs
             : Math.min(cfg.leseMaxMs, cfg.leseBasisMs + anzahlWoerter * cfg.leseProWortMs);
         },
+        // Fehlklick bei mehrschrittigen Aufgaben (Sortieren, Reihenfolge, Lücke, Bild, Gespräch)
         fehler(text) {
+          const geraten = schnell;
+          schnell = false;
           fehlerHier += 1;
           S.fehler += 1;
           S.themen.push(auf.thema || cfg.abschnitt || '');
+          const pause = geraten && tempoWarnung();
           sichern();
           inhalt.querySelector('.herzen').replaceWith(herzen());
           if (S.fehler > cfg.fehlerMax) { neustart('fehler'); return false; }
-          hinweisZeigen('✗ ' + (text || 'Leider falsch.'), 'bad');
+          if (pause) { tempoPause(); return false; }
+          hinweisZeigen('✗ ' + (text || 'Leider falsch.') + (geraten ? ' ' + ratenText() : ''), 'bad');
           return true;
         },
         antwort(ok, zusatz) {
+          const geraten = schnell && !ok;
+          schnell = false;
           if (!ok) {
             fehlerHier += 1;
             S.fehler += 1;
             S.themen.push(auf.thema || cfg.abschnitt || '');
+            if (geraten && tempoWarnung()) S.tempoPauseFaellig = true;   // Lesepause vor der nächsten Aufgabe
+            if (geraten) tempoNotiz = ratenText();
             sichern();
             inhalt.querySelector('.herzen').replaceWith(herzen());
-            if (S.fehler > cfg.fehlerMax) { neustart('fehler'); return; }
+            if (S.fehler > cfg.fehlerMax) { S.tempoPauseFaellig = false; neustart('fehler'); return; }
           }
           abschliessen(ok, zusatz);
         },
@@ -687,5 +729,8 @@ const ILSLern = (() => {
     return { schritt };
   }
 
-  return { uebung, ziehen, signatur, TYPEN, sortierFolge };
+  // Mindest-Lesezeit einer Aufgabe in ms (für Tests und zum Nachrechnen)
+  const lesezeit = (a, c = STANDARD) => Math.min(c.leseMaxMs, c.leseBasisMs + lesetext(a) * c.leseProWortMs);
+
+  return { uebung, ziehen, signatur, TYPEN, sortierFolge, lesezeit, STANDARD };
 })();
