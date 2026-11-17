@@ -115,7 +115,7 @@ const ILSLern = (() => {
       knoepfe.forEach((k, p) => { k.disabled = true; if (reihen[p] === a.richtig) k.classList.add('richtig'); });
       const ok = gewaehlt === a.richtig;
       if (!ok) b.classList.add('falsch');
-      api.antwort(ok, ok ? '' : `Richtig ist: „${ohneTags(a.optionen[a.richtig]).trim()}“.`);
+      api.antwort(ok, ok ? '' : `Richtig ist: „${ohneTags(a.optionen[a.richtig]).trim()}“.`, ok ? null : 'o' + gewaehlt);
     });
     api.karte.append(liste);
   };
@@ -129,7 +129,7 @@ const ILSLern = (() => {
       knoepfe[a.richtig ? 0 : 1].classList.add('richtig');
       if (wahl !== a.richtig) {
         b.classList.add('falsch');
-        api.antwort(false, `Die Aussage ist ${a.richtig ? 'richtig' : 'falsch'}.`);
+        api.antwort(false, `Die Aussage ist ${a.richtig ? 'richtig' : 'falsch'}.`, 'rf');
         return;
       }
       if (!a.begruendung) { api.antwort(true); return; }
@@ -142,7 +142,7 @@ const ILSLern = (() => {
         z.knoepfe.forEach((k, p) => { k.disabled = true; if (reihen[p] === bg.richtig) k.classList.add('richtig'); });
         const ok = reihen[p2] === bg.richtig;
         if (!ok) b2.classList.add('falsch');
-        api.antwort(ok, ok ? '' : `Die passende Begründung: „${ohneTags(bg.optionen[bg.richtig]).trim()}“.`);
+        api.antwort(ok, ok ? '' : `Die passende Begründung: „${ohneTags(bg.optionen[bg.richtig]).trim()}“.`, ok ? null : 'b' + reihen[p2]);
       });
       api.karte.append(z.liste);
     }, 'zwei');
@@ -170,7 +170,9 @@ const ILSLern = (() => {
         if (soll.has(i)) k.classList.add('richtig'); else if (an.has(i)) k.classList.add('falsch');
       });
       pruefen.remove();
-      api.antwort(ok, ok ? '' : 'Grün markiert sind alle richtigen Antworten.');
+      // Statistik: o3+ = fälschlich angekreuzt, o1- = richtige Antwort nicht angekreuzt
+      const details = a.optionen.map((_, i) => (an.has(i) && !soll.has(i) ? `o${i}+` : !an.has(i) && soll.has(i) ? `o${i}-` : null)).filter(Boolean);
+      api.antwort(ok, ok ? '' : 'Grün markiert sind alle richtigen Antworten.', details);
     });
     api.karte.append(liste, pruefen);
   };
@@ -190,7 +192,7 @@ const ILSLern = (() => {
           if (!pool.children.length) api.geloest();
         } else {
           b.classList.remove('nope'); void b.offsetWidth; b.classList.add('nope');
-          api.fehler('Das ist noch nicht der nächste Schritt.');
+          api.fehler('Das ist noch nicht der nächste Schritt.', `s${liste.children.length}>${it.i}`);
         }
       });
       pool.append(b);
@@ -233,6 +235,7 @@ const ILSLern = (() => {
       return b;
     });
     let pos = 0;
+    let schonFalsch = false;   // je Begriff zählt nur der erste Fehlklick als Fehler (❤️)
     function zeigen() {
       frage.innerHTML = '';
       frage.append(el('span', { class: 'small' }, 'Wohin gehört …'), el('div', { class: 'sort-text', html: elemente[pos].t }));
@@ -243,11 +246,15 @@ const ILSLern = (() => {
       const e = elemente[pos];
       if (i !== e.k) {
         b.classList.remove('nope'); void b.offsetWidth; b.classList.add('nope');
-        api.fehler(e.warum ? `Nicht ganz: ${e.warum}` : 'Das passt hier nicht.');
+        const detail = `e${a.elemente.indexOf(e)}>${i}`;
+        if (schonFalsch) api.nochmal('Auch das passt nicht – versuchen Sie eine andere Spalte. (Kostet kein weiteres Herz.)', detail);
+        else api.fehler(e.warum ? `Nicht ganz: ${e.warum}` : 'Das passt hier nicht.', detail);
+        schonFalsch = true;
         return;
       }
       spalten[i].querySelector('ul').append(el('li', { html: e.t }));
       pos++;
+      schonFalsch = false;
       if (pos >= elemente.length) {
         frage.remove(); zaehler.remove();
         knoepfe.forEach((k) => { k.disabled = true; });
@@ -274,7 +281,7 @@ const ILSLern = (() => {
       feld.disabled = true; knopf.disabled = true;
       const ok = Math.abs(wert - a.richtig) <= (a.toleranz || 0);
       feld.classList.add(ok ? 'ok' : 'bad');
-      api.antwort(ok, ok ? '' : `Richtig ist: ${String(a.richtig).replace('.', ',')} ${a.einheit || ''}.`);
+      api.antwort(ok, ok ? '' : `Richtig ist: ${String(a.richtig).replace('.', ',')} ${a.einheit || ''}.`, 'zahl');
     });
     feld.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') knopf.click(); });
     api.karte.append(el('div', { class: 'lern-zahlzeile' }, feld, a.einheit ? el('span', { class: 'einheit' }, a.einheit) : null, knopf));
@@ -297,7 +304,8 @@ const ILSLern = (() => {
     const markieren = () => luecken.forEach((l, i) => l.s.classList.toggle('aktiv', i === pos));
     // tausch: Wörter, deren Reihenfolge egal ist („Datum und Uhrzeit“) – dann passt jedes davon in die markierte Lücke
     const tauschbar = (x, y) => (a.tausch || []).some((g) => g.includes(x) && g.includes(y));
-    mischen([...luecken.map((l) => l.wort), ...(a.extra || [])]).forEach((w) => {
+    const alleWoerter = [...luecken.map((l) => l.wort), ...(a.extra || [])];   // Reihenfolge wie im Text (für die Statistik)
+    mischen(alleWoerter).forEach((w) => {
       const b = el('button', { type: 'button', class: 'chip' }, w);
       b.addEventListener('click', () => {
         if (b.disabled || !api.versuch()) return;
@@ -314,7 +322,7 @@ const ILSLern = (() => {
           if (pos >= luecken.length) { chips.querySelectorAll('.chip').forEach((c) => { c.disabled = true; }); api.geloest(); }
         } else {
           b.classList.remove('nope'); void b.offsetWidth; b.classList.add('nope');
-          api.fehler('Dieses Wort passt nicht in die markierte Lücke.');
+          api.fehler('Dieses Wort passt nicht in die markierte Lücke.', `l${pos}>${alleWoerter.indexOf(w)}`);
         }
       });
       chips.append(b);
@@ -344,7 +352,7 @@ const ILSLern = (() => {
         const id = ziel && ziel.getAttribute('data-ziel');
         const getippt = id && ((a.ziele.find((z) => z.id === id) || {}).name || (a.namen || {})[id]);
         if (ziel) { ziel.classList.remove('daneben'); void ziel.getBoundingClientRect(); ziel.classList.add('daneben'); }
-        api.fehler(getippt ? `Das ist ${getippt}.` : 'Das ist nicht die gesuchte Stelle.');
+        api.fehler(getippt ? `Das ist ${getippt}.` : 'Das ist nicht die gesuchte Stelle.', `z${pos}>${id || 'x'}`);
       }
     });
     zeigen();
@@ -365,7 +373,7 @@ const ILSLern = (() => {
         const o = k.optionen[reihen[p]];
         if (!o.richtig) {
           b.disabled = true; b.classList.add('falsch');
-          api.fehler(o.rueck || 'Das ist hier nicht die beste Wahl.');
+          api.fehler(o.rueck || 'Das ist hier nicht die beste Wahl.', `k${pos}>${reihen[p]}`);
           return;
         }
         z.knoepfe.forEach((x) => { x.disabled = true; });
@@ -506,6 +514,15 @@ const ILSLern = (() => {
       let gelesen = false;
       let schnell = false;      // dieser Versuch kam vor Ablauf der Lesezeit (richtig → zählt, falsch → Warnung)
       let tempoNotiz = '';
+      const poolNr = S.ziehung[S.i];
+      const details = [];       // Fehlklicks dieser Karte (z. B. „e2>1“ = Begriff 2 in Spalte 1) – nur für die anonyme Statistik
+
+      // Anonyme Fehlerstatistik (ohne Namen): wie oft wurde diese Aufgabe gelöst, mit wie vielen Fehlern, welche Fehlklicks?
+      function statistikMelden(geloest, fehlerfrei, abbruch) {
+        if (!K.statistik || (!geloest && !details.length)) return;
+        K.statistik(cfg.ils, cfg.schritt, { a: ILS.aufgabeId(auf), i: poolNr, geloest, fehlerfrei, abbruch, f: fehlerHier, d: details.slice(0, 30) });
+      }
+      const merken = (d) => { for (const x of [].concat(d || [])) details.push(String(x)); };
 
       const hinweisZeigen = (text, art) => {
         hinweis.className = 'lern-hinweis zeigen ' + (art || '');
@@ -529,6 +546,7 @@ const ILSLern = (() => {
         fb.innerHTML = '';
         fb.append(...[el('strong', {}, fehlerfrei ? '✓ Richtig. ' : ok ? `✓ Geschafft – mit ${fehlerHier} Fehler${fehlerHier === 1 ? '' : 'n'}. ` : '✗ Leider falsch. '),
           zusatz ? span(zusatz + ' ') : null, auf.erklaerung ? span(auf.erklaerung) : null].filter(Boolean));
+        statistikMelden(1, fehlerfrei ? 1 : 0, 0);
         // Zwischenstand sofort sichern (die Karte gilt als bearbeitet)
         S.fehlerfrei += fehlerfrei ? 1 : 0;
         S.i += 1;
@@ -563,7 +581,7 @@ const ILSLern = (() => {
           if (dauer >= leseNoetig * cfg.mindestAnteil) { schnell = true; return true; }
           const pause = tempoWarnung();
           sichern();
-          if (pause) { tempoPause(); return false; }
+          if (pause) { statistikMelden(0, 0, 0); tempoPause(); return false; }
           hinweisZeigen(`⏳ Langsam! So schnell kann niemand die Aufgabe lesen. Diese Antwort zählt nicht. (Warnung ${S.zuSchnell} von ${cfg.zuSchnellMax})`, 'bad');
           return false;
         },
@@ -575,24 +593,37 @@ const ILSLern = (() => {
             : Math.min(cfg.leseMaxMs, cfg.leseBasisMs + anzahlWoerter * cfg.leseProWortMs);
         },
         // Fehlklick bei mehrschrittigen Aufgaben (Sortieren, Reihenfolge, Lücke, Bild, Gespräch)
-        fehler(text) {
+        fehler(text, detail) {
           const geraten = schnell;
           schnell = false;
+          merken(detail);
           fehlerHier += 1;
           S.fehler += 1;
           S.themen.push(auf.thema || cfg.abschnitt || '');
           const pause = geraten && tempoWarnung();
           sichern();
           inhalt.querySelector('.herzen').replaceWith(herzen());
-          if (S.fehler > cfg.fehlerMax) { neustart('fehler'); return false; }
-          if (pause) { tempoPause(); return false; }
+          if (S.fehler > cfg.fehlerMax) { statistikMelden(0, 0, 1); neustart('fehler'); return false; }
+          if (pause) { statistikMelden(0, 0, 0); tempoPause(); return false; }
           hinweisZeigen('✗ ' + (text || 'Leider falsch.') + (geraten ? ' ' + ratenText() : ''), 'bad');
           return true;
         },
-        antwort(ok, zusatz) {
+        // Weiterer Fehlklick, der kein Herz kostet (Sortieren: je Begriff zählt nur der erste Fehler)
+        nochmal(text, detail) {
+          const geraten = schnell;
+          schnell = false;
+          merken(detail);
+          const pause = geraten && tempoWarnung();
+          sichern();
+          if (pause) { statistikMelden(0, 0, 0); tempoPause(); return false; }
+          hinweisZeigen('✗ ' + text + (geraten ? ' ' + ratenText() : ''), 'bad');
+          return true;
+        },
+        antwort(ok, zusatz, detail) {
           const geraten = schnell && !ok;
           schnell = false;
           if (!ok) {
+            merken(detail);
             fehlerHier += 1;
             S.fehler += 1;
             S.themen.push(auf.thema || cfg.abschnitt || '');
@@ -600,7 +631,7 @@ const ILSLern = (() => {
             if (geraten) tempoNotiz = ratenText();
             sichern();
             inhalt.querySelector('.herzen').replaceWith(herzen());
-            if (S.fehler > cfg.fehlerMax) { S.tempoPauseFaellig = false; neustart('fehler'); return; }
+            if (S.fehler > cfg.fehlerMax) { S.tempoPauseFaellig = false; statistikMelden(0, 0, 1); neustart('fehler'); return; }
           }
           abschliessen(ok, zusatz);
         },

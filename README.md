@@ -77,7 +77,14 @@ lösen – auf der Lehrkraft-Seite erscheint der Haken (Auftrag „Probe-Auftrag
 - Gespeichert werden (beim Cloudflare-Worker, in einem „Durable Object“): Klasse, Anzeigename („Vorname N.“),
   ein **Prüfwert** des Geburtsdatums (HMAC-SHA-256 mit einem geheimen Schlüssel, der den Server nie verlässt –
   das Datum selbst wird nicht gespeichert), Zeitpunkt der ersten Anmeldung und welche Übung wann bestanden wurde
-  (beim Abschlussquiz mit Punktzahl). **Einzelne Antworten werden nie übertragen.**
+  (beim Abschlussquiz mit Punktzahl). **Einzelne Antworten werden nicht personenbezogen gespeichert.**
+- **Anonyme Fehlerstatistik (seit 17.11.2026):** Nach jeder Aufgabe meldet das Handy, ob sie gelöst wurde, wie viele
+  Fehler es gab und welche falschen Antworten getippt wurden (als Kennung, z. B. „Begriff 2 → Spalte S“). Der Server
+  addiert das nur zu Summen je Aufgabe (`stat:<ils>:<schritt>`), **ohne Person, Klasse oder Zeitpunkt der einzelnen Antwort**.
+  Senden dürfen nur angemeldete Geräte (damit niemand Fantasiezahlen schickt). Lehrkraft-Seite: **📊 Schwierige Aufgaben**
+  (mit Klartext der Aufgaben, den die Seite aus den Übungsseiten liest), „Statistik zurücksetzen“; „Fortschritt eines
+  Auftrags löschen“ und „Alles löschen“ löschen sie mit. Ändert man eine Aufgabe, beginnt ihre Zählung neu.
+  Test: `node tests/statistik.test.js`.
 - Lesen kann nur, wer das Lehrkraft-Passwort kennt. Cloudflare-Protokolle sind abgeschaltet.
 - Hinweis: Die Haken werden vom Handy gemeldet. Wer sich mit Technik auskennt, könnte einen Haken auch ohne
   Übung setzen – wie früher beim Weitergeben von Bausteinen. Für ILS-Aufträge ist das vertretbar.
@@ -125,8 +132,9 @@ Neue ILS-Übungen laufen im Lernmodus (`ILSLern.uebung({...})`, Beispiel: `probe
 - **Eine Aufgabe nach der anderen**, sofortige Rückmeldung mit Erklärung. Pro Durchgang werden Aufgaben aus einem
   größeren Pool gezogen (Varianten über `gruppe`, feste über `fest`).
 - **Fehlerbudget** (Standard 4 ❤️): Beim 5. Fehler (Abschlussquiz: beim 3.) Lesepause von 30 s mit Hinweis auf
-  die Stellen im Arbeitsblatt, danach Neustart mit neu gezogenen Aufgaben. Jeder Fehlklick zählt – auch beim Sortieren,
-  bei der Reihenfolge, im Lückentext und beim Bild.
+  die Stellen im Arbeitsblatt, danach Neustart mit neu gezogenen Aufgaben. Jeder Fehlklick zählt – auch bei der
+  Reihenfolge, im Lückentext und beim Bild. **Beim Sortieren zählt je Begriff nur der erste Fehlklick** (weitere Versuche
+  beim selben Begriff kosten kein Herz) – sonst kostet ein unsicherer Begriff bei vier Spalten bis zu drei Herzen.
 - **Tempo-Kontrolle (seit 17.11.2026 gelockert):** Jede Aufgabe hat eine Lesezeit: 0,8 s + 0,1 s je Wort (≈ 600 Wörter/Minute,
   schnelles Lesen), höchstens 6 s; gezählt werden Frage und Antwortmöglichkeiten, beim Lückentext nur der Text bis zur
   ersten Lücke. Folgeschritte (nächster Begriff, Begründung): 0,3 s + 0,06 s je Wort.
@@ -181,7 +189,7 @@ beliebig oft – wie die Klausur-Challenge der Lernkarten:
 
 - **20 Aufgaben** aus allen Übungen des Auftrags (je Übung 3, aus dem Abschlussquiz 5), zufällige Reihenfolge.
   Aufgaben, die das Arbeitsblatt brauchen (Drainageprotokoll, Anordnung), sind ausgenommen.
-- **Punkte:** 150 je Aufgabe, bei mehrschrittigen Aufgaben anteilig (jeder Fehlklick kostet). **Zeitbonus** bis 750 Punkte,
+- **Punkte:** 150 je Aufgabe, bei mehrschrittigen Aufgaben anteilig (jeder Fehlklick kostet, beim Sortieren nur der erste je Begriff). **Zeitbonus** bis 750 Punkte,
   sinkt in 15 Minuten linear auf 0 und zählt nur anteilig zu den richtigen Antworten. Die **Zeit misst der Server**;
   ein Durchgang unter 2 Sekunden je Aufgabe (40 s für 20 Aufgaben) wird nicht gewertet (Schutz gegen Manipulation).
   **Keine Mindest-Lesezeit** in der Challenge: Richtige Antworten zählen sofort – Tempo bringt Zeitbonus. Raten lohnt

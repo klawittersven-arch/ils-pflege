@@ -12,6 +12,8 @@
  *     GET  /api/ich        (Authorization: Bearer <token>)  → { name, klasse, fortschritt }
  *     POST /api/melden     (Bearer) { ils, schritt, punkte, max, neustarts?, zuSchnell?, selbst?, selbstMax? }
  *     POST /api/live       (Bearer) { ils, schritt, phase, i, n }   aktueller Stand am Handy (für das Live-Rennen)
+ *     POST /api/statistik  (Bearer) { ils, schritt, eintraege: [{ a, i, geloest, fehlerfrei, abbruch, f, d: [...] }] }
+ *                          anonyme Fehlerstatistik je Aufgabe: wird OHNE Namen nur aufsummiert
  *                          nur bekannte Schritte (assets/auftraege.js); Abschluss erst nach allen Übungen
  *   ILS-Challenge (nach bestandenem Abschlussquiz, Bestenliste je ILS-Auftrag und Klasse)
  *     POST /api/challenge/start (Bearer) { ils }            → { laufId }   (Zeit misst der Server)
@@ -27,6 +29,8 @@
  *     POST /api/lehrkraft/schueler-loeschen     { sid }
  *     POST /api/lehrkraft/auftrag-loeschen      { ils }   Fortschritt eines ILS-Auftrags löschen
  *     POST /api/lehrkraft/alles-loeschen        { bestaetigung: 'ALLES LÖSCHEN' }
+ *     GET  /api/lehrkraft/statistik?ils=…       anonyme Fehlerstatistik je Aufgabe (alle Klassen zusammen)
+ *     POST /api/lehrkraft/statistik-loeschen    { ils }   Statistik eines Auftrags zurücksetzen
  *     GET  /api/lehrkraft/wappen?ils=…          alle Siegerwappen eines Auftrags (Galerie)
  *     POST /api/lehrkraft/wappen-loeschen       { sid, ils }
  *     POST /api/lehrkraft/wappen-sperre         { sid, gesperrt }   Person vom Malen ausschließen (löscht ihre Wappen)
@@ -34,7 +38,8 @@
  *
  * Datenschutz: Geburtsdaten werden nie gespeichert, nur ein Prüfwert (HMAC-SHA-256 mit einem
  * geheimen Schlüssel, der nur im Durable Object liegt). Gespeichert werden Klasse, Anzeigename
- * („Vorname N.“) und welche Übung wann erledigt wurde – keine einzelnen Antworten.
+ * („Vorname N.“) und welche Übung wann erledigt wurde – keine einzelnen Antworten. Die Fehlerstatistik je Aufgabe
+ * ist anonym: Sie enthält nur Summen (wie oft gelöst, wie viele Fehler, welche Fehlklicks), keine Person und keine Klasse.
  * Gelöscht wird nur von Hand (Lehrkraft-Seite). Cloudflare-Protokolle sind abgeschaltet.
  */
 import { DurableObject } from 'cloudflare:workers';
@@ -65,6 +70,12 @@ const SID_MUSTER = /^[a-z0-9]{12}$/;
 const DATUM_ISO = /^(\d{4})-(\d{2})-(\d{2})$/;
 const LAUF_MUSTER = /^[A-Za-z0-9]{16}$/;
 const LIVE_PHASEN = new Set(['start', 'karten', 'pause', 'schreiben', 'checkliste', 'fertig']);
+// Anonyme Fehlerstatistik
+const AUFGABE_MUSTER = /^[a-z0-9]{1,8}$/;          // Kennung einer Aufgabe (ILS.aufgabeId)
+const DETAIL_MUSTER = /^[a-z0-9_>+-]{1,24}$/;       // Fehlklick, z. B. „e2>1“, „o3+“, „z0>klemme_fern“
+const STAT_MAX_EINTRAEGE = 20;                      // je Anfrage
+const STAT_MAX_AUFGABEN = 300;                      // je Übung
+const STAT_MAX_DETAILS = 80;                        // verschiedene Fehlklicks je Aufgabe
 // ILS-Challenge: wie die Klausur-Challenge der Lernkarten – 150 Punkte je Aufgabe, Zeitbonus bis 750 Punkte,
 // der in 15 Minuten linear auf 0 sinkt und nur anteilig zu den richtigen Antworten zählt.
 const CH_PUNKTE_JE_AUFGABE = 150;
@@ -84,6 +95,24 @@ export function wappenPruefen(bild) {
   const breite = (bytes[16] << 24) | (bytes[17] << 16) | (bytes[18] << 8) | bytes[19];
   const hoehe = (bytes[20] << 24) | (bytes[21] << 16) | (bytes[22] << 8) | bytes[23];
   return breite >= 32 && breite <= 128 && hoehe >= 32 && hoehe <= 128;
+}
+
+// Einträge der Fehlerstatistik prüfen; null = ungültig
+export function statistikPruefen(liste) {
+  if (!Array.isArray(liste) || !liste.length || liste.length > STAT_MAX_EINTRAEGE) return null;
+  const aus = [];
+  for (const e of liste) {
+    if (!e || typeof e !== 'object') return null;
+    const a = String(e.a ?? '');
+    const i = ganzzahl(e.i, 0, 500);
+    const geloest = ganzzahl(e.geloest, 0, 1), fehlerfrei = ganzzahl(e.fehlerfrei, 0, 1), abbruch = ganzzahl(e.abbruch, 0, 1);
+    const f = ganzzahl(e.f, 0, 50);
+    const d = Array.isArray(e.d) ? e.d.map(String) : null;
+    if (!AUFGABE_MUSTER.test(a) || [i, geloest, fehlerfrei, abbruch, f].includes(null) || !d || d.length > 30 || !d.every((x) => DETAIL_MUSTER.test(x))) return null;
+    if (fehlerfrei && (!geloest || f)) return null;
+    aus.push({ a, i, geloest, fehlerfrei, abbruch, f, d });
+  }
+  return aus;
 }
 
 const CORS = {
@@ -269,6 +298,20 @@ export default {
         return mitStatus(await daten.live(token, ils, schritt, phase, i, n));
       }
 
+      // Anonyme Fehlerstatistik je Aufgabe (nur Summen, ohne Person)
+      if (weg === '/api/statistik' && methode === 'POST') {
+        const token = bearer(request);
+        if (!token) return antwort({ ok: false, grund: 'abgemeldet' }, 401);
+        const d = await jsonLesen(request);
+        const ils = String(d?.ils ?? '');
+        const schritt = String(d?.schritt ?? '');
+        const eintraege = statistikPruefen(d?.eintraege);
+        if (!ILS_MUSTER.test(ils) || !SCHRITT_MUSTER.test(schritt) || !schrittFinden(ils, schritt).schritt || !eintraege) {
+          return antwort({ ok: false, grund: 'ungueltig' }, 400);
+        }
+        return mitStatus(await daten.statistik(token, ils, schritt, eintraege));
+      }
+
       /* ----- ILS-Challenge ----- */
       if (weg.startsWith('/api/challenge/')) {
         const token = bearer(request);
@@ -311,6 +354,11 @@ export default {
         const aktion = weg.slice('/api/lehrkraft/'.length);
 
         if (aktion === 'stand' && methode === 'GET') return mitStatus(await daten.stand());
+        if (aktion === 'statistik' && methode === 'GET') {
+          const ils = url.searchParams.get('ils') || '';
+          if (!ILS_MUSTER.test(ils)) return antwort({ ok: false, grund: 'ungueltig' }, 400);
+          return mitStatus(await daten.statistikLesen(ils));
+        }
         if (aktion === 'wappen' && methode === 'GET') {
           const ils = url.searchParams.get('ils') || '';
           if (!ILS_MUSTER.test(ils)) return antwort({ ok: false, grund: 'ungueltig' }, 400);
@@ -348,6 +396,11 @@ export default {
           }
           return mitStatus(await daten.wappenSperre(sid, d.gesperrt === true));
         }
+        if (aktion === 'statistik-loeschen') {
+          const ils = String(d.ils ?? '');
+          if (!ILS_MUSTER.test(ils)) return antwort({ ok: false, grund: 'ungueltig' }, 400);
+          return mitStatus(await daten.statistikLoeschen(ils));
+        }
         if (aktion === 'auftrag-loeschen') {
           const ils = String(d.ils ?? '');
           if (!ILS_MUSTER.test(ils)) return antwort({ ok: false, grund: 'ungueltig' }, 400);
@@ -377,6 +430,8 @@ export default {
  *   w:<ils>:<sid>   { bild, um, gesehen }  Siegerwappen (PNG als data:-Adresse)
  *   wsperre:<sid>   true                  Person darf kein Siegerwappen malen
  *   live:<ils>:<sid> { schritt, phase, i, n, um }  zuletzt gemeldeter Stand am Handy (Live-Rennen)
+ *   stat:<ils>:<schritt> { <aufgabe>: { i, n, ok, x, f, d: { <fehlklick>: anzahl }, um } }  anonyme Fehlerstatistik
+ *                   (n = gelöst, ok = davon ohne Fehler, x = Neustarts ausgelöst, f = Fehler/Herzen, d = Fehlklicks)
  *   fehl:<klasse>   { start, anzahl }  fehlgeschlagene Anmeldungen
  *   lkfehl          { start, anzahl }  falsche Lehrkraft-Passwörter */
 export class Daten extends DurableObject {
@@ -498,6 +553,39 @@ export class Daten extends DurableObject {
     return { ok: true };
   }
 
+  /* ----- Anonyme Fehlerstatistik ----- */
+  async statistik(token, ils, schritt, eintraege) {
+    if (!(await this.schuelerZuToken(token))) return { ok: false, grund: 'abgemeldet' };   // nur Angemeldete; die Person wird NICHT gespeichert
+    const schl = `stat:${ils}:${schritt}`;
+    const st = (await this.ctx.storage.get(schl)) || {};
+    for (const e of eintraege) {
+      if (!st[e.a] && Object.keys(st).length >= STAT_MAX_AUFGABEN) continue;
+      const z = st[e.a] || (st[e.a] = { i: e.i, n: 0, ok: 0, x: 0, f: 0, d: {} });
+      z.i = e.i;
+      z.n += e.geloest; z.ok += e.fehlerfrei; z.x += e.abbruch; z.f += e.f;
+      for (const k of e.d) {
+        if (z.d[k] === undefined && Object.keys(z.d).length >= STAT_MAX_DETAILS) continue;
+        z.d[k] = (z.d[k] || 0) + 1;
+      }
+      z.um = Date.now();
+    }
+    await this.ctx.storage.put(schl, st);
+    return { ok: true };
+  }
+
+  async statistikLesen(ils) {
+    const alle = await this.ctx.storage.list({ prefix: `stat:${ils}:` });
+    const statistik = {};
+    for (const [k, v] of alle) statistik[k.slice(`stat:${ils}:`.length)] = v;
+    return { ok: true, statistik };
+  }
+
+  async statistikLoeschen(ils) {
+    const weg = [...(await this.ctx.storage.list({ prefix: `stat:${ils}:` })).keys()];
+    if (weg.length) await this.ctx.storage.delete(weg);
+    return { ok: true, geloescht: weg.length };
+  }
+
   async stand() {
     const [schueler, fortschritte, tokens, challenges, wappen, sperren, lives] = await Promise.all([
       this.alleSchueler(),
@@ -613,6 +701,7 @@ export class Daten extends DurableObject {
   }
 
   async auftragLoeschen(ils) {
+    await this.statistikLoeschen(ils);
     const ch = [...(await this.ctx.storage.list({ prefix: `c:${ils}:` })).keys(), ...(await this.ctx.storage.list({ prefix: `lauf:${ils}:` })).keys(),
       ...(await this.ctx.storage.list({ prefix: `w:${ils}:` })).keys(), ...(await this.ctx.storage.list({ prefix: `live:${ils}:` })).keys()];
     for (let i = 0; i < ch.length; i += 100) await this.ctx.storage.delete(ch.slice(i, i + 100));

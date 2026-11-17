@@ -310,5 +310,16 @@ const ILS = (() => {
     });
   };
 
-  return { el, shuffle, decode, store, nameStore, nameOk, personalDigits, sha256hex, normName, normWord, makeId, quiz };
+  // Kennung einer Aufgabe (Lernmodus) für die anonyme Fehlerstatistik. Sie bleibt gleich, solange Typ, Frage und
+  // Inhalt gleich bleiben – wird eine Aufgabe überarbeitet, beginnt ihre Statistik neu. Gleiche Rechnung auf dem
+  // Handy (ils-lern.js) und auf der Lehrkraft-Seite (lehrkraft.js), die so den Klartext der Aufgabe findet.
+  const aufgabeId = (a) => {
+    const s = JSON.stringify([a.typ, a.frage || '', a.aussage || '', a.text || '', a.optionen || a.schritte || [],
+      (a.elemente || []).map((e) => e.t), (a.ziele || []).map((z) => z.id), (a.knoten || []).map((k) => [k.text || '', k.frage || ''])]);
+    let h = 5381;
+    for (let i = 0; i < s.length; i++) h = (Math.imul(h, 33) ^ s.charCodeAt(i)) >>> 0;
+    return h.toString(36);
+  };
+
+  return { el, shuffle, decode, store, nameStore, nameOk, personalDigits, sha256hex, normName, normWord, makeId, quiz, aufgabeId };
 })();

@@ -305,6 +305,11 @@ const ILSChallenge = (() => {
           zeigeHinweis(`✗ Fehlklick – kostet Punkte (${fehlerHier})`, 'bad');
           return true;
         },
+        // Sortieren: weiterer Fehlklick beim selben Begriff kostet keine weiteren Punkte
+        nochmal() {
+          zeigeHinweis(`✗ Auch das passt nicht – kostet aber keine weiteren Punkte (${fehlerHier})`, 'bad');
+          return true;
+        },
         antwort(ok) { abschliessen(ok ? 1 : 0); },
         geloest() { abschliessen(Math.max(0, 1 - fehlerHier / teile(auf))); }
       };

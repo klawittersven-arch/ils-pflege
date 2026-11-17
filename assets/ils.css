@@ -246,6 +246,13 @@ table.lk tr.st-fertig td.stand { color: var(--ok); }
 table.lk tr.st-arbeitet td.stand { color: var(--hint); }
 table.lk tr.st-offen td.stand, table.lk tr.st-nie td.stand { color: var(--bad); }
 table.lk tr.st-nie th { color: var(--muted); }
+table.lk-stat th, table.lk-stat td { white-space: normal; vertical-align: top; }
+table.lk-stat td.stat-aufgabe { min-width: 220px; }
+table.lk-stat td.stat-details { min-width: 300px; }
+table.lk-stat td.stat-details ul { margin: 0; padding-left: 18px; font-size: 14px; }
+table.lk-stat td.stat-quote { font-weight: 700; text-align: center; }
+table.lk-stat tr.warn td.stat-quote { color: var(--bad); }
+table.lk-stat tr.alt td { color: var(--muted); }
 .lk-verwaltung summary { font-weight: 700; cursor: pointer; min-height: 32px; }
 .lk-verwaltung h3 { font-size: 16px; margin: 22px 0 6px; }
 .lk-verwaltung select, .lk-verwaltung input, .lk-verwaltung textarea { margin: 6px 0; }
