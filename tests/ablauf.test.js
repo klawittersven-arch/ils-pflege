@@ -183,10 +183,23 @@ const QUIZ = { 'Die Lehrkraft sieht': 'Richtig', 'einzelnen Antworten': 'Falsch'
     await sus.waitForSelector('.lern-karte');
     pruefe((await typ(sus)) === 'sortieren' && (await sus.textContent('.herzen')).split('❤️').length - 1 === 3, 'nach Neuladen: nächste Aufgabe, Fehler bleiben gezählt (3 ❤️ übrig)');
     await lesen(sus);
-    for (let i = 0; i < 4; i++) {   // vier falsche Zuordnungen → 5. Fehler insgesamt → Lesepause
+    // Sortieren: je Begriff zählt nur der erste Fehlklick → 3 Begriffe × 1 Fehler (dazu je ein zweiter, kostenloser Fehlklick)
+    for (let i = 0; i < 3; i++) {
       const t = (await sus.textContent('.sort-text')).trim();
-      await sus.click(`.sort-knopf:has-text("${SORT[t] === 'aktiv' ? 'passiv' : 'aktiv'}")`);
+      const falsch = `.sort-knopf:has-text("${SORT[t] === 'aktiv' ? 'passiv' : 'aktiv'}")`;
+      await sus.click(falsch);
+      await sus.click(falsch);
+      if (i === 0) {
+        pruefe((await sus.textContent('.herzen')).split('❤️').length - 1 === 2 && /kein weiteres Herz/.test(await sus.textContent('.lern-hinweis')),
+          'Sortieren: zweiter Fehlklick beim selben Begriff kostet kein weiteres Herz');
+      }
+      await sus.click(`.sort-knopf:has-text("${SORT[t]}")`);
+      await sus.clock.fastForward(3000);
     }
+    pruefe((await sus.textContent('.herzen')).split('❤️').length - 1 === 0, 'Sortieren: 3 Begriffe falsch → 3 Fehler (4 insgesamt, kein Herz mehr)');
+    await weiterKlicken(sus);
+    await lesen(sus);
+    await sus.locator('[data-ziel="flasche"] .feld').click();   // 5. Fehler → Lesepause
     await sus.waitForSelector('#lern-neustart');
     pruefe(/Zu viele Fehler/.test(await sus.textContent('.lern-start')) && await sus.isDisabled('#lern-neustart'), 'zu viele Fehler → Lesepause, Neustart gesperrt');
     await foto(sus, '4_lesepause_handy');
