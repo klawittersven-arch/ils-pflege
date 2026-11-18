@@ -144,7 +144,8 @@
         el('button', { type: 'button', class: 'btn secondary', id: 'lk-statistik-knopf', onclick: () => fehlerStatistik(true) }, '📊 Schwierige Aufgaben'),
         el('button', { type: 'button', class: 'btn secondary', id: 'lk-rennen', onclick: rennen }, '🏁 Live-Rennen'),
         el('button', { type: 'button', class: 'btn secondary', id: 'lk-siegerehrung', onclick: siegerehrung }, '🏆 Siegerehrung'),
-        teile.wappenKnopf));
+        teile.wappenKnopf,
+        el('button', { type: 'button', class: 'btn secondary', id: 'lk-galerie', onclick: galeriegang }, '🖼️ Galeriegang')));
 
     app.append(el('div', { id: 'lk-haupt' },
       leiste, teile.status, fehltBox, statistikBox, wappenBox, teile.zusammenfassung, teile.tabelle,
@@ -374,6 +375,228 @@
         `animation-delay:${Math.random() * 0.8}s;animation-duration:${2.5 + Math.random() * 2}s;transform:rotate(${Math.random() * 360}deg)` });
       ziel.append(k);
       setTimeout(() => k.remove(), 5500);
+    }
+  }
+
+  /* ---------- Galeriegang: die Siegerwappen einer Klasse feierlich am Beamer ----------
+     Vorhang auf, dann „läuft“ man an der Galeriewand entlang: Ein Kunstwerk nach dem anderen im Scheinwerferlicht,
+     gerahmt, mit Namensschild; am Ende alle Werke im Saal. Gezeigt werden – wie bei der Siegerehrung – nur Wappen,
+     die die Lehrkraft als angesehen markiert hat, aus allen ILS-Aufträgen der Klasse.
+     „Neu“ = noch nie in einem Galeriegang dieser Klasse gezeigt (gemerkt nur in diesem Browser; neu gemalt = neu).
+     Tasten: ← → blättern, Leertaste Pause, T Tempo, G Gesamtansicht, R von vorn, F Vollbild, Esc schließen. */
+  const GALERIE_TEMPO = [['langsam', 9000], ['normal', 6500], ['schnell', 4000]];
+  const RAHMEN = ['gold', 'nuss', 'silber'];
+  const galerieMonat = (ms) => new Date(ms).toLocaleDateString('de-DE', { month: 'long', year: 'numeric' });
+  const galerieAuftrag = (a) => 'ILS ' + a.titel.split(':')[0].split(' und ')[0];
+  const mischen = (x) => { const a = x.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  function galeriegang() {
+    if (!stand) return;
+    const klassen = [...new Set(stand.schueler.map((s) => s.klasse))].sort();
+    const laden = Promise.all(AUFTRAEGE.filter((x) => x.challenge).map((a) => api('/api/lehrkraft/wappen?ils=' + encodeURIComponent(a.id))
+      .then((r) => (r.status === 200 ? r.d.wappen.map((w) => ({ ...w, auftrag: a })) : []))
+      .catch(() => []))).then((l) => l.flat());
+
+    const ov = el('div', { class: 'se-overlay ga-overlay', id: 'ga-overlay', tabindex: '-1' });
+    const vorhang = el('div', { class: 'ga-vorhang' }, el('div', { class: 'ga-vh links' }), el('div', { class: 'ga-vh rechts' }), el('div', { class: 'ga-volant' }));
+    const karte = el('div', { class: 'ga-karte' });
+    const kopf = el('div', { class: 'ga-kopf' });
+    const gang = el('div', { class: 'ga-gang', 'aria-live': 'polite' });
+    const zaehler = el('div', { class: 'ga-zaehler' });
+    const knoepfe = el('div', { class: 'se-knoepfe ga-knoepfe' });
+    ov.append(el('div', { class: 'ga-lampe' }), el('div', { class: 'ga-licht' }), el('div', { class: 'ga-boden' }), kopf, gang, zaehler, vorhang, karte, knoepfe);
+
+    let klasse = null, werke = [], figuren = [], pos = 0, pause = false, tempo = 1, timer = null, phase = 'wahl';
+    // Welche Werke wurden in dieser Klasse schon gezeigt? null = noch nie ein Galeriegang
+    const merkSchl = () => 'ils-lk-galerie:' + klasse;
+    const kennung = (w) => `${w.auftrag.id}:${w.sid}:${w.um}`;
+    let gezeigt = null;
+    function gezeigtLaden() {
+      try { const x = JSON.parse(merken.get(merkSchl())); return Array.isArray(x) ? new Set(x) : null; } catch (e) { return null; }
+    }
+    function alsGezeigt(liste) {
+      gezeigt = gezeigt || new Set();
+      liste.forEach((w) => gezeigt.add(kennung(w)));
+      try { merken.set(merkSchl(), JSON.stringify([...gezeigt].slice(-2000))); } catch (e) { /* egal */ }
+    }
+
+    // Knöpfe blenden sich aus, wenn die Maus ruht (am Beamer stört nichts)
+    let ruhe = null;
+    const wach = () => { ov.classList.remove('still'); clearTimeout(ruhe); ruhe = setTimeout(() => ov.classList.add('still'), 3000); };
+    ov.addEventListener('mousemove', wach);
+
+    const schliessen = () => {
+      clearTimeout(timer); clearTimeout(ruhe);
+      document.removeEventListener('keydown', taste);
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+      ov.remove();
+    };
+    const vollbild = () => { if (!document.fullscreenElement) ov.requestFullscreen && ov.requestFullscreen().catch(() => {}); else document.exitFullscreen().catch(() => {}); };
+    function taste(ev) {
+      if (ev.key === 'Escape') { schliessen(); return; }
+      if (ev.key === 'f' || ev.key === 'F') { vollbild(); return; }
+      if (phase === 'gang') {
+        if (ev.key === 'ArrowRight') { ev.preventDefault(); gehe(pos + 1); } else if (ev.key === 'ArrowLeft') { ev.preventDefault(); gehe(pos - 1); } else if (ev.key === ' ') { ev.preventDefault(); pauseUmschalten(); } else if (ev.key === 't' || ev.key === 'T') tempoUmschalten();
+      }
+      if ((phase === 'gang' || phase === 'saal') && (ev.key === 'g' || ev.key === 'G')) saal();
+      if ((phase === 'gang' || phase === 'saal') && (ev.key === 'r' || ev.key === 'R')) rundgang(werke);
+    }
+    document.addEventListener('keydown', taste);
+    document.body.append(ov);
+    ov.focus();
+    wach();
+
+    const knopf = (text, aktion, id) => el('button', { type: 'button', class: 'btn secondary', id: id || null, onclick: aktion }, text);
+    function knoepfeSetzen(...liste) { knoepfe.innerHTML = ''; knoepfe.append(...liste.filter(Boolean)); }
+
+    function werk(w, i) {
+      return el('figure', { class: `ga-werk rahmen-${RAHMEN[i % RAHMEN.length]}` + (w.neu ? ' neu' : '') },
+        el('div', { class: 'ga-rahmen' }, el('div', { class: 'ga-passepartout' }, el('img', { src: w.bild, alt: `Siegerwappen von ${w.name}` }))),
+        w.neu ? el('div', { class: 'ga-neu' }, '✨ Neu') : null,
+        el('figcaption', { class: 'ga-schild' }, el('strong', {}, w.name), el('span', {}, `${galerieAuftrag(w.auftrag)} · ${galerieMonat(w.um)}`)));
+    }
+
+    function kopfSetzen(unter) {
+      kopf.innerHTML = '';
+      kopf.append(el('div', { class: 'ga-titel' }, '✦ Galerie der Siegerwappen ✦'), el('div', { class: 'ga-unter' }, unter));
+    }
+
+    function vorhangZu(inhalt) {
+      clearTimeout(timer);
+      phase = 'karte';
+      ov.classList.remove('offen', 'saal-an');
+      gang.innerHTML = ''; zaehler.textContent = ''; kopf.innerHTML = '';
+      karte.innerHTML = '';
+      karte.append(...inhalt.filter(Boolean));
+      karte.classList.remove('weg');
+    }
+
+    function klasseWaehlen() {
+      vorhangZu([
+        el('div', { class: 'ga-k-titel' }, 'Galeriegang'),
+        el('div', { class: 'ga-k-unter' }, 'Welche Klasse besucht heute die Galerie?'),
+        el('div', { class: 'ga-k-knoepfe' }, klassen.map((k) => el('button', { type: 'button', class: 'ga-gold-knopf', onclick: () => einlass(k) }, k)))]);
+      phase = 'wahl';
+      knoepfeSetzen(knopf('⛶ Vollbild (F)', vollbild), knopf('Schließen (Esc)', schliessen));
+    }
+
+    async function einlass(k) {
+      klasse = k;
+      vorhangZu([el('div', { class: 'ga-k-titel' }, 'Galeriegang'), el('div', { class: 'ga-k-unter' }, 'Die Kunstwerke werden aufgehängt …')]);
+      const alle = await laden;
+      const meine = alle.filter((w) => w.klasse === k);
+      const frei = meine.filter((w) => w.gesehen);
+      const wartet = meine.length - frei.length;
+      gezeigt = gezeigtLaden();
+      frei.forEach((w) => { w.neu = gezeigt !== null && !gezeigt.has(kennung(w)); });
+      const neue = frei.filter((w) => w.neu).sort((x, y) => x.um - y.um);
+      const alleWerke = [...neue, ...mischen(frei.filter((w) => !w.neu))];
+      const dauerText = (n) => { const s = Math.round((n * GALERIE_TEMPO[tempo][1]) / 1000); return s < 60 ? `ca. ${Math.max(10, Math.round(s / 10) * 10)} Sekunden` : `ca. ${Math.round(s / 60)} Minute${Math.round(s / 60) === 1 ? '' : 'n'}`; };
+      const hinweis = wartet ? el('p', { class: 'ga-k-hinweis' }, `${wartet} Wappen ${wartet === 1 ? 'wartet' : 'warten'} noch auf Ihre Freigabe (🛡️ Siegerwappen → ✓ Angesehen).`) : null;
+      if (!frei.length) {
+        vorhangZu([el('div', { class: 'ga-k-titel' }, 'Galeriegang'), el('div', { class: 'ga-k-unter' }, `Klasse ${k}`),
+          el('p', { class: 'ga-k-text' }, 'Die Galerie ist noch leer – sobald Siegerwappen gemalt und freigegeben sind, hängen sie hier.'), hinweis]);
+        knoepfeSetzen(klassen.length > 1 ? knopf('Klasse wechseln', klasseWaehlen) : null, knopf('Schließen (Esc)', schliessen));
+        return;
+      }
+      vorhangZu([
+        el('div', { class: 'ga-k-titel' }, 'Galeriegang'),
+        el('div', { class: 'ga-k-unter' }, `Klasse ${k} · Siegerwappen aus den ILS-Aufträgen`),
+        el('p', { class: 'ga-k-text' }, `${frei.length} Kunstwerk${frei.length === 1 ? '' : 'e'} hängen in der Galerie` + (neue.length ? `, davon ${neue.length} neu seit dem letzten Galeriegang.` : '.')),
+        el('div', { class: 'ga-k-knoepfe' },
+          neue.length ? el('button', { type: 'button', class: 'ga-gold-knopf', id: 'ga-start-neu', onclick: () => rundgang(neue) }, `▶ Nur die neuen (${neue.length}) · ${dauerText(neue.length)}`) : null,
+          el('button', { type: 'button', class: 'ga-gold-knopf' + (neue.length ? ' zweit' : ''), id: 'ga-start-alle', onclick: () => rundgang(alleWerke) }, `▶ Alle ${frei.length} · ${dauerText(frei.length)}`)),
+        hinweis]);
+      knoepfeSetzen(klassen.length > 1 ? knopf('Klasse wechseln', klasseWaehlen) : null, knopf('⛶ Vollbild (F)', vollbild), knopf('Schließen (Esc)', schliessen));
+    }
+
+    function rundgang(liste) {
+      werke = liste;
+      phase = 'gang';
+      pause = false;
+      ov.classList.remove('saal-an');
+      karte.classList.add('weg');
+      kopfSetzen(`Klasse ${klasse}`);
+      gang.innerHTML = '';
+      figuren = werke.map((w, i) => werk(w, i));
+      gang.append(...figuren);
+      pos = 0;
+      setzen();
+      // Vorhang auf – dann beginnt der Rundgang
+      requestAnimationFrame(() => ov.classList.add('offen'));
+      knoepfeSetzen(knopf('◀', () => gehe(pos - 1)), knopf('⏸ Pause (Leertaste)', pauseUmschalten, 'ga-pause'), knopf('▶', () => gehe(pos + 1)),
+        knopf(`Tempo: ${GALERIE_TEMPO[tempo][0]} (T)`, tempoUmschalten, 'ga-tempo'), knopf('▦ Alle Werke (G)', saal), knopf('⛶ Vollbild (F)', vollbild), knopf('Schließen (Esc)', schliessen));
+      weiterNach(2600 + GALERIE_TEMPO[tempo][1]);   // erst der Vorhang, dann die volle Zeit für das erste Werk
+    }
+
+    function setzen() {
+      figuren.forEach((f, i) => {
+        const d = i - pos;
+        f.style.setProperty('--d', String(d));
+        f.classList.toggle('aktiv', d === 0);
+        f.classList.toggle('weg', Math.abs(d) > 1);
+      });
+      if (werke[pos]) alsGezeigt([werke[pos]]);
+      zaehler.textContent = `Werk ${pos + 1} von ${werke.length}` + (pause ? ' · ⏸ Pause' : '');
+    }
+
+    function weiterNach(ms) {
+      clearTimeout(timer);
+      if (pause) return;
+      timer = setTimeout(() => (pos + 1 < werke.length ? gehe(pos + 1) : saal()), ms || GALERIE_TEMPO[tempo][1]);
+    }
+
+    function gehe(n) {
+      if (phase !== 'gang') return;
+      if (n >= werke.length) { saal(); return; }
+      pos = Math.max(0, n);
+      setzen();
+      weiterNach();
+    }
+
+    function pauseUmschalten() {
+      pause = !pause;
+      const b = document.getElementById('ga-pause');
+      if (b) b.textContent = pause ? '▶ Weiter (Leertaste)' : '⏸ Pause (Leertaste)';
+      setzen();
+      weiterNach();
+    }
+
+    function tempoUmschalten() {
+      tempo = (tempo + 1) % GALERIE_TEMPO.length;
+      const b = document.getElementById('ga-tempo');
+      if (b) b.textContent = `Tempo: ${GALERIE_TEMPO[tempo][0]} (T)`;
+      weiterNach();
+    }
+
+    // Gesamtansicht: alle Werke im Saal, dazu Dank und goldener Glanz
+    function saal() {
+      clearTimeout(timer);
+      phase = 'saal';
+      alsGezeigt(werke);
+      ov.classList.add('offen', 'saal-an');
+      karte.classList.add('weg');
+      kopfSetzen(`Klasse ${klasse} · ${werke.length} Kunstwerk${werke.length === 1 ? '' : 'e'}`);
+      gang.innerHTML = '';
+      zaehler.textContent = '';
+      gang.append(el('div', { class: 'ga-saal' }, werke.map((w, i) => { const f = werk({ ...w, neu: false }, i); f.style.setProperty('--i', String(i)); return f; })),
+        el('div', { class: 'ga-dank' }, 'Danke an alle Künstlerinnen und Künstler!'));
+      glanz(ov);
+      knoepfeSetzen(knopf('↻ Rundgang von vorn (R)', () => rundgang(werke)), klassen.length > 1 ? knopf('Klasse wechseln', klasseWaehlen) : null,
+        knopf('⛶ Vollbild (F)', vollbild), knopf('Schließen (Esc)', schliessen));
+    }
+
+    if (wahl.klasse) einlass(wahl.klasse); else if (klassen.length === 1) einlass(klassen[0]); else klasseWaehlen();
+  }
+
+  // Goldener Glanz (ruhiger als Konfetti)
+  function glanz(ziel) {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    for (let i = 0; i < 70; i++) {
+      const g = el('i', { class: 'ga-funke', style: `left:${Math.random() * 100}%;top:${Math.random() * 85}%;animation-delay:${Math.random() * 2.5}s;` +
+        `--g:${(6 + Math.random() * 10).toFixed(0)}px` });
+      ziel.append(g);
+      setTimeout(() => g.remove(), 6000);
     }
   }
 

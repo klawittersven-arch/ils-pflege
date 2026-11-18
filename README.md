@@ -236,3 +236,19 @@ Es erscheint neben dem Namen in der Bestenliste der Klasse.
 - Die **🏆 Siegerehrung** am Beamer zeigt **nur Wappen, die Sie als angesehen markiert haben** – ein frisch gemaltes Bild
   landet also nie ungeprüft an der Wand.
 - Speicher im Worker: `w:<ils>:<sid>` = { bild, um, gesehen }, `wsperre:<sid>`.
+
+### Galeriegang (wöchentlich am Beamer)
+
+Lehrkraft-Seite → **🖼️ Galeriegang** (neben „🛡️ Siegerwappen“): die Siegerwappen einer Klasse feierlich und groß.
+
+- Samtvorhang mit Startkarte („4 Kunstwerke hängen in der Galerie, davon 1 neu“), dann öffnet sich der Vorhang und man
+  „geht“ die Galeriewand entlang: ein Werk nach dem anderen im Scheinwerferlicht, in Gold-, Nussbaum- oder Silberrahmen
+  mit Passepartout und Messing-Namensschild (Vorname N., ILS-Auftrag, Monat). Am Ende alle Werke im Saal mit
+  „Danke an alle Künstlerinnen und Künstler!“.
+- Gezeigt werden – wie bei der Siegerehrung – **nur Wappen, die Sie als angesehen markiert haben**, aus allen ILS-Aufträgen
+  der gewählten Klasse (ohne gewählte Klasse wird sie zuerst abgefragt). Noch nicht freigegebene werden auf der Startkarte gezählt.
+- **Nur die neuen:** Der Browser merkt sich, welche Werke in dieser Klasse schon gezeigt wurden; neu gemalte oder neu
+  freigegebene Wappen tragen „✨ Neu“ und lassen sich allein zeigen – ideal für den wöchentlichen Stundenbeginn.
+- Tasten: **← →** blättern, **Leertaste** Pause, **T** Tempo (langsam 9 s / normal 6,5 s / schnell 4 s je Werk),
+  **G** alle Werke, **R** von vorn, **F** Vollbild, **Esc** schließen. Die Knöpfe blenden sich aus, wenn die Maus ruht.
+- Test: `node tests/galerie.test.js`

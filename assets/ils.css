@@ -521,3 +521,107 @@ table.lk td.challenge-zelle { font-weight: 700; color: #1f3a5f; white-space: now
 .rb-links .rb-status { font-size: max(12px, min(calc(var(--zeile) * .42), 1.45vw)); }
 .rb-links .rb-marken-spur { height: max(18px, min(calc(var(--zeile) * .4), 30px)); }
 .rb-links .rb-marken-spur span { font-size: max(12px, min(calc(var(--zeile) * .38), 1.3vw)); }
+
+/* ---------- Galeriegang (Lehrkraft-Seite → 🖼️ Galeriegang) ---------- */
+.ga-overlay {
+  --gold: #e9cf86; --gold-dunkel: #b08a35; --abstand: 36vw; --bild: min(44vh, 30vw);
+  padding: 0; overflow: hidden; justify-content: flex-start;
+  font-family: Georgia, 'Times New Roman', 'Palatino Linotype', serif;
+  background:
+    radial-gradient(ellipse 42% 60% at 50% 42%, rgba(255, 228, 170, .16), transparent 70%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, .03) 0 2px, transparent 2px 64px),
+    linear-gradient(#4b1f2b, #33131c 60%, #240d13);
+}
+.ga-overlay.still { cursor: none; }
+.ga-overlay.still .ga-knoepfe { opacity: 0; }
+.ga-knoepfe { transition: opacity .6s; z-index: 8; font-family: system-ui, sans-serif; }
+/* Lampe, Lichtkegel, Parkett */
+.ga-lampe { position: absolute; top: 0; left: 50%; width: 120px; height: 18px; transform: translateX(-50%); z-index: 1;
+  background: linear-gradient(#1a1a1a, #3a3a3a); border-radius: 0 0 60px 60px; box-shadow: 0 6px 24px rgba(255, 230, 170, .5); }
+.ga-licht { position: absolute; top: 0; left: 50%; width: 72vw; height: 88vh; transform: translateX(-50%); pointer-events: none; z-index: 1;
+  background: linear-gradient(rgba(255, 238, 195, .22), rgba(255, 238, 195, .05) 70%, transparent);
+  clip-path: polygon(46% 0, 54% 0, 80% 100%, 20% 100%); filter: blur(6px); opacity: 0; transition: opacity 1.4s .9s; }
+.ga-overlay.offen:not(.saal-an) .ga-licht { opacity: 1; }
+.ga-boden { position: absolute; left: 0; right: 0; bottom: 0; height: 12vh; z-index: 0;
+  background:
+    radial-gradient(ellipse 30% 60% at 50% 0, rgba(255, 228, 170, .22), transparent 70%),
+    linear-gradient(rgba(0, 0, 0, .55), rgba(0, 0, 0, .15)),
+    repeating-linear-gradient(90deg, #5d3a20 0 110px, #6e4527 110px 220px, #563419 220px 330px);
+  border-top: 7px solid #1d0e08; box-shadow: 0 -2px 0 #6a4a2a; }
+/* Überschrift */
+.ga-kopf { position: absolute; top: 3.2vh; left: 0; right: 0; text-align: center; z-index: 3; color: var(--gold); text-shadow: 0 2px 8px rgba(0, 0, 0, .6); }
+.ga-titel { font-size: clamp(18px, 2.4vw, 34px); letter-spacing: .22em; font-variant: small-caps; }
+.ga-unter { font-size: clamp(14px, 1.5vw, 22px); font-style: italic; opacity: .85; margin-top: 4px; }
+/* Gang: das Werk in der Mitte im Licht, die Nachbarn im Halbdunkel */
+.ga-gang { position: absolute; inset: 0; z-index: 2; }
+.ga-werk { position: absolute; left: 50%; top: 47%; margin: 0; display: flex; flex-direction: column; align-items: center;
+  transform: translate(-50%, -50%) translateX(calc(var(--d, 0) * var(--abstand))) scale(.58);
+  opacity: .5; filter: brightness(.45) saturate(.8);
+  transition: transform 1.2s cubic-bezier(.45, .05, .25, 1), opacity 1.2s, filter 1.2s; }
+.ga-werk.aktiv { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: none; z-index: 2; }
+.ga-werk.weg { opacity: 0; pointer-events: none; }
+/* Rahmen: Gold, Nussbaum, Silber */
+.ga-rahmen { padding: clamp(14px, 2.4vh, 30px); border-radius: 3px; position: relative;
+  box-shadow: 0 22px 48px rgba(0, 0, 0, .65), 0 6px 14px rgba(0, 0, 0, .45), inset 0 0 0 2px rgba(0, 0, 0, .35), inset 0 0 0 6px rgba(255, 255, 255, .18), inset 0 0 18px rgba(0, 0, 0, .45); }
+.rahmen-gold .ga-rahmen { background: linear-gradient(145deg, #7a5a14, #f7e38a 16%, #b98b26 34%, #fff1a8 52%, #9c7420 70%, #e8c75a 86%, #7a5a14); }
+.rahmen-nuss .ga-rahmen { background: linear-gradient(145deg, #2e1b0e, #7a4b2a 20%, #4a2c17 42%, #8d5c36 60%, #3e2412 80%, #6b4124); }
+.rahmen-silber .ga-rahmen { background: linear-gradient(145deg, #5f656b, #eef1f3 18%, #9aa1a7 38%, #fbfcfd 55%, #7d8389 74%, #d5dade 90%, #5f656b); }
+.ga-passepartout { background: #f6f1e6; padding: clamp(14px, 3.2vh, 44px);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1), inset 3px 3px 8px rgba(0, 0, 0, .18), inset -1px -1px 0 rgba(255, 255, 255, .7); }
+.ga-passepartout img { display: block; width: var(--bild); height: var(--bild); object-fit: contain; background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .12), 2px 2px 6px rgba(0, 0, 0, .18); }
+/* Messing-Namensschild */
+.ga-schild { margin-top: 2.6vh; padding: .45em 1.6em .5em; border-radius: 4px; text-align: center; position: relative; color: #3a2a0c;
+  background: linear-gradient(#f1dc9c, #c9a24c 55%, #e3c77c); box-shadow: 0 3px 8px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .65), inset 0 -1px 0 rgba(0, 0, 0, .2); }
+.ga-schild::before, .ga-schild::after { content: ''; position: absolute; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff6d8, #8a6a24); }
+.ga-schild::before { left: 8px; } .ga-schild::after { right: 8px; }
+.ga-schild strong { display: block; font-size: clamp(18px, 2.4vw, 34px); letter-spacing: .03em; text-shadow: 0 1px 0 rgba(255, 255, 255, .5); }
+.ga-schild span { display: block; font-size: clamp(11px, 1.1vw, 16px); font-variant: small-caps; letter-spacing: .08em; opacity: .85; }
+.ga-neu { position: absolute; top: -12px; right: -14px; z-index: 3; background: #c0392b; color: #fff; font: 700 clamp(12px, 1.2vw, 18px) system-ui, sans-serif;
+  padding: .3em .8em; border-radius: 999px; transform: rotate(8deg); box-shadow: 0 3px 10px rgba(0, 0, 0, .45); }
+.ga-zaehler { position: absolute; left: 0; right: 0; bottom: 4.2vh; z-index: 3; text-align: center; color: var(--gold); font-size: clamp(13px, 1.3vw, 19px);
+  letter-spacing: .12em; font-variant: small-caps; text-shadow: 0 2px 6px rgba(0, 0, 0, .7); }
+/* Samtvorhang mit Volant und Startkarte */
+.ga-vorhang { position: absolute; inset: 0; z-index: 6; display: flex; pointer-events: none; }
+.ga-vh { flex: 1; transition: transform 2.2s cubic-bezier(.6, 0, .25, 1); box-shadow: inset 0 0 60px rgba(0, 0, 0, .55);
+  background:
+    linear-gradient(rgba(0, 0, 0, .25), transparent 18%, transparent 80%, rgba(0, 0, 0, .45)),
+    repeating-linear-gradient(90deg, #6d0b18 0, #a5182b 2.2vw, #c22a3c 3vw, #8d1222 4.2vw, #6d0b18 5.4vw); }
+.ga-overlay.offen .ga-vh.links { transform: translateX(-102%); }
+.ga-overlay.offen .ga-vh.rechts { transform: translateX(102%); }
+.ga-volant { position: absolute; top: 0; left: 0; right: 0; height: 7vh; transition: transform 1.6s .4s;
+  background: repeating-radial-gradient(circle at 50% 0, #8d1222 0 2.6vh, #b51f32 2.6vh 3.6vh, #6d0b18 3.6vh 4.6vh);
+  border-bottom: 5px solid var(--gold-dunkel); box-shadow: 0 6px 16px rgba(0, 0, 0, .5); }
+.ga-overlay.offen .ga-volant { transform: translateY(-110%); }
+.ga-karte { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 7; width: min(760px, 88vw); text-align: center;
+  padding: 4vh 4vw; color: var(--gold); background: rgba(25, 6, 10, .82); border: 3px double var(--gold); border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .6), inset 0 0 40px rgba(233, 207, 134, .08); transition: opacity .8s, transform .8s; }
+.ga-karte.weg { opacity: 0; transform: translate(-50%, -46%); pointer-events: none; }
+.ga-k-titel { font-size: clamp(34px, 5vw, 72px); font-style: italic; letter-spacing: .04em; }
+.ga-k-unter { font-size: clamp(15px, 1.8vw, 24px); font-variant: small-caps; letter-spacing: .14em; margin-top: .4em; }
+.ga-k-text { font-size: clamp(15px, 1.6vw, 22px); color: #f6ecd0; margin: 2.4vh 0 0; }
+.ga-k-hinweis { font: 14px system-ui, sans-serif; color: #f6ecd0; opacity: .75; margin: 2vh 0 0; }
+.ga-k-knoepfe { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 3vh; }
+.ga-gold-knopf { font: 700 clamp(16px, 1.7vw, 24px) Georgia, serif; color: #2b1d05; cursor: pointer; padding: .7em 1.4em; border-radius: 6px; border: 1px solid #7a5a14;
+  background: linear-gradient(#fbeaa8, #d8b357 55%, #b8902f); box-shadow: 0 4px 12px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .7); }
+.ga-gold-knopf:hover, .ga-gold-knopf:focus-visible { filter: brightness(1.08); outline: 3px solid #fff3c4; outline-offset: 2px; }
+.ga-gold-knopf.zweit { background: linear-gradient(#f3ead2, #cdbf9a); }
+/* Gesamtansicht (Saal) */
+.ga-saal { position: absolute; top: 14vh; bottom: 16vh; left: 4vw; right: 4vw; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 3.5vh 2.5vw;
+  justify-content: center; align-content: center; padding: 2vh 0; }
+.ga-saal .ga-werk { position: static; transform: none; opacity: 1; filter: none; animation: ga-auf .8s both; --bild: min(15vh, 11vw); }
+.ga-saal .ga-werk:nth-child(n) { animation-delay: calc(var(--i, 0) * 60ms); }
+.ga-saal .ga-rahmen { padding: 8px; } .ga-saal .ga-passepartout { padding: 9px; }
+.ga-saal .ga-schild { margin-top: 1.2vh; padding: .25em 1.5em; } .ga-saal .ga-schild strong { font-size: clamp(13px, 1.2vw, 18px); }
+.ga-saal .ga-schild span { display: none; }
+.ga-dank { position: absolute; left: 0; right: 0; bottom: 4vh; z-index: 3; text-align: center; color: var(--gold); font-style: italic;
+  font-size: clamp(20px, 2.8vw, 40px); text-shadow: 0 2px 10px rgba(0, 0, 0, .7); animation: ga-auf 1.2s .6s both; }
+@keyframes ga-auf { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.ga-funke { position: absolute; z-index: 4; width: var(--g, 10px); height: var(--g, 10px); pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, #fff8dc 0, #f1d27a 35%, transparent 70%); animation: ga-funkeln 2.4s ease-in-out forwards; }
+@keyframes ga-funkeln { 0% { opacity: 0; transform: scale(.2); } 40% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0; transform: scale(.4); } }
+@media (prefers-reduced-motion: reduce) {
+  .ga-werk, .ga-vh, .ga-volant, .ga-karte, .ga-licht { transition: none; }
+  .ga-saal .ga-werk, .ga-dank { animation: none; }
+}
