@@ -10,12 +10,13 @@
  * Schnittstelle (JSON; <lk> = Schlüssel der Beamer-Seite, <token> = Schlüssel eines Handys, beide als Bearer)
  *   POST /api/rennen/neu        { set, ziel? }                    → { raum, lk }
  *   GET  /api/rennen/beamer?raum=…     (Bearer lk)              → Stand aller Bahnen
- *   POST /api/rennen/steuern    { raum, aktion, ziel?, id? }      (Bearer lk)  aktion: start | stopp | runde | ziel | entfernen | loeschen
+ *   POST /api/rennen/steuern    { raum, aktion, ziel?, an?, id? } (Bearer lk)  aktion: start | stopp | runde | ziel | zeitlimit | entfernen | loeschen
  *   GET  /api/rennen/fehler?raum=…     (Bearer lk)              → häufige Fehler je Frage (anonym, nur Summen)
  *   GET  /api/rennen/info?raum=…                                → { titel, status } (gibt es den Raum? – vor der Namenseingabe)
  *   POST /api/rennen/beitreten  { raum, vorname, initial, token? } → { token, id, name }
  *   GET  /api/rennen/ich?raum=…        (Bearer token)           → eigener Stand + aktuelle Frage (ohne Lösung)
  *   POST /api/rennen/antwort    { raum, frage, wahl }             (Bearer token) → richtig?, Lösung + Begründung, nächste Frage
+ *                               { raum, frage, zeit: true }       Zeit abgelaufen (das Handy meldet es) → wie ein Fehler
  *   POST /api/rennen/verlassen  { raum }                          (Bearer token) → eigene Bahn entfernen (z. B. Name vertippt)
  *
  * Datenschutz: Gespeichert werden nur der Anzeigename („Anna K.“) und der Spielstand – keine Klasse, kein Gerät,
@@ -35,7 +36,7 @@ const ID_MUSTER = /^[a-z0-9]{8}$/;
 const FRAGE_MUSTER = /^[a-z0-9]{1,8}$/;
 const VORNAME_MUSTER = /^\p{L}[\p{L}\p{N}' -]{0,19}$/u;   // Ziffern erlaubt (z. B. „Anna2“, wenn der Name schon vergeben ist)
 const INITIAL_MUSTER = /^\p{L}$/u;
-const AKTIONEN = new Set(['start', 'stopp', 'runde', 'ziel', 'entfernen', 'loeschen']);
+const AKTIONEN = new Set(['start', 'stopp', 'runde', 'ziel', 'zeitlimit', 'entfernen', 'loeschen']);
 
 export const ZIELE = [5, 8, 10, 12, 15, 20];
 export const ZIEL_STANDARD = 10;
@@ -43,6 +44,15 @@ const MAX_SPIELER = 60;
 export const LEBEN_MS = 3 * 3600000;        // Raum löscht sich 3 h nach der letzten Aktivität
 export const COUNTDOWN_MS = 5000;           // „5 – 4 – 3 – 2 – 1 – Los!“ – lang genug, dass jedes wartende Handy ihn mitbekommt
 const MIN_ANTWORT_MS = 350;                 // schneller kann kein Mensch lesen (Schutz gegen Skripte)
+// Zeitlimit je Frage (am Beamer abschaltbar): kurze Befunde bis 20 Zeichen 3 s, je weiteres Zeichen 0,08 s mehr
+// (die längsten Sätze im ABCDE-Satz: gut 6 s). Die Zeit läuft ab dem Erscheinen der Frage auf dem Handy.
+const ZEIT_KURZ_MS = 3000;
+const ZEIT_KURZ_ZEICHEN = 20;
+const ZEIT_JE_ZEICHEN_MS = 80;
+export function zeitLimit(text) {
+  const extra = Math.max(0, [...String(text)].length - ZEIT_KURZ_ZEICHEN) * ZEIT_JE_ZEICHEN_MS;
+  return Math.min(9000, Math.round((ZEIT_KURZ_MS + extra) / 100) * 100);
+}
 const UEBERNAHME_MS = 60000;                // gleicher Name: nach 1 Minute ohne Lebenszeichen darf ein anderes Gerät übernehmen
 const SICHERN_SPAETESTENS_MS = 60000;
 const MAX_KOERPER = 4000;
@@ -134,10 +144,11 @@ export async function rennenAnfrage(request, env, url, weg) {
     const set = String(d.set ?? 'abcde');
     if (!Object.prototype.hasOwnProperty.call(SETS, set)) return ungueltig();
     const ziel = ZIELE.includes(Number(d.ziel)) ? Number(d.ziel) : ZIEL_STANDARD;
+    const zeitlimit = d.zeitlimit !== false;
     for (let versuch = 0; versuch < 8; versuch++) {
       const raum = zufall(4, RAUM_ZEICHEN);
       const lk = zufall(32, TOKEN_ZEICHEN);
-      const e = await raumObjekt(env, raum).anlegen(raum, set, lk, ziel);
+      const e = await raumObjekt(env, raum).anlegen(raum, set, lk, ziel, zeitlimit);
       if (e.ok) return antwort({ ok: true, raum, lk });
     }
     return antwort({ ok: false, grund: 'kein-raum-frei' }, 503);
@@ -159,9 +170,10 @@ export async function rennenAnfrage(request, env, url, weg) {
   if (!schluessel) return antwort({ ok: false, grund: 'unbekannt' }, 401);
   if (aktion === 'antwort') {
     const frage = String(d.frage ?? '');
-    const wahl = String(d.wahl ?? '');
-    if (!FRAGE_MUSTER.test(frage) || !/^[A-Z]$/.test(wahl)) return ungueltig();
-    return mitStatus(await r.antworten(schluessel, frage, wahl));
+    const zeit = d.zeit === true;
+    const wahl = zeit ? '' : String(d.wahl ?? '');
+    if (!FRAGE_MUSTER.test(frage) || (!zeit && !/^[A-Z]$/.test(wahl))) return ungueltig();
+    return mitStatus(await r.antworten(schluessel, frage, wahl, zeit));
   }
   if (aktion === 'verlassen') return mitStatus(await r.verlassen(schluessel));
   if (aktion === 'steuern') {
@@ -170,6 +182,7 @@ export async function rennenAnfrage(request, env, url, weg) {
     let wert = null;
     if (was === 'ziel') { wert = Number(d.ziel); if (!ZIELE.includes(wert)) return ungueltig(); }
     if (was === 'entfernen') { wert = String(d.id ?? ''); if (!ID_MUSTER.test(wert)) return ungueltig(); }
+    if (was === 'zeitlimit') { if (typeof d.an !== 'boolean') return ungueltig(); wert = d.an; }
     return mitStatus(await r.steuern(schluessel, was, wert));
   }
   return antwort({ ok: false, grund: 'nicht-gefunden' }, 404);
@@ -177,11 +190,12 @@ export async function rennenAnfrage(request, env, url, weg) {
 
 /* ---------- Durable Object: ein Raum ----------
  * Speicher: ein einziger Schlüssel „raum“ =
- *   { raum, set, lk, angelegt, zuletzt, status: 'warten'|'laeuft'|'beendet', start, ende, ziel, runde,
- *     spieler: { <id>: { id, token, name, schl, beigetreten, zuletzt, serie, best, fehler, richtig, imZiel,
+ *   { raum, set, lk, angelegt, zuletzt, status: 'warten'|'laeuft'|'beendet', start, ende, ziel, zeitlimit, runde,
+ *     spieler: { <id>: { id, token, name, schl, beigetreten, zuletzt, serie, best, fehler, zeit, richtig, imZiel,
  *                        frage: { id, um } | null, wieder: [{ id, in }], beutel: [ids] } },
- *     stat: { <frage>: { n, falsch, als: { <Buchstabe>: anzahl } } } }       (anonym, für „Häufige Fehler“)
- * serie = richtige hintereinander (Fortschritt auf der Bahn), best = längste Serie, imZiel = Zeitpunkt des Zieleinlaufs. */
+ *     stat: { <frage>: { n, falsch, zeit, als: { <Buchstabe>: anzahl } } } }   (anonym, für „Häufige Fehler“)
+ * serie = richtige hintereinander (Fortschritt auf der Bahn), best = längste Serie, imZiel = Zeitpunkt des Zieleinlaufs,
+ * fehler = alle Fehler (auch Zeit abgelaufen), zeit = davon „zu langsam“. */
 export class Rennen extends DurableObject {
   async laden() {
     if (this.r === undefined) this.r = (await this.ctx.storage.get('raum')) || null;
@@ -215,10 +229,10 @@ export class Rennen extends DurableObject {
     this.r = null;
   }
 
-  async anlegen(raum, set, lk, ziel) {
+  async anlegen(raum, set, lk, ziel, zeitlimit = true) {
     if (await this.laden()) return { ok: false, grund: 'belegt' };
     const jetzt = Date.now();
-    this.r = { raum, set, lk, angelegt: jetzt, zuletzt: jetzt, status: 'warten', start: null, ende: null, ziel, runde: 1, spieler: {}, stat: {} };
+    this.r = { raum, set, lk, angelegt: jetzt, zuletzt: jetzt, status: 'warten', start: null, ende: null, ziel, zeitlimit, runde: 1, spieler: {}, stat: {} };
     await this.sichern();
     return { ok: true };
   }
@@ -272,11 +286,12 @@ export class Rennen extends DurableObject {
     const r = this.r;
     const liste = this.rangliste();
     const f = r.status === 'laeuft' && jetzt >= r.start && p.frage ? this.set().fragen.find((x) => x.id === p.frage.id) : null;
+    const mitZeit = r.zeitlimit !== false;
     return {
-      ok: true, jetzt, raum: r.raum, status: r.status, start: r.start, ende: r.ende, ziel: r.ziel, runde: r.runde,
+      ok: true, jetzt, raum: r.raum, status: r.status, start: r.start, ende: r.ende, ziel: r.ziel, zeitlimit: mitZeit, runde: r.runde,
       id: p.id, name: p.name, serie: p.serie, best: p.best, imZiel: p.imZiel,
       platz: liste.indexOf(p) + 1, von: liste.length,
-      frage: f ? { id: f.id, text: f.text } : null
+      frage: f ? { id: f.id, text: f.text, zeit: mitZeit ? zeitLimit(f.text) : null } : null
     };
   }
 
@@ -285,8 +300,8 @@ export class Rennen extends DurableObject {
     const s = this.set();
     return {
       ok: true, jetzt, raum: r.raum, set: { id: s.id, titel: s.titel }, status: r.status, start: r.start, ende: r.ende,
-      ziel: r.ziel, ziele: ZIELE, runde: r.runde,
-      spieler: this.rangliste().map((p) => ({ id: p.id, name: p.name, serie: p.serie, best: p.best, fehler: p.fehler,
+      ziel: r.ziel, ziele: ZIELE, zeitlimit: r.zeitlimit !== false, runde: r.runde,
+      spieler: this.rangliste().map((p) => ({ id: p.id, name: p.name, serie: p.serie, best: p.best, fehler: p.fehler, zeit: p.zeit || 0,
         richtig: p.richtig, imZiel: p.imZiel, zuletzt: p.zuletzt, beigetreten: p.beigetreten }))
     };
   }
@@ -305,7 +320,7 @@ export class Rennen extends DurableObject {
     if (r.lk !== lk) return { ok: false, grund: 'schluessel' };
     const jetzt = Date.now();
     const zuruecksetzen = () => {
-      for (const p of Object.values(r.spieler)) Object.assign(p, { serie: 0, best: 0, fehler: 0, richtig: 0, imZiel: null, frage: null, wieder: [] });
+      for (const p of Object.values(r.spieler)) Object.assign(p, { serie: 0, best: 0, fehler: 0, zeit: 0, richtig: 0, imZiel: null, frage: null, wieder: [] });
     };
     if (was === 'loeschen') {
       await this.ctx.storage.deleteAll();
@@ -317,6 +332,7 @@ export class Rennen extends DurableObject {
     else if (was === 'stopp') { if (r.status === 'laeuft') Object.assign(r, { status: 'beendet', ende: jetzt }); }
     else if (was === 'runde') { zuruecksetzen(); Object.assign(r, { status: 'warten', start: null, ende: null, runde: r.runde + 1 }); }
     else if (was === 'ziel') { if (r.status === 'laeuft') return { ok: false, grund: 'laeuft' }; r.ziel = wert; }
+    else if (was === 'zeitlimit') { if (r.status === 'laeuft') return { ok: false, grund: 'laeuft' }; r.zeitlimit = wert; }
     else if (was === 'entfernen') delete r.spieler[wert];
     await this.sichern();
     return this.beamerStand(jetzt);
@@ -326,9 +342,9 @@ export class Rennen extends DurableObject {
     if (!(await this.laden())) return { ok: false, grund: 'kein-raum' };
     if (this.r.lk !== lk) return { ok: false, grund: 'schluessel' };
     const s = this.set();
-    const liste = s.fragen.map((f) => ({ id: f.id, text: f.text, k: f.k, warum: f.warum, ...(this.r.stat[f.id] || { n: 0, falsch: 0, als: {} }) }))
+    const liste = s.fragen.map((f) => ({ id: f.id, text: f.text, k: f.k, warum: f.warum, zeit: 0, ...(this.r.stat[f.id] || { n: 0, falsch: 0, als: {} }) }))
       .filter((x) => x.n > 0)
-      .sort((a, b) => (b.falsch - a.falsch) || (b.falsch / b.n - a.falsch / a.n) || a.id.localeCompare(b.id));
+      .sort((a, b) => ((b.falsch + b.zeit) - (a.falsch + a.zeit)) || ((b.falsch + b.zeit) / b.n - (a.falsch + a.zeit) / a.n) || a.id.localeCompare(b.id));
     return { ok: true, kategorien: s.kategorien, liste };
   }
 
@@ -360,7 +376,7 @@ export class Rennen extends DurableObject {
     let id;
     do id = zufall(8, ID_ZEICHEN); while (r.spieler[id]);
     const p = { id, token: zufall(24, TOKEN_ZEICHEN), name: anzeigeName(vorname, initial), schl, beigetreten: jetzt, zuletzt: jetzt,
-      serie: 0, best: 0, fehler: 0, richtig: 0, imZiel: null, frage: null, wieder: [], beutel: [] };
+      serie: 0, best: 0, fehler: 0, zeit: 0, richtig: 0, imZiel: null, frage: null, wieder: [], beutel: [] };
     r.spieler[id] = p;
     await this.sichern();
     return { ok: true, token: p.token, id, name: p.name };
@@ -378,7 +394,7 @@ export class Rennen extends DurableObject {
     return { ...this.zustand(p, jetzt), set: { id: s.id, titel: s.titel, aufgabe: s.aufgabe, kategorien: s.kategorien } };
   }
 
-  async antworten(token, frageId, wahl) {
+  async antworten(token, frageId, wahl, zeit = false) {
     const r = await this.laden();
     if (!r) return { ok: false, grund: 'kein-raum' };
     const p = this.spielerZu(token);
@@ -395,11 +411,11 @@ export class Rennen extends DurableObject {
       if (neu) await this.sichern(); else await this.beruehren();
       return { ...this.zustand(p, jetzt), ok: false, grund: 'veraltet' };
     }
-    if (jetzt - p.frage.um < MIN_ANTWORT_MS) return { ...this.zustand(p, jetzt), ok: false, grund: 'zu-schnell' };
+    if (!zeit && jetzt - p.frage.um < MIN_ANTWORT_MS) return { ...this.zustand(p, jetzt), ok: false, grund: 'zu-schnell' };
     const f = this.set().fragen.find((x) => x.id === frageId);
-    if (!f || !this.set().kategorien.some((k) => k.k === wahl)) return { ok: false, grund: 'ungueltig' };
-    const richtig = f.k === wahl;
-    const st = r.stat[f.id] || (r.stat[f.id] = { n: 0, falsch: 0, als: {} });
+    if (!f || (!zeit && !this.set().kategorien.some((k) => k.k === wahl))) return { ok: false, grund: 'ungueltig' };
+    const richtig = !zeit && f.k === wahl;
+    const st = r.stat[f.id] || (r.stat[f.id] = { n: 0, falsch: 0, zeit: 0, als: {} });
     st.n += 1;
     if (richtig) {
       p.richtig += 1;
@@ -409,8 +425,13 @@ export class Rennen extends DurableObject {
         if (p.serie >= r.ziel) p.imZiel = jetzt;
       }
     } else {
-      st.falsch += 1;
-      st.als[wahl] = (st.als[wahl] || 0) + 1;
+      if (zeit) {   // Zeit abgelaufen: zählt wie ein Fehler, in der Statistik getrennt („zu langsam“)
+        st.zeit = (st.zeit || 0) + 1;
+        p.zeit = (p.zeit || 0) + 1;
+      } else {
+        st.falsch += 1;
+        st.als[wahl] = (st.als[wahl] || 0) + 1;
+      }
       p.fehler += 1;
       if (!p.imZiel) p.serie = 0;
       p.wieder = (p.wieder || []).filter((w) => w.id !== f.id);
@@ -418,7 +439,7 @@ export class Rennen extends DurableObject {
     }
     p.frage = this.naechste(p);
     await this.sichern();
-    return { ...this.zustand(p, jetzt), richtig, gewaehlt: wahl, loesung: f.k, warum: f.warum, ok: true };
+    return { ...this.zustand(p, jetzt), richtig, gewaehlt: wahl || null, zuLangsam: zeit, loesung: f.k, warum: f.warum, ok: true };
   }
 
   async verlassen(token) {

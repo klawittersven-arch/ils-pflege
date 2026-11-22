@@ -2,7 +2,9 @@
  * Ablauf: Namen eingeben (Vorname + Anfangsbuchstabe des Nachnamens) → am Start warten → Countdown →
  * Fragen zuordnen. Richtig: eine Stufe weiter. Falsch: zurück auf 0, mit Lösung und Begründung (3 Sekunden lesen).
  * Schutz gegen Raten: Die Knöpfe sind erst nach einer kurzen Lesezeit frei (wie in den ILS-Übungen);
- * der Server prüft die Antworten selbst. Das Handy merkt sich seinen Schlüssel je Raum (Neuladen = gleiche Bahn). */
+ * der Server prüft die Antworten selbst. Das Handy merkt sich seinen Schlüssel je Raum (Neuladen = gleiche Bahn).
+ * Zeitlimit (am Beamer abschaltbar): Der Server schickt mit jeder Frage die Zeit (kurze Befunde 3 s, lange gut 6 s);
+ * ein Balken läuft ab, danach meldet das Handy „Zeit abgelaufen“ → wie ein Fehler zurück auf 0. */
 (() => {
   'use strict';
   const el = ILS.el;
@@ -36,6 +38,8 @@
   let sendet = false;
   let pollTimer = null;
   let cdTimer = null;
+  let zeitTimer = null;   // Zeitlimit der angezeigten Frage
+  let frist = 0;
   let wachSperre = null;
   const serverJetzt = () => Date.now() + versatz;
   const speicherSchl = () => 'quiz-rennen|' + raum;
@@ -95,6 +99,7 @@
   /* ---------- Anzeige ---------- */
   function zeige(...kinder) {
     clearInterval(cdTimer);
+    clearTimeout(zeitTimer);
     app.innerHTML = '';
     app.append(...kinder.filter(Boolean));
     window.scrollTo(0, 0);
@@ -252,10 +257,13 @@
   }
 
   /* ---------- Warten am Start ---------- */
+  let wartenStand = '';
   function wartenZeigen() {
-    if (modus === 'warten') { kopfAktualisieren(); return; }
-    modus = 'warten';
     const z = stand;
+    const schl = `${z.ziel}|${z.zeitlimit}`;   // Ziel oder Zeitlimit am Beamer geändert → Regeln neu zeigen
+    if (modus === 'warten' && wartenStand === schl) { kopfAktualisieren(); return; }
+    modus = 'warten';
+    wartenStand = schl;
     zeige(kopf(), haupt(
       el('div', { class: 'qz-hell', id: 'qz-warten' },
         el('h2', {}, `Hallo ${name}!`),
@@ -267,7 +275,8 @@
           el('li', {}, 'Sie sehen einen Befund oder eine Maßnahme.'),
           el('li', {}, 'Tippen Sie auf den passenden Buchstaben.'),
           el('li', {}, el('strong', {}, `${z.ziel} richtige hintereinander`), ' → Ziel!'),
-          el('li', {}, el('strong', {}, 'Ein Fehler → zurück auf 0.'), ' Dann sehen Sie die richtige Lösung.'))),
+          el('li', {}, el('strong', {}, 'Ein Fehler → zurück auf 0.'), ' Dann sehen Sie die richtige Lösung.'),
+          z.zeitlimit ? el('li', {}, el('strong', {}, '⏱ Schnell sein: '), 'Kurze Befunde 3 Sekunden, lange etwas mehr. Zu langsam → zurück auf 0.') : null)),
       setInfo ? el('div', { class: 'qz-hell' },
         el('h2', {}, 'Die Leitfragen'),
         el('ul', { class: 'qz-leitfragen' }, setInfo.kategorien.map((k) => el('li', {},
@@ -305,10 +314,39 @@
         el('span', { class: 'qz-buchstabe' }, el('span', {}, k.k)),
         el('span', {}, el('b', {}, `${k.name} – ${k.kurz}`), el('small', {}, k.frage)))));
     setTimeout(() => { if (frage === f) knoepfe.classList.remove('gesperrt'); }, lese);
+    const zeitBalken = f.zeit ? el('div', { class: 'qz-zeit', id: 'qz-zeit', style: `--zeit:${f.zeit}ms`, 'data-ms': String(f.zeit),
+      role: 'timer', 'aria-label': `${String(f.zeit / 1000).replace('.', ',')} Sekunden Zeit` }, el('i')) : null;
     zeige(kopf(), haupt(
       el('div', { class: 'qz-karte' }, el('div', { class: 'qz-auftrag' }, setInfo.aufgabe || 'Wohin gehört das?'),
-        el('div', { class: 'qz-text', id: 'qz-text', 'data-id': f.id }, f.text)),
+        el('div', { class: 'qz-text', id: 'qz-text', 'data-id': f.id }, f.text), zeitBalken),
       knoepfe));
+    frist = f.zeit ? Date.now() + f.zeit : 0;
+    if (f.zeit) zeitTimer = setTimeout(() => zeitAbgelaufen(f), f.zeit);
+  }
+
+  // Zeit abgelaufen: dem Server melden (zählt wie ein Fehler) und die Lösung zeigen
+  async function zeitAbgelaufen(f) {
+    if (modus !== 'frage' || frage !== f || sendet) return;
+    sendet = true;
+    const knoepfe = document.getElementById('qz-knoepfe');
+    knoepfe.classList.remove('gesperrt');
+    knoepfe.classList.add('aus');
+    knoepfe.querySelectorAll('button').forEach((b) => { b.disabled = true; });
+    let r;
+    try { r = await api('/api/rennen/antwort', { raum, frage: f.id, zeit: true }); } catch (e) { r = null; }
+    if (frage !== f || modus !== 'frage') return;
+    if (!r) { sendet = false; hinweis('Keine Verbindung – es geht gleich weiter.'); modus = ''; abfragen(); return; }
+    const z = r.d;
+    if (!z.ok) {
+      if (z.grund === 'kein-raum') { weg(); return; }
+      if (z.grund === 'unbekannt' || r.status === 401) { tokenLoeschen(); nameZeigen('Sie sind nicht mehr im Rennen. Bitte melden Sie sich neu an.'); return; }
+      modus = '';
+      if (z.jetzt) annehmen(z); else abfragen();
+      return;
+    }
+    versatz = z.jetzt - Date.now();
+    stand = { ...z };
+    falschZeigen(z, null, knoepfe);
   }
 
   async function tippen(k, knopf) {
@@ -317,9 +355,17 @@
     sendet = true;
     const f = frage;
     const knoepfe = document.getElementById('qz-knoepfe');
+    const zeitBalken = document.getElementById('qz-zeit');
+    if (zeitBalken) zeitBalken.classList.add('stopp');
     knoepfe.classList.add('aus');
     knoepfe.querySelectorAll('button').forEach((b) => { b.disabled = true; });
-    const freigeben = () => { sendet = false; knoepfe.classList.remove('aus'); knoepfe.querySelectorAll('button').forEach((b) => { b.disabled = false; }); };
+    const freigeben = () => {
+      sendet = false;
+      knoepfe.classList.remove('aus');
+      knoepfe.querySelectorAll('button').forEach((b) => { b.disabled = false; });
+      if (zeitBalken) zeitBalken.classList.remove('stopp');
+      if (frist && Date.now() >= frist) zeitAbgelaufen(f);   // die Zeit lief ab, während die Antwort nicht ankam
+    };
     let r;
     try { r = await api('/api/rennen/antwort', { raum, frage: f.id, wahl: k }); } catch (e) { freigeben(); hinweis('Keine Verbindung – bitte nochmal tippen.'); return; }
     if (frage !== f || modus !== 'frage') return;
@@ -353,7 +399,10 @@
 
   function falschZeigen(z, knopf, knoepfe) {
     modus = 'falsch';
-    knopf.classList.add('falsch');
+    clearTimeout(zeitTimer);
+    const zeitBalken = document.getElementById('qz-zeit');
+    if (zeitBalken) zeitBalken.classList.add('stopp');
+    if (knopf) knopf.classList.add('falsch');
     knoepfe.classList.add('nach-fehler');   // nur noch die getippte und die richtige Antwort – so passt die Erklärung auf den Bildschirm
     const richtig = knoepfe.querySelector(`[data-k="${z.loesung}"]`);
     if (richtig) richtig.classList.add('loesung');
@@ -368,7 +417,9 @@
       else { clearInterval(uhr); weiter.textContent = 'Weiter'; weiter.disabled = false; }
     }, 1000);
     const panel = el('div', { class: 'qz-falsch', id: 'qz-falsch', role: 'alert' },
-      el('div', { class: 'qz-falsch-titel' }, z.imZiel ? '❌ Leider falsch.' : '❌ Leider falsch – zurück auf 0!'),
+      el('div', { class: 'qz-falsch-titel' }, z.zuLangsam
+        ? (z.imZiel ? '⏱ Zu langsam.' : '⏱ Zu langsam – zurück auf 0!')
+        : (z.imZiel ? '❌ Leider falsch.' : '❌ Leider falsch – zurück auf 0!')),
       el('div', { class: 'qz-loesung' }, el('span', { class: `qz-buchstabe k-${kat.k}` }, kat.k), `Richtig: ${kat.name} – ${kat.kurz}`),
       el('p', { class: 'qz-warum' }, z.warum),
       kat.frage ? el('p', { class: 'qz-leitfrage' }, `Leitfrage ${kat.k}: ${kat.frage}`) : null,

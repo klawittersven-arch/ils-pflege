@@ -265,6 +265,9 @@ QR-Code und Rennen stehen auf **demselben Bildschirm** – wer später kommt ode
 - **Regel:** Wer zuerst die eingestellten *richtigen Antworten hintereinander* schafft (5, 8, **10**, 12, 15 oder 20), ist im Ziel.
   **Ein Fehler → zurück auf 0**; das Handy zeigt die richtige Lösung, die Begründung und die Leitfrage („Weiter“ erst nach 3 s).
   Falsch beantwortete Befunde kommen nach 2–4 anderen Fragen wieder.
+- **⏱ Zeitlimit** (Standard: an, am Beamer neben dem Ziel abschaltbar): kurze Befunde bis 20 Zeichen **3 Sekunden**,
+  je weiteres Zeichen 0,08 s mehr (die längsten Sätze gut 6 s; `zeitLimit()` in worker/src/rennen.js). Auf dem Handy läuft
+  ein Balken ab; zu langsam → wie ein Fehler zurück auf 0 mit Lösung. Am Beamer „⏱ zu langsam → 0“, in „Häufige Fehler“ getrennt gezählt.
 - **Schutz gegen Raten:** Knöpfe erst nach einer kurzen Lesezeit frei („Erst lesen, dann tippen“); der Server prüft die
   Antworten selbst, die Lösung kommt erst nach der Antwort aufs Handy, Neuladen überspringt keine Frage.
 - **Beamer:** Bahnen wie im ILS-Live-Rennen (Pixel-Schwester), bei einem Fehler blinkt die Bahn rot und die Figur läuft

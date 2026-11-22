@@ -4,7 +4,8 @@
  * Die Seite legt beim ersten Öffnen einen Raum an (Code + Schlüssel werden in diesem Browser gemerkt, damit ein
  * Neuladen denselben Raum behält). Jede Person hat eine Bahn wie im ILS-Live-Rennen: Die Figur rückt mit jeder
  * richtigen Antwort vor; ein Fehler setzt sie zurück auf Start (die Bahn blinkt rot). Wer zuerst <ziel> richtige
- * hintereinander schafft, ist im Ziel. Tasten: F Vollbild, T nur Top 10, Q QR-Code klein/groß, Esc zurück.
+ * hintereinander schafft, ist im Ziel. ⏱ Zeitlimit (an/aus): kurze Befunde 3 s, lange gut 6 s – zu langsam = Fehler.
+ * Tasten: F Vollbild, T nur Top 10, Q QR-Code klein/groß, Esc zurück.
  * Name anklicken = Person aus dem Rennen nehmen (z. B. Name falsch geschrieben). */
 (() => {
   'use strict';
@@ -70,6 +71,8 @@
   t.haupt = el('button', { type: 'button', class: 'btn haupt', id: 'qz-haupt', onclick: hauptKnopf }, '▶ Rennen starten');
   t.neuStart = el('button', { type: 'button', class: 'btn secondary hidden', id: 'qz-neustart', title: 'Rennen neu starten: alle wieder auf 0', onclick: neuStarten }, '↻ Neu');
   t.zielWahl = el('select', { id: 'qz-ziel', onchange: zielAendern, 'aria-label': 'Ziel: richtige Antworten hintereinander' });
+  t.zeitWahl = el('select', { id: 'qz-zeit', onchange: zeitAendern, 'aria-label': 'Zeitlimit je Frage' },
+    el('option', { value: 'an' }, 'mit Zeit'), el('option', { value: 'aus' }, 'ohne Zeit'));
   t.top10 = el('button', { type: 'button', class: 'btn secondary', id: 'qz-top10', onclick: top10Umschalten });
   t.fehlerKnopf = el('button', { type: 'button', class: 'btn secondary', id: 'qz-fehler-knopf', onclick: fehlerZeigen }, '📊 Häufige Fehler');
   t.ehrungKnopf = el('button', { type: 'button', class: 'btn secondary', id: 'qz-ehrung', onclick: siegerehrung }, '🏆 Siegerehrung');
@@ -83,7 +86,8 @@
     el('div', { class: 'rb-haupt' }, t.links,
       el('div', { class: 'rb-rechts' }, t.qr, t.ziel,
         el('div', { class: 'rb-knoepfe' }, el('div', { class: 'qz-haupt-zeile' }, t.haupt, t.neuStart),
-          el('label', { class: 'qz-ziel-wahl' }, 'Ziel:', t.zielWahl),
+          el('div', { class: 'qz-knoepfe-zeile' }, el('label', { class: 'qz-ziel-wahl' }, 'Ziel:', t.zielWahl),
+            el('label', { class: 'qz-ziel-wahl', title: 'Zeitlimit je Frage: kurze Befunde 3 Sekunden, lange gut 6 Sekunden. Zu langsam = zurück auf 0.' }, '⏱', t.zeitWahl)),
           el('div', { class: 'qz-knoepfe-zeile' }, t.fehlerKnopf, t.ehrungKnopf),
           el('div', { class: 'qz-knoepfe-zeile' }, t.qrKnopf, t.top10),
           el('div', { class: 'qz-knoepfe-zeile' }, t.vollbild, t.neueKlasse)))),
@@ -127,7 +131,8 @@
       }
     }
     const ziel = Number(merken.get('quiz-rennen-ziel')) || undefined;
-    const r = await fetch(SERVER + '/api/rennen/neu', { method: 'POST', body: JSON.stringify({ set: SET, ziel }) });
+    const zeitlimit = merken.get('quiz-rennen-zeitlimit') !== 'aus';
+    const r = await fetch(SERVER + '/api/rennen/neu', { method: 'POST', body: JSON.stringify({ set: SET, ziel, zeitlimit }) });
     const d = await r.json();
     if (!d.ok) throw new Error(d.grund || String(r.status));
     raum = d.raum; lk = d.lk;
@@ -166,7 +171,7 @@
     versatz = d.jetzt - Date.now();
     if (neueRunde) {
       bekannteZiele = null;
-      for (const b of bahnen.values()) b.fehler = null;
+      for (const b of bahnen.values()) { b.fehler = null; b.zeit = null; }
     }
     aktualisieren();
     ticken();
@@ -176,7 +181,7 @@
     try {
       const r = await api('/api/rennen/steuern', { raum, ...daten });
       if (r.status === 200 && r.d.ok) { uebernehmen(r.d); return true; }
-      meldung(r.d.grund === 'laeuft' ? 'Das Ziel lässt sich nur ändern, wenn kein Rennen läuft.' : 'Das hat nicht geklappt. Bitte nochmal versuchen.');
+      meldung(r.d.grund === 'laeuft' ? 'Ziel und Zeitlimit lassen sich nur ändern, wenn kein Rennen läuft.' : 'Das hat nicht geklappt. Bitte nochmal versuchen.');
     } catch (e) {
       meldung('Keine Verbindung zum Server. Bitte nochmal versuchen.');
     }
@@ -209,7 +214,8 @@
     t.titel.textContent = '🏁 ' + st.set.titel;
     document.title = st.set.titel + ' – Beamer';
     t.unter.innerHTML = '';
-    t.unter.append('Ziel: ', el('strong', {}, `${ziel} richtige hintereinander`), ' · Fehler → zurück auf Start!');
+    t.unter.append('Ziel: ', el('strong', {}, `${ziel} richtige hintereinander`),
+      st.zeitlimit ? ' · Fehler oder ⏱ zu langsam → zurück auf Start!' : ' · Fehler → zurück auf Start!');
     if (t.markenZiel !== ziel) {
       t.markenZiel = ziel;
       t.marken.innerHTML = '';
@@ -246,7 +252,7 @@
           name: el('span', { class: 'rb-name', title: 'Anklicken: aus dem Rennen nehmen', onclick: () => entfernen(p.id) }, p.name),
           linien: el('div'), fuellung: el('div', { class: 'rb-fuellung' }), rekord: el('i', { class: 'qz-rekord' }),
           figur: el('span', { class: 'rb-figur' + (figur ? ' rb-sprite' : '') }), status: el('span', { class: 'rb-status' }),
-          fehler: p.fehler, sturzBis: 0 };
+          fehler: p.fehler, zeit: p.zeit, sturzBis: 0, sturzText: '' };
         b.el = el('div', { class: 'rb-raster rb-bahn', 'data-id': p.id }, b.platz, b.name,
           el('div', { class: 'rb-spur' }, b.linien, b.fuellung, b.rekord, b.figur), b.status);
         bahnen.set(p.id, b);
@@ -260,11 +266,13 @@
       // Fehler seit der letzten Abfrage → zurück auf Start: Bahn blinkt rot
       if (b.fehler != null && p.fehler > b.fehler && st.status === 'laeuft' && !p.imZiel) {
         b.sturzBis = Date.now() + 2600;
+        b.sturzText = b.zeit != null && p.zeit > b.zeit ? '⏱ zu langsam → 0' : '💥 zurück auf 0';
         b.el.classList.remove('sturz'); void b.el.offsetWidth; b.el.classList.add('sturz');
         clearTimeout(b.sturzTimer);
         b.sturzTimer = setTimeout(() => b.el.classList.remove('sturz'), 2600);
       }
       b.fehler = p.fehler;
+      b.zeit = p.zeit;
       const offline = jetzt - p.zuletzt > OFFLINE_MS;
       const serie = p.imZiel ? ziel : Math.min(p.serie, ziel);
       const pct = (serie / ziel) * 100;
@@ -295,7 +303,7 @@
       if (p.imZiel) text = `Platz ${platz} · ${dauer(p.imZiel - st.start)}`;
       else if (offline) text = '📴 offline';
       else if (st.status === 'warten') text = 'bereit';
-      else if (b.sturzBis > Date.now()) text = '💥 zurück auf 0';
+      else if (b.sturzBis > Date.now()) text = b.sturzText;
       else if (st.status === 'beendet') text = `beste Serie: ${p.best}`;
       else text = `${p.serie} / ${ziel}` + (p.best > p.serie ? ` · Rekord ${p.best}` : '');
       b.status.textContent = text;
@@ -327,6 +335,8 @@
     t.neuStart.classList.toggle('hidden', st.status !== 'laeuft');
     t.zielWahl.disabled = st.status === 'laeuft';
     if (t.zielWahl.value !== String(ziel)) t.zielWahl.value = String(ziel);
+    t.zeitWahl.disabled = st.status === 'laeuft';
+    t.zeitWahl.value = st.zeitlimit ? 'an' : 'aus';
     t.top10.textContent = nurTop10 ? '👥 Alle (T)' : '🔟 Top 10 (T)';
     t.top10.disabled = liste.length <= 10 && !nurTop10;
     t.ehrungKnopf.disabled = !zielListe.length;
@@ -367,6 +377,11 @@
     const ziel = Number(t.zielWahl.value);
     merken.set('quiz-rennen-ziel', String(ziel));
     await steuern({ aktion: 'ziel', ziel });
+  }
+  async function zeitAendern() {
+    const an = t.zeitWahl.value === 'an';
+    merken.set('quiz-rennen-zeitlimit', an ? 'an' : 'aus');
+    await steuern({ aktion: 'zeitlimit', an });
   }
   async function entfernen(id) {
     const p = stand && stand.spieler.find((x) => x.id === id);
@@ -481,24 +496,25 @@
     const liste = r.d.liste;
     const summeN = liste.reduce((s, x) => s + x.n, 0);
     const summeF = liste.reduce((s, x) => s + x.falsch, 0);
+    const summeZ = liste.reduce((s, x) => s + (x.zeit || 0), 0);
     const paare = {};
     for (const x of liste) for (const [w, n] of Object.entries(x.als)) paare[`${x.k}|${w}`] = (paare[`${x.k}|${w}`] || 0) + n;
     const top = Object.entries(paare).sort((a, b) => b[1] - a[1]).slice(0, 6);
     const buchstabe = (k) => el('span', { class: `qz-l k-${k}` }, k);
-    const falsche = liste.filter((x) => x.falsch > 0).slice(0, 12);
+    const falsche = liste.filter((x) => x.falsch > 0 || x.zeit > 0).slice(0, 12);
     anhaengen(fehlerEbene,
       el('h2', {}, '📊 Häufige Fehler'),
       el('p', { class: 'se-unter' }, summeN
-        ? `Alle Runden in diesem Raum: ${summeN} Antworten, davon ${summeF} falsch. Anonym – ohne Namen.`
+        ? `Alle Runden in diesem Raum: ${summeN} Antworten, davon ${summeF} falsch` + (summeZ ? ` und ${summeZ}× zu langsam` : '') + '. Anonym – ohne Namen.'
         : 'Noch keine Antworten.'),
       top.length ? el('div', { class: 'qz-verwechslungen' }, el('span', {}, 'Am häufigsten verwechselt:'),
         top.map(([paar, n]) => { const [k, w] = paar.split('|'); return el('span', {}, 'richtig ', el('b', {}, k), ' · getippt ', el('b', {}, w), ` – ${n}×`); })) : null,
       falsche.length
         ? el('ol', { class: 'qz-fehler-liste' }, falsche.map((x) => el('li', {},
           el('div', { class: 'qz-f-text' }, `„${x.text}“`),
-          el('div', { class: 'qz-f-quote' }, el('b', {}, String(x.falsch)), ` von ${x.n} falsch`),
+          el('div', { class: 'qz-f-quote' }, el('b', {}, String(x.falsch)), ` von ${x.n} falsch`, x.zeit ? ` · ⏱ ${x.zeit}× zu langsam` : ''),
           el('div', { class: 'qz-f-info' }, 'Richtig: ', buchstabe(x.k), `${kat[x.k] ? kat[x.k].name + ' – ' + kat[x.k].kurz : x.k}`,
-            '   ·   getippt: ', Object.entries(x.als).sort((a, b) => b[1] - a[1]).map(([w, n]) => `${w} ${n}×`).join(', ')),
+            Object.keys(x.als).length ? '   ·   getippt: ' + Object.entries(x.als).sort((a, b) => b[1] - a[1]).map(([w, n]) => `${w} ${n}×`).join(', ') : ''),
           el('div', { class: 'qz-f-warum' }, x.warum))))
         : el('p', { class: 'se-unter' }, summeN ? 'Keine Fehler – stark!' : ''),
       knoepfe);

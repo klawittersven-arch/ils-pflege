@@ -17,6 +17,7 @@ const foto = async (s, n) => { if (BILDER) await s.screenshot({ path: path.join(
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const w = await workerNachbauen();
+const { zeitLimit } = await import('../worker/src/rennen.js');
 const SET = globalThis.QUIZ_RENNEN_SETS.abcde;
 const loesung = (id) => SET.fragen.find((f) => f.id === id).k;
 const { server, basis } = await serverStarten(w.url);
@@ -73,6 +74,10 @@ try {
   await beamer.selectOption('#qz-ziel', '5');
   await beamer.waitForFunction(() => document.querySelector('.rb-unter').textContent.includes('5 richtige'));
   pruefe(true, 'Ziel am Beamer auf 5 gestellt');
+  pruefe((await beamer.inputValue('#qz-zeit')) === 'an', 'Zeitlimit ist zu Beginn an');
+  await beamer.selectOption('#qz-zeit', 'aus');   // für die folgenden Schritte (der Test bedient mehrere Handys nacheinander)
+  await beamer.waitForFunction(() => !document.querySelector('.rb-unter').textContent.includes('zu langsam'));
+  pruefe(true, 'Zeitlimit am Beamer abgeschaltet');
   await beamer.reload();
   await beamer.waitForSelector('#qz-code');
   pruefe((await beamer.textContent('#qz-code')) === code, 'Neuladen des Beamers: gleicher Raum, gleicher QR-Code');
@@ -247,13 +252,43 @@ try {
   const neuUrl = await beamer.getAttribute('#qz-qr-bild', 'data-url');
   await beitreten(klein, neuUrl, 'Dana', 'D');
   await klein.s.waitForSelector('#qz-warten');
+
+  console.log('Zeitlimit');
+  pruefe(zeitLimit('Puls 128/min') === 3000 && zeitLimit('Blutzucker 45 mg/dl') === 3000, 'kurze Befunde: 3 Sekunden');
+  pruefe(zeitLimit('Die Zahnprothese hat sich gelöst und liegt im Rachen.') === 5600, 'langer Satz: mehr Zeit (5,6 s)');
+  await beamer.selectOption('#qz-zeit', 'an');
+  await beamer.waitForFunction(() => document.querySelector('.rb-unter').textContent.includes('zu langsam'));
+  await klein.s.waitForFunction(() => document.querySelector('#qz-warten') && document.body.textContent.includes('Schnell sein'), null, { timeout: 6000 });
+  pruefe(true, 'Wartebildschirm nennt das Zeitlimit, sobald es am Beamer an ist');
   await beamer.click('#qz-haupt');
   await klein.s.waitForSelector('#qz-text', { timeout: 9000 });
   const unten = await klein.s.evaluate(() => document.querySelector('.qz-knopf[data-k="E"]').getBoundingClientRect().bottom);
-  pruefe(unten <= 640, 'kleines Handy (360×640): alle 5 Knöpfe ohne Scrollen sichtbar', unten);
+  pruefe(unten <= 640, 'kleines Handy (360×640): alle 5 Knöpfe und Zeitbalken ohne Scrollen sichtbar', unten);
+  const zeitId = await klein.s.getAttribute('#qz-text', 'data-id');
+  const soll = zeitLimit(SET.fragen.find((f) => f.id === zeitId).text);
+  pruefe((await klein.s.getAttribute('#qz-zeit', 'data-ms')) === String(soll), `Zeitbalken passt zur Textlänge (${soll / 1000} s)`);
   await foto(klein.s, 'handy-klein-frage');
+  const vorher = Date.now();
+  await klein.s.waitForSelector('#qz-falsch', { timeout: soll + 4000 });
+  const dauerMs = Date.now() - vorher;
+  pruefe(dauerMs >= soll - 400, `nichts getippt → nach Ablauf der Zeit (${(dauerMs / 1000).toFixed(1)} s) …`);
+  pruefe((await klein.s.textContent('.qz-falsch-titel')).includes('Zu langsam – zurück auf 0'), '… „Zu langsam – zurück auf 0!“ mit Lösung',
+    await klein.s.textContent('#qz-falsch'));
+  pruefe((await klein.s.textContent('.qz-loesung .qz-buchstabe')) === loesung(zeitId), 'richtige Lösung wird gezeigt');
+  await beamer.waitForFunction(() => [...document.querySelectorAll('.rb-status')].some((x) => x.textContent.includes('zu langsam')), null, { timeout: 5000 });
+  pruefe(true, 'Beamer: „⏱ zu langsam → 0“ auf der Bahn');
+  await foto(klein.s, 'handy-klein-zu-langsam');
+  await foto(beamer, 'beamer-zu-langsam');
+  await klein.s.waitForSelector('#qz-weiter:not([disabled])', { timeout: 5000 });
+  await klein.s.click('#qz-weiter');
+  await antworten(klein, true);
+  pruefe(true, 'mit Zeitlimit: rechtzeitig richtig getippt → weiter');
   await antworten(klein, false);
   await foto(klein.s, 'handy-klein-falsch');
+  await beamer.click('#qz-fehler-knopf');
+  await beamer.waitForSelector('.qz-fehler-liste li');
+  pruefe((await beamer.textContent('#qz-fehler')).includes('zu langsam'), 'häufige Fehler zählen „zu langsam“ getrennt');
+  await beamer.click('#qz-fehler-zurueck');
   const bk2 = await browser.newContext({ viewport: { width: 1280, height: 720 } });
   const beamer2 = await bk2.newPage();
   beobachten(beamer2, protokoll, 'beamer-720');
