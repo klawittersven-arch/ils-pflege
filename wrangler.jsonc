@@ -10,9 +10,16 @@
   "workers_dev": true,
   "preview_urls": false,
   "durable_objects": {
-    "bindings": [{ "name": "DATEN", "class_name": "Daten" }]
+    "bindings": [
+      { "name": "DATEN", "class_name": "Daten" },
+      // Quiz-Rennen im Klassenraum: ein Objekt je Raumcode, löscht sich 3 Stunden nach der letzten Aktivität selbst
+      { "name": "RENNEN", "class_name": "Rennen" }
+    ]
   },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Daten"] }],
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["Daten"] },
+    { "tag": "v2", "new_sqlite_classes": ["Rennen"] }
+  ],
   // Das Passwort für die Lehrkraft-Seite steht NICHT hier, sondern als „Secret“
   // LEHRKRAFT_PASSWORT im Cloudflare-Dashboard (siehe README).
   // Keine Protokolle bei Cloudflare speichern (enthielten sonst Namen).

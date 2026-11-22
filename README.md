@@ -252,3 +252,31 @@ Lehrkraft-Seite → **🖼️ Galeriegang** (neben „🛡️ Siegerwappen“): 
 - Tasten: **← →** blättern, **Leertaste** Pause, **T** Tempo (langsam 9 s / normal 6,5 s / schnell 4 s je Werk),
   **G** alle Werke, **R** von vorn, **F** Vollbild, **Esc** schließen. Die Knöpfe blenden sich aus, wenn die Maus ruht.
 - Test: `node tests/galerie.test.js`
+
+---
+
+## Quiz-Rennen im Klassenraum (z. B. „ABCDE-Rennen“) – Beamer + Handys, ohne Anmeldung
+
+Für das Ende einer Stunde: Am Beamer **https://klawittersven-arch.github.io/ils-pflege/quiz-rennen/beamer/** öffnen.
+QR-Code und Rennen stehen auf **demselben Bildschirm** – wer später kommt oder dessen Handy ausfällt, scannt einfach (neu).
+
+- **Handy:** QR-Code scannen (oder `…/ils-pflege/quiz-rennen/` öffnen und den 4-stelligen Code eingeben), Vorname +
+  Anfangsbuchstabe des Nachnamens eingeben → am Start warten (mit den Leitfragen) → Countdown 5-4-3-2-1 → Befunde zuordnen (A–E).
+- **Regel:** Wer zuerst die eingestellten *richtigen Antworten hintereinander* schafft (5, 8, **10**, 12, 15 oder 20), ist im Ziel.
+  **Ein Fehler → zurück auf 0**; das Handy zeigt die richtige Lösung, die Begründung und die Leitfrage („Weiter“ erst nach 3 s).
+  Falsch beantwortete Befunde kommen nach 2–4 anderen Fragen wieder.
+- **Schutz gegen Raten:** Knöpfe erst nach einer kurzen Lesezeit frei („Erst lesen, dann tippen“); der Server prüft die
+  Antworten selbst, die Lösung kommt erst nach der Antwort aufs Handy, Neuladen überspringt keine Frage.
+- **Beamer:** Bahnen wie im ILS-Live-Rennen (Pixel-Schwester), bei einem Fehler blinkt die Bahn rot und die Figur läuft
+  zurück zum Start; gelber Strich = beste Serie. Zieleinlauf mit Einblendung und Konfetti, **🏆 Siegerehrung** Top 5,
+  **📊 Häufige Fehler** (anonym, für die Nachbesprechung: welcher Befund wie oft falsch und mit welchem Buchstaben verwechselt).
+  ▶ Start / ⏹ Beenden / ▶ Neues Rennen (alle wieder auf 0, Namen bleiben). Name anklicken = Person herausnehmen.
+  **🧹 Neue Klasse** löscht alles und erzeugt einen neuen QR-Code. Tasten: **F** Vollbild, **T** nur Top 10, **Q** QR klein/groß.
+- **Wiedereinstieg:** Neuladen am selben Handy → gleiche Bahn. Neues Handy mit gleichem Namen → übernimmt die Bahn,
+  wenn das alte Gerät seit 1 Minute still ist (vorher: „Name schon im Rennen“).
+- **Datenschutz:** gespeichert werden nur „Vorname N.“ und der Spielstand, je Raum in einem eigenen Durable Object
+  (`Rennen`, worker/src/rennen.js). Der Raum **löscht sich 3 Stunden nach der letzten Aktivität selbst**.
+- **Fragen:** `assets/quiz-rennen-fragen.js` (liest nur der Server). Weitere Fragensätze dort ergänzen und am Beamer
+  mit `…/quiz-rennen/beamer/?set=<id>` öffnen. Frage-Kennungen nie wiederverwenden (die Fehlerstatistik zählt je Kennung).
+- **Einrichtung:** keine – der Worker bekommt die neue Klasse `Rennen` per Migration `v2` (wrangler.jsonc) beim nächsten Hochladen.
+- Test (ohne wrangler, Worker in Node nachgebaut): `node tests/quiz-rennen.test.mjs` (Bilder: `BILDER=/pfad`).

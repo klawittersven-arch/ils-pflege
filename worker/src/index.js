@@ -35,6 +35,7 @@
  *     POST /api/lehrkraft/wappen-loeschen       { sid, ils }
  *     POST /api/lehrkraft/wappen-sperre         { sid, gesperrt }   Person vom Malen ausschließen (löscht ihre Wappen)
  *     POST /api/lehrkraft/wappen-gesehen        { ils, sids: [...] } angesehen → darf in der Siegerehrung erscheinen
+ *   Quiz-Rennen im Klassenraum (Beamer + Handys, ohne Anmeldung): /api/rennen/… – siehe worker/src/rennen.js
  *
  * Datenschutz: Geburtsdaten werden nie gespeichert, nur ein Prüfwert (HMAC-SHA-256 mit einem
  * geheimen Schlüssel, der nur im Durable Object liegt). Gespeichert werden Klasse, Anzeigename
@@ -44,6 +45,8 @@
  */
 import { DurableObject } from 'cloudflare:workers';
 import '../../assets/auftraege.js';   // legt globalThis.ILS_AUFTRAEGE an (gleiche Datei wie auf der Website)
+import { rennenAnfrage } from './rennen.js';   // Quiz-Rennen im Klassenraum (eigenes Durable Object je Raum)
+export { Rennen } from './rennen.js';
 
 const AUFTRAEGE = globalThis.ILS_AUFTRAEGE || [];
 export function schrittFinden(ils, schritt) {
@@ -230,6 +233,9 @@ export default {
     const daten = env.DATEN.get(env.DATEN.idFromName('schule'));
 
     try {
+      /* ----- Quiz-Rennen am Beamer (worker/src/rennen.js) ----- */
+      if (weg.startsWith('/api/rennen/')) return await rennenAnfrage(request, env, url, weg);
+
       if (weg === '/' && methode === 'GET') {
         return antwort({ dienst: 'ILS Pflege – Fortschritt', ok: true, passwortGesetzt: !!env.LEHRKRAFT_PASSWORT });
       }

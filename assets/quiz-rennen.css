@@ -1,0 +1,151 @@
+/* Quiz-Rennen im Klassenraum: Beamer-Seite (QR-Code + Rennen) und Handy-Seite.
+   Die Bahnen am Beamer nutzen die Klassen des ILS-Live-Rennens aus ils.css (rb-…, se-…). */
+
+/* ---------- Beamer ---------- */
+.qz-beamer { --qz-gelb: #f1c232; }
+.qz-beamer .rb-rechts { width: clamp(230px, 23vw, 460px); gap: 8px; overflow-y: auto; overflow-x: hidden; }
+.qz-beamer .rb-marken-spur span:first-child { transform: translateX(calc(-100% - 14px)); }
+.qz-beamer.qr-klein .rb-rechts { width: clamp(200px, 17vw, 320px); }
+.qz-beamer .rb-kopf { align-items: center; }
+.qz-beamer .rb-unter strong { color: var(--qz-gelb); }
+.qz-qr { background: #fff; color: #1f1d1b; border-radius: 18px; padding: 12px 14px 10px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+.qz-qr-titel { font-weight: 800; font-size: clamp(16px, 1.45vw, 28px); line-height: 1.2; }
+.qz-qr-bild { margin: 4px auto 2px; width: min(100%, 31vh); }
+.qz-qr-bild svg { width: 100%; height: auto; display: block; }
+.qz-beamer.qr-klein .qz-qr-bild { width: min(62%, 18vh); }
+.qz-qr-code { font-size: clamp(14px, 1.25vw, 22px); }
+.qz-qr-code b { font: 800 1.45em/1.1 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; letter-spacing: .14em; color: #b4572a; }
+.qz-qr-url { font-size: clamp(11px, .8vw, 15px); color: #5f5a54; word-break: break-all; line-height: 1.3; }
+.qz-qr-anzahl { font-size: clamp(12px, .95vw, 17px); font-weight: 700; color: #1f3a5f; margin-top: 4px; }
+.qz-beamer .rb-ziel { padding: 8px 14px; flex: 1 1 auto; min-height: 70px; overflow: hidden; }
+.qz-beamer .rb-ziel-titel { font-size: clamp(16px, 1.7vw, 28px); margin-bottom: 4px; }
+.qz-beamer .rb-ziel ol { gap: 3px; font-size: clamp(13px, 1.35vw, 21px); }
+.qz-beamer .rb-anzahl { margin-top: 6px; font-size: clamp(12px, 1vw, 17px); }
+.qz-beamer .rb-knoepfe { gap: 6px; margin-top: 0; }
+.qz-beamer .rb-knoepfe .btn { min-height: 34px; padding: 4px 8px; font-size: clamp(12px, .9vw, 16px); }
+.qz-knoepfe-zeile { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.qz-haupt-zeile { display: flex; gap: 6px; }
+.qz-haupt-zeile .btn.haupt { flex: 1; }
+.qz-haupt-zeile #qz-neustart { width: auto; flex: none; }
+@media (max-height: 800px) { .qz-qr-bild { width: min(100%, 27vh); } .qz-beamer .rb-ziel { min-height: 56px; } .qz-qr-titel { font-size: 16px; } }
+.qz-beamer .rb-knoepfe .btn.haupt { background: #2e7d5b; border: 0; color: #fff; font-size: clamp(14px, 1.15vw, 20px); min-height: 42px; }
+.qz-beamer .rb-knoepfe .btn.haupt.stopp { background: #b3261e; }
+.qz-ziel-wahl { display: flex; align-items: center; gap: 8px; font-size: clamp(13px, 1vw, 16px); }
+.qz-ziel-wahl select { min-height: 32px; padding: 4px 8px; background: rgba(255,255,255,.12); color: #fff; border: 2px solid rgba(255,255,255,.5); font-size: inherit; flex: 1; }
+.qz-ziel-wahl select option { color: #1f1d1b; }
+.qz-ziel-wahl select:disabled { opacity: .5; }
+.qz-strecke-wrap { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.qz-leer { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; font-size: clamp(20px, 2.3vw, 40px); line-height: 1.35; opacity: .9; pointer-events: none; }
+.qz-leer small { display: block; font-size: .6em; opacity: .8; margin-top: .4em; }
+.qz-beamer .rb-name { cursor: pointer; }
+.qz-beamer .rb-name:hover { text-decoration: underline dotted; }
+.qz-rekord { position: absolute; top: -5px; bottom: -5px; width: 4px; margin-left: -2px; border-radius: 2px; background: var(--qz-gelb); opacity: .6; transition: left .9s ease; }
+.rb-bahn.sturz { animation: qz-sturz 1.4s ease; }
+.rb-bahn.sturz .rb-spur { box-shadow: 0 0 0 3px #f05046; }
+.rb-bahn.sturz .rb-status { color: #ff8a80; font-weight: 800; }
+@keyframes qz-sturz { 0%, 30% { background: rgba(240, 80, 70, .45); } 100% { background: transparent; } }
+.rb-bahn.offline { opacity: .38; }
+.qz-countdown { position: fixed; inset: 0; display: grid; place-items: center; font-size: 30vh; font-weight: 900; color: var(--qz-gelb);
+  text-shadow: 0 10px 40px rgba(0,0,0,.55); pointer-events: none; z-index: 20; }
+.qz-countdown.los { font-size: 22vh; color: #5be37d; }
+.qz-meldung { position: fixed; left: 50%; bottom: 3vh; transform: translateX(-50%); background: #b3261e; color: #fff; padding: 10px 18px; border-radius: 12px; font-weight: 700; z-index: 30; }
+
+/* Häufige Fehler (Nachbesprechung) */
+.qz-fehler { position: absolute; inset: 0; background: radial-gradient(circle at 50% 20%, #2a4a75, #0f1f36); z-index: 6; overflow-y: auto; padding: 3vh 4vw; }
+.qz-fehler h2 { font-size: clamp(26px, 3vw, 48px); margin: 0 0 4px; text-align: center; }
+.qz-fehler .se-unter { text-align: center; margin-bottom: 2vh; }
+.qz-verwechslungen { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 0 0 2.4vh; }
+.qz-verwechslungen span { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 6px 14px; font-size: clamp(14px, 1.3vw, 22px); }
+.qz-verwechslungen b { color: var(--qz-gelb); }
+.qz-fehler-liste { list-style: none; margin: 0 auto; padding: 0; display: grid; gap: 1.2vh; max-width: 1500px; }
+.qz-fehler-liste li { display: grid; grid-template-columns: 1fr auto; gap: 4px 20px; background: rgba(255,255,255,.07); border-radius: 14px; padding: 1.2vh 1.4vw; }
+.qz-f-text { font-size: clamp(17px, 1.65vw, 30px); font-weight: 700; }
+.qz-f-quote { font-size: clamp(14px, 1.3vw, 22px); text-align: right; white-space: nowrap; }
+.qz-f-quote b { color: #ff8a80; }
+.qz-f-info { grid-column: 1 / -1; font-size: clamp(14px, 1.25vw, 21px); opacity: .92; }
+.qz-f-info .qz-l { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 50%; font-weight: 900; color: #fff; margin-right: 6px; }
+.qz-f-warum { grid-column: 1 / -1; font-size: clamp(13px, 1.1vw, 19px); opacity: .8; }
+.qz-fehler .se-knoepfe { position: sticky; bottom: 0; justify-content: center; padding-top: 2vh; }
+
+
+/* ---------- Handy ---------- */
+body.qz-handy { background: #0f1f36; min-height: 100vh; min-height: 100dvh; }
+.qz-kopf { position: sticky; top: 0; z-index: 5; background: #1f3a5f; color: #fff; padding: 10px 16px 10px; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+.qz-kopf-zeile { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 14px; max-width: 560px; margin: 0 auto; }
+.qz-titel { font-weight: 800; font-size: 16px; white-space: nowrap; }
+.qz-ich { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qz-balken { display: flex; gap: 3px; height: 14px; max-width: 560px; margin: 8px auto 0; }
+.qz-balken i { flex: 1; border-radius: 4px; background: rgba(255,255,255,.18); transition: background .25s; }
+.qz-balken i.voll { background: #4cc38a; }
+.qz-balken.ziel i { background: #f1c232; }
+.qz-balken.reset { animation: qz-rutteln .55s; }
+.qz-balken.reset i { background: rgba(240, 80, 70, .7); }
+@keyframes qz-rutteln { 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
+.qz-stand { font-size: 14px; max-width: 560px; margin: 5px auto 0; display: flex; justify-content: space-between; gap: 10px; opacity: .95; }
+.qz-stand b { color: #f1c232; }
+main.qz { max-width: 560px; padding: 12px 14px 48px; }
+.qz-karte { background: #fff; border-radius: 16px; padding: 14px 16px; margin: 4px 0 12px; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+.qz-auftrag { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; }
+.qz-text { font-size: 21px; font-weight: 700; line-height: 1.3; margin-top: 4px; }
+.qz-knoepfe { display: grid; gap: 8px; }
+.qz-knopf { position: relative; overflow: hidden; display: grid; grid-template-columns: 46px 1fr; gap: 12px; align-items: center;
+  width: 100%; text-align: left; font: inherit; color: var(--ink); background: #fff; border: 3px solid transparent; border-radius: 14px;
+  padding: 7px 12px; min-height: 64px; cursor: pointer; transition: opacity .2s, transform .1s; -webkit-tap-highlight-color: transparent; }
+.qz-knopf:active { transform: scale(.98); }
+.qz-buchstabe { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 24px; color: #fff; }
+.qz-knopf b { display: block; font-size: 16px; line-height: 1.2; }
+.qz-knopf small { display: block; font-size: 13px; line-height: 1.25; color: var(--muted); margin-top: 1px; }
+.qz-knoepfe.gesperrt .qz-knopf { opacity: .6; }
+.qz-knoepfe.gesperrt .qz-knopf::after { content: ""; position: absolute; left: 0; bottom: 0; height: 4px; width: 0; background: var(--farbe);
+  animation: qz-lesen var(--lese, 1s) linear forwards; }
+@keyframes qz-lesen { to { width: 100%; } }
+.qz-knopf:disabled { cursor: default; }
+.qz-knoepfe.aus .qz-knopf:not(.richtig):not(.falsch):not(.loesung) { opacity: .45; }
+.qz-knopf.richtig { border-color: var(--ok); background: var(--ok-soft); }
+.qz-knopf.richtig .qz-buchstabe::after { content: "✓"; }
+.qz-knopf.richtig .qz-buchstabe span { display: none; }
+.qz-knopf.falsch { border-color: var(--bad); background: var(--bad-soft); }
+.qz-knopf.loesung { border-color: var(--ok); box-shadow: 0 0 0 3px rgba(29,122,70,.35); }
+.qz-plus { position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); font-size: 64px; font-weight: 900; color: #4cc38a; text-shadow: 0 4px 18px rgba(0,0,0,.35);
+  pointer-events: none; animation: qz-plus .7s ease-out forwards; z-index: 20; }
+@keyframes qz-plus { from { opacity: 1; transform: translate(-50%, -30%) scale(.7); } to { opacity: 0; transform: translate(-50%, -110%) scale(1.2); } }
+.qz-falsch { background: #fff; border: 3px solid var(--bad); border-radius: 16px; padding: 12px 16px 14px; margin-top: 12px; }
+.qz-falsch-titel { color: var(--bad); font-weight: 800; font-size: 19px; }
+.qz-loesung { display: flex; align-items: center; gap: 10px; margin: 8px 0 4px; font-weight: 700; }
+.qz-loesung .qz-buchstabe { width: 38px; height: 38px; font-size: 20px; flex: none; }
+.qz-warum { margin: 6px 0; }
+.qz-leitfrage { font-size: 14px; color: var(--muted); margin: 4px 0 10px; }
+.qz-hinweis { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: #fff4d1; color: #4d3a00; border: 2px solid #e8b923; font-weight: 700;
+  padding: 10px 16px; border-radius: 12px; z-index: 30; box-shadow: 0 6px 20px rgba(0,0,0,.3); max-width: 92vw; text-align: center; }
+.qz-hell { background: #fff; border-radius: 16px; padding: 16px; margin: 8px 0 12px; }
+.qz-hell h2 { margin: 0 0 6px; font-size: 22px; }
+.qz-hell p { margin: 6px 0; }
+.qz-regeln { margin: 8px 0 0; padding-left: 1.2em; }
+.qz-regeln li { margin: 4px 0; }
+.qz-leitfragen { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 6px; }
+.qz-leitfragen li { display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: center; font-size: 15px; line-height: 1.3; }
+.qz-leitfragen .qz-buchstabe { width: 32px; height: 32px; font-size: 17px; }
+.qz-gross { color: #fff; text-align: center; padding: 6vh 0 2vh; }
+.qz-gross .zahl { font-size: 34vw; font-weight: 900; line-height: 1; color: #f1c232; }
+.qz-gross .zahl.los { color: #5be37d; font-size: 22vw; }
+.qz-gross h2 { font-size: 30px; margin: 8px 0; }
+.qz-gross p { font-size: 18px; margin: 6px 0; opacity: .95; }
+.qz-gross .platz { font-size: 52px; font-weight: 900; color: #f1c232; margin: 8px 0; }
+.qz-weiss { color: #fff; }
+.qz-weiss a { color: #fff; }
+.qz-link { background: none; border: 0; color: #cfe0f5; text-decoration: underline; font: inherit; font-size: 15px; padding: 8px 0; cursor: pointer; }
+.qz-code-feld input { text-transform: uppercase; letter-spacing: .3em; font-weight: 800; font-size: 26px; text-align: center; }
+.qz-klein { font-size: 13px; color: var(--muted); }
+.qz-offline { position: fixed; top: 0; left: 0; right: 0; background: #b3261e; color: #fff; text-align: center; font-size: 14px; font-weight: 700; padding: 4px; z-index: 40; }
+.qz-konfetti { position: fixed; top: -12px; width: 10px; height: 14px; border-radius: 2px; z-index: 25; pointer-events: none; animation: se-fall linear forwards; }
+@media (max-height: 640px) {
+  .qz-knopf { min-height: 54px; padding: 5px 10px; grid-template-columns: 40px 1fr; }
+  .qz-buchstabe { width: 40px; height: 40px; font-size: 21px; }
+  .qz-knopf small { font-size: 12px; }
+  .qz-text { font-size: 19px; }
+}
+
+/* Farben der Buchstaben (Beamer und Handy) – am Ende, damit sie gewinnen */
+.k-A { --farbe: #1f6fb2; } .k-B { --farbe: #138a8a; } .k-C { --farbe: #c0392b; } .k-D { --farbe: #7a5bb5; } .k-E { --farbe: #3b7d23; }
+.qz-l, .qz-buchstabe { background: var(--farbe, #1f3a5f); }
+.qz-knoepfe.nach-fehler .qz-knopf:not(.falsch):not(.loesung) { display: none; }
