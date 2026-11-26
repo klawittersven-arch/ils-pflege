@@ -152,5 +152,8 @@ main.qz { max-width: 560px; padding: 12px 14px 48px; }
 
 /* Farben der Buchstaben (Beamer und Handy) – am Ende, damit sie gewinnen */
 .k-A { --farbe: #1f6fb2; } .k-B { --farbe: #138a8a; } .k-C { --farbe: #c0392b; } .k-D { --farbe: #7a5bb5; } .k-E { --farbe: #3b7d23; }
+/* Schock-Rennen (V A N K) und SPIKES-Rennen (S P I K E Z) */
+.k-V { --farbe: #c0392b; } .k-N { --farbe: #7a5bb5; } .k-K { --farbe: #a14b0c; }
+.k-S { --farbe: #0f6f6a; } .k-P { --farbe: #1f6fb2; } .k-I { --farbe: #7a5bb5; } .k-Z { --farbe: #9c1f5a; }
 .qz-l, .qz-buchstabe { background: var(--farbe, #1f3a5f); }
 .qz-knoepfe.nach-fehler .qz-knopf:not(.falsch):not(.loesung) { display: none; }

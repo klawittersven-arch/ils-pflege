@@ -500,7 +500,10 @@
     const paare = {};
     for (const x of liste) for (const [w, n] of Object.entries(x.als)) paare[`${x.k}|${w}`] = (paare[`${x.k}|${w}`] || 0) + n;
     const top = Object.entries(paare).sort((a, b) => b[1] - a[1]).slice(0, 6);
-    const buchstabe = (k) => el('span', { class: `qz-l k-${k}` }, k);
+    const zeichen = (k) => (kat[k] && kat[k].zeichen) || k;
+    const doppelt = (k) => r.d.kategorien.filter((x) => (x.zeichen || x.k) === zeichen(k)).length > 1;
+    const kurzName = (k) => zeichen(k) + (doppelt(k) && kat[k] ? ` (${kat[k].kurz})` : '');   // SPIKES: „S (Rahmen)“ / „S (Plan …)“
+    const buchstabe = (k) => el('span', { class: `qz-l k-${k}` }, zeichen(k));
     const falsche = liste.filter((x) => x.falsch > 0 || x.zeit > 0).slice(0, 12);
     anhaengen(fehlerEbene,
       el('h2', {}, '📊 Häufige Fehler'),
@@ -508,13 +511,13 @@
         ? `Alle Runden in diesem Raum: ${summeN} Antworten, davon ${summeF} falsch` + (summeZ ? ` und ${summeZ}× zu langsam` : '') + '. Anonym – ohne Namen.'
         : 'Noch keine Antworten.'),
       top.length ? el('div', { class: 'qz-verwechslungen' }, el('span', {}, 'Am häufigsten verwechselt:'),
-        top.map(([paar, n]) => { const [k, w] = paar.split('|'); return el('span', {}, 'richtig ', el('b', {}, k), ' · getippt ', el('b', {}, w), ` – ${n}×`); })) : null,
+        top.map(([paar, n]) => { const [k, w] = paar.split('|'); return el('span', {}, 'richtig ', el('b', {}, kurzName(k)), ' · getippt ', el('b', {}, kurzName(w)), ` – ${n}×`); })) : null,
       falsche.length
         ? el('ol', { class: 'qz-fehler-liste' }, falsche.map((x) => el('li', {},
           el('div', { class: 'qz-f-text' }, `„${x.text}“`),
           el('div', { class: 'qz-f-quote' }, el('b', {}, String(x.falsch)), ` von ${x.n} falsch`, x.zeit ? ` · ⏱ ${x.zeit}× zu langsam` : ''),
           el('div', { class: 'qz-f-info' }, 'Richtig: ', buchstabe(x.k), `${kat[x.k] ? kat[x.k].name + ' – ' + kat[x.k].kurz : x.k}`,
-            Object.keys(x.als).length ? '   ·   getippt: ' + Object.entries(x.als).sort((a, b) => b[1] - a[1]).map(([w, n]) => `${w} ${n}×`).join(', ') : ''),
+            Object.keys(x.als).length ? '   ·   getippt: ' + Object.entries(x.als).sort((a, b) => b[1] - a[1]).map(([w, n]) => `${kurzName(w)} ${n}×`).join(', ') : ''),
           el('div', { class: 'qz-f-warum' }, x.warum))))
         : el('p', { class: 'se-unter' }, summeN ? 'Keine Fehler – stark!' : ''),
       knoepfe);

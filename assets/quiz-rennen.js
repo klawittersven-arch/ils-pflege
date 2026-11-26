@@ -158,6 +158,8 @@
     try { if ('wakeLock' in navigator && !wachSperre) { wachSperre = await navigator.wakeLock.request('screen'); wachSperre.addEventListener('release', () => { wachSperre = null; }); } } catch (e) { /* egal */ }
   }
   const kategorie = (k) => (setInfo ? setInfo.kategorien.find((x) => x.k === k) : null) || { k, name: k, kurz: '', frage: '' };
+  // Angezeigter Buchstabe: „zeichen“, falls zwei Kategorien gleich heißen (SPIKES: zweimal S), sonst das Kürzel
+  const zeichen = (kat) => kat.zeichen || kat.k;
 
   /* Welche Ansicht passt zum Stand vom Server? */
   function zeigen() {
@@ -272,15 +274,15 @@
       el('div', { class: 'qz-hell' },
         el('h2', {}, 'So geht’s'),
         el('ol', { class: 'qz-regeln' },
-          el('li', {}, 'Sie sehen einen Befund oder eine Maßnahme.'),
+          el('li', {}, (setInfo && setInfo.regel) || 'Sie sehen einen Befund oder eine Maßnahme.'),
           el('li', {}, 'Tippen Sie auf den passenden Buchstaben.'),
           el('li', {}, el('strong', {}, `${z.ziel} richtige hintereinander`), ' → Ziel!'),
           el('li', {}, el('strong', {}, 'Ein Fehler → zurück auf 0.'), ' Dann sehen Sie die richtige Lösung.'),
-          z.zeitlimit ? el('li', {}, el('strong', {}, '⏱ Schnell sein: '), 'Kurze Befunde 3 Sekunden, lange etwas mehr. Zu langsam → zurück auf 0.') : null)),
+          z.zeitlimit ? el('li', {}, el('strong', {}, '⏱ Schnell sein: '), 'Kurze Karten 3 Sekunden, lange etwas mehr. Zu langsam → zurück auf 0.') : null)),
       setInfo ? el('div', { class: 'qz-hell' },
         el('h2', {}, 'Die Leitfragen'),
         el('ul', { class: 'qz-leitfragen' }, setInfo.kategorien.map((k) => el('li', {},
-          el('span', { class: `qz-buchstabe k-${k.k}` }, k.k), el('span', {}, el('strong', {}, `${k.name} – ${k.kurz}: `), k.frage))))) : null,
+          el('span', { class: `qz-buchstabe k-${k.k}` }, zeichen(k)), el('span', {}, el('strong', {}, `${k.name} – ${k.kurz}: `), k.frage))))) : null,
       el('p', { class: 'qz-weiss' }, el('button', { type: 'button', class: 'qz-link', id: 'qz-name-aendern', onclick: verlassen }, 'Falscher Name? Hier ändern'))));
   }
 
@@ -311,7 +313,7 @@
     freigabe = Date.now() + lese;
     const knoepfe = el('div', { class: 'qz-knoepfe gesperrt', id: 'qz-knoepfe', style: `--lese:${lese}ms` },
       setInfo.kategorien.map((k) => el('button', { type: 'button', class: `qz-knopf k-${k.k}`, 'data-k': k.k, onclick: (ev) => tippen(k.k, ev.currentTarget) },
-        el('span', { class: 'qz-buchstabe' }, el('span', {}, k.k)),
+        el('span', { class: 'qz-buchstabe' }, el('span', {}, zeichen(k))),
         el('span', {}, el('b', {}, `${k.name} – ${k.kurz}`), el('small', {}, k.frage)))));
     setTimeout(() => { if (frage === f) knoepfe.classList.remove('gesperrt'); }, lese);
     const zeitBalken = f.zeit ? el('div', { class: 'qz-zeit', id: 'qz-zeit', style: `--zeit:${f.zeit}ms`, 'data-ms': String(f.zeit),
@@ -420,9 +422,9 @@
       el('div', { class: 'qz-falsch-titel' }, z.zuLangsam
         ? (z.imZiel ? '⏱ Zu langsam.' : '⏱ Zu langsam – zurück auf 0!')
         : (z.imZiel ? '❌ Leider falsch.' : '❌ Leider falsch – zurück auf 0!')),
-      el('div', { class: 'qz-loesung' }, el('span', { class: `qz-buchstabe k-${kat.k}` }, kat.k), `Richtig: ${kat.name} – ${kat.kurz}`),
+      el('div', { class: 'qz-loesung' }, el('span', { class: `qz-buchstabe k-${kat.k}` }, zeichen(kat)), `Richtig: ${kat.name} – ${kat.kurz}`),
       el('p', { class: 'qz-warum' }, z.warum),
-      kat.frage ? el('p', { class: 'qz-leitfrage' }, `Leitfrage ${kat.k}: ${kat.frage}`) : null,
+      kat.frage ? el('p', { class: 'qz-leitfrage' }, `Leitfrage ${zeichen(kat)}: ${kat.frage}`) : null,
       weiter);
     knoepfe.after(panel);
     setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'end' }), 50);

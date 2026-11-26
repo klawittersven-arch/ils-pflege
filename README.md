@@ -261,7 +261,7 @@ Für das Ende einer Stunde: Am Beamer **https://klawittersven-arch.github.io/ils
 QR-Code und Rennen stehen auf **demselben Bildschirm** – wer später kommt oder dessen Handy ausfällt, scannt einfach (neu).
 
 - **Handy:** QR-Code scannen (oder `…/ils-pflege/quiz-rennen/` öffnen und den 4-stelligen Code eingeben), Vorname +
-  Anfangsbuchstabe des Nachnamens eingeben → am Start warten (mit den Leitfragen) → Countdown 5-4-3-2-1 → Befunde zuordnen (A–E).
+  Anfangsbuchstabe des Nachnamens eingeben → am Start warten (mit den Leitfragen) → Countdown 5-4-3-2-1 → Karten zuordnen (z. B. A–E).
 - **Regel:** Wer zuerst die eingestellten *richtigen Antworten hintereinander* schafft (5, 8, **10**, 12, 15 oder 20), ist im Ziel.
   **Ein Fehler → zurück auf 0**; das Handy zeigt die richtige Lösung, die Begründung und die Leitfrage („Weiter“ erst nach 3 s).
   Falsch beantwortete Befunde kommen nach 2–4 anderen Fragen wieder.
@@ -279,7 +279,16 @@ QR-Code und Rennen stehen auf **demselben Bildschirm** – wer später kommt ode
   wenn das alte Gerät seit 1 Minute still ist (vorher: „Name schon im Rennen“).
 - **Datenschutz:** gespeichert werden nur „Vorname N.“ und der Spielstand, je Raum in einem eigenen Durable Object
   (`Rennen`, worker/src/rennen.js). Der Raum **löscht sich 3 Stunden nach der letzten Aktivität selbst**.
-- **Fragen:** `assets/quiz-rennen-fragen.js` (liest nur der Server). Weitere Fragensätze dort ergänzen und am Beamer
-  mit `…/quiz-rennen/beamer/?set=<id>` öffnen. Frage-Kennungen nie wiederverwenden (die Fehlerstatistik zählt je Kennung).
+- **Fragensätze** (`assets/quiz-rennen-fragen.js`, liest nur der Server) – am Beamer öffnen mit:
+  - **ABCDE-Rennen** (60 Befunde, A–E): https://klawittersven-arch.github.io/ils-pflege/quiz-rennen/beamer/
+  - **Schock-Rennen** (36 Karten, KB I TB 2): Welche Schockform passt – **V**olumenmangel, **A**naphylaxie, **N**erven (neurogen),
+    **K**ardiogen? Ursachen, Befunde und Maßnahmen nach Pflegias Band 2 (S. 801, 811, 831):
+    https://klawittersven-arch.github.io/ils-pflege/quiz-rennen/beamer/?set=schock
+  - **SPIKES-Rennen** (42 Sätze, KB II TB 2): Zu welchem Schritt gehört der Satz – S P I K E S? Zuordnung wie im
+    KB-II-Arbeitsblatt „Schlechte Nachrichten überbringen“: https://klawittersven-arch.github.io/ils-pflege/quiz-rennen/beamer/?set=spikes
+  Weitere Sätze dort ergänzen (`regel` = erste Regel auf dem Handy; `zeichen` = angezeigter Buchstabe, wenn zwei Kategorien
+  gleich heißen – beim SPIKES-Rennen hat „Strategy and Summary“ intern den Buchstaben Z und zeigt S; Farben in
+  `assets/quiz-rennen.css`). Frage-Kennungen nie wiederverwenden (die Fehlerstatistik zählt je Kennung).
+  Test: `node tests/quiz-rennen-saetze.test.mjs` (Inhalt aller Sätze + kurzer Lauf mit Schock- und SPIKES-Rennen).
 - **Einrichtung:** keine – der Worker bekommt die neue Klasse `Rennen` per Migration `v2` (wrangler.jsonc) beim nächsten Hochladen.
 - Test (ohne wrangler, Worker in Node nachgebaut): `node tests/quiz-rennen.test.mjs` (Bilder: `BILDER=/pfad`).
