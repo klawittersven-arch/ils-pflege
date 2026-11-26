@@ -391,7 +391,7 @@ export class Rennen extends DurableObject {
     if (this.frageGeben(p, jetzt)) await this.sichern();
     else await this.beruehren();
     const s = this.set();
-    return { ...this.zustand(p, jetzt), set: { id: s.id, titel: s.titel, aufgabe: s.aufgabe, kategorien: s.kategorien } };
+    return { ...this.zustand(p, jetzt), set: { id: s.id, titel: s.titel, aufgabe: s.aufgabe, regel: s.regel, kategorien: s.kategorien } };
   }
 
   async antworten(token, frageId, wahl, zeit = false) {
