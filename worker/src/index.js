@@ -11,6 +11,8 @@
  *     POST /api/anmelden  { klasse, id, geburtstag: 'JJJJ-MM-TT' }        angetippter Name (id aus /api/namen)
  *                    oder { klasse, vorname, geburtstag }                getippter Vorname (Rückfall, ältere Seiten)
  *                                               → { token, name, klasse }
+ *                    Sperren → 429 { grund, minuten }: 'gesperrt' (40 Fehlversuche je Klasse in 10 Min.),
+ *                    'gesperrt-netz' (20 je Gerät/Netz in 10 Min.), 'gesperrt-name' (5 je Name und Netz in 1 Std.)
  *     GET  /api/ich        (Authorization: Bearer <token>)  → { name, klasse, fortschritt }
  *     POST /api/melden     (Bearer) { ils, schritt, punkte, max, neustarts?, zuSchnell?, selbst?, selbstMax? }
  *     POST /api/live       (Bearer) { ils, schritt, phase, i, n }   aktueller Stand am Handy (für das Live-Rennen)
@@ -64,6 +66,11 @@ const MAX_AUFTRAEGE = 40;           // ILS-Aufträge je Person
 const MAX_SCHRITTE = 30;            // Schritte je ILS-Auftrag
 const FEHL_MAX = 40;                // fehlgeschlagene Anmeldungen je Klasse …
 const FEHL_FENSTER_MS = 10 * 60000; // … in 10 Minuten, danach 10 Minuten Pause
+// Sperre pro Gerät/Netz (Internet-Anschluss; in der Schule teilen sich alle Handys im WLAN einen):
+const NETZ_FEHL_MAX = 20;             // fehlgeschlagene Anmeldungen aus einem Netz …
+const NETZ_FENSTER_MS = 10 * 60000;   // … in 10 Minuten, danach 10 Minuten keine neuen Anmeldungen aus diesem Netz
+const NAME_FEHL_MAX = 5;              // falsche Geburtstage für denselben Namen aus einem Netz …
+const NAME_FENSTER_MS = 60 * 60000;   // … in 1 Stunde, danach 1 Stunde Pause für diesen Namen aus diesem Netz
 const LK_FEHL_MAX = 10;             // falsche Lehrkraft-Passwörter …
 const LK_FENSTER_MS = 15 * 60000;   // … in 15 Minuten
 
@@ -220,6 +227,16 @@ function bearer(request) {
   return m && TOKEN_MUSTER.test(m[1]) ? m[1] : null;
 }
 
+// Internet-Adresse des Geräts (bei Cloudflare immer gesetzt). Sie wird nie gespeichert, nur ein Prüfwert davon (netzKennung).
+function netzAus(request) {
+  return String(request.headers.get('CF-Connecting-IP') || '').slice(0, 64);
+}
+
+// Zähler mit Zeitfenster { start, anzahl } für die Sperren
+const zaehlerVoll = (z, max, fenster, jetzt) => !!z && z.anzahl >= max && jetzt - z.start < fenster;
+const zaehlerPlus = (z, fenster, jetzt) => (!z || jetzt - z.start >= fenster ? { start: jetzt, anzahl: 1 } : { start: z.start, anzahl: z.anzahl + 1 });
+const restMinuten = (z, fenster, jetzt) => Math.max(1, Math.ceil((z.start + fenster - jetzt) / 60000));
+
 function passwortAus(request) {
   try { return decodeURIComponent(request.headers.get('X-Passwort') || ''); } catch (e) { return ''; }
 }
@@ -236,7 +253,8 @@ async function gleichSicher(a, b) {
   return u === 0;
 }
 
-const STATUS = { ungueltig: 400, abgemeldet: 401, 'nicht-gefunden': 401, passwort: 401, gesperrt: 429, unbekannt: 404, voll: 409, voraussetzung: 409,
+const STATUS = { ungueltig: 400, abgemeldet: 401, 'nicht-gefunden': 401, passwort: 401, gesperrt: 429, 'gesperrt-netz': 429, 'gesperrt-name': 429,
+  unbekannt: 404, voll: 409, voraussetzung: 409,
   'zu-schnell': 400, 'lauf-unbekannt': 409, 'wappen-gesperrt': 403, 'passwort-fehlt': 503 };
 const mitStatus = (erg) => antwort(erg, erg.ok ? 200 : (STATUS[erg.grund] || 400));
 
@@ -275,13 +293,13 @@ export default {
         if (d?.id !== undefined && d?.id !== null && d?.id !== '') {
           const id = String(d.id);
           if (!KLASSE_MUSTER.test(klasse) || !SID_MUSTER.test(id) || !datum) return antwort({ ok: false, grund: 'ungueltig' }, 400);
-          return mitStatus(await daten.anmelden(klasse, '', datum, id));
+          return mitStatus(await daten.anmelden(klasse, '', datum, id, netzAus(request)));
         }
         const vorname = String(d?.vorname ?? '').trim();
         if (!KLASSE_MUSTER.test(klasse) || normName(vorname).length < 1 || vorname.length > 60 || !datum) {
           return antwort({ ok: false, grund: 'ungueltig' }, 400);
         }
-        return mitStatus(await daten.anmelden(klasse, vorname, datum));
+        return mitStatus(await daten.anmelden(klasse, vorname, datum, null, netzAus(request)));
       }
 
       if (weg === '/api/ich' && methode === 'GET') {
@@ -469,6 +487,9 @@ export default {
  *   stat:<ils>:<schritt> { <aufgabe>: { i, n, ok, x, f, d: { <fehlklick>: anzahl }, um } }  anonyme Fehlerstatistik
  *                   (n = gelöst, ok = davon ohne Fehler, x = Neustarts ausgelöst, f = Fehler/Herzen, d = Fehlklicks)
  *   fehl:<klasse>   { start, anzahl }  fehlgeschlagene Anmeldungen
+ *   netzfehl:<netz> { start, anzahl }  fehlgeschlagene Anmeldungen aus einem Netz (netz = Prüfwert der Internet-Adresse)
+ *   namefehl:<netz>:<sid> { start, anzahl }  falsche Geburtstage für einen Namen aus einem Netz
+ *                   (beide werden per Alarm nach Ablauf des Zeitfensters gelöscht, spätestens ca. 75 Min. nach dem ersten Fehlversuch)
  *   lkfehl          { start, anzahl }  falsche Lehrkraft-Passwörter */
 export class Daten extends DurableObject {
   async schluessel() {
@@ -481,6 +502,30 @@ export class Daten extends DurableObject {
     const bytes = new Uint8Array(roh.match(/../g).map((h) => parseInt(h, 16)));
     this._schluessel = await crypto.subtle.importKey('raw', bytes, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
     return this._schluessel;
+  }
+
+  // Prüfwert der Internet-Adresse (HMAC, gekürzt) – die Adresse selbst wird nicht gespeichert
+  async netzKennung(ip) {
+    const sig = await crypto.subtle.sign('HMAC', await this.schluessel(), new TextEncoder().encode('ip|' + (ip || 'unbekannt')));
+    return Array.from(new Uint8Array(sig).slice(0, 8), (b) => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // Abgelaufene Sperr-Zähler löschen (Alarm des Durable Objects)
+  async aufraeumenPlanen() {
+    if ((await this.ctx.storage.getAlarm()) === null) await this.ctx.storage.setAlarm(Date.now() + NAME_FENSTER_MS + 60000);
+  }
+
+  async alarm() {
+    const jetzt = Date.now();
+    const weg = [];
+    let rest = false;
+    for (const [praefix, fenster] of [['netzfehl:', NETZ_FENSTER_MS], ['namefehl:', NAME_FENSTER_MS], ['fehl:', FEHL_FENSTER_MS]]) {
+      for (const [k, z] of await this.ctx.storage.list({ prefix: praefix })) {
+        if (!z || jetzt - z.start >= fenster) weg.push(k); else rest = true;
+      }
+    }
+    for (let i = 0; i < weg.length; i += 100) await this.ctx.storage.delete(weg.slice(i, i + 100));
+    if (rest) await this.ctx.storage.setAlarm(jetzt + 15 * 60000);
   }
 
   async pruefwert(datum) {
@@ -507,12 +552,23 @@ export class Daten extends DurableObject {
 
   /* ----- Anmeldung der SuS ----- */
   // id gesetzt = Name aus der Liste angetippt (dann zählt nur noch der Geburtstag), sonst getippter Vorname
-  async anmelden(klasse, vorname, datum, id = null) {
+  // netz = Internet-Adresse des Geräts (nur für die Sperre pro Gerät/Netz, gespeichert wird nur ein Prüfwert)
+  async anmelden(klasse, vorname, datum, id = null, netz = '') {
     const jetzt = Date.now();
     const fehlSchl = 'fehl:' + klasse;
-    const fehl = await this.ctx.storage.get(fehlSchl);
-    if (fehl && fehl.anzahl >= FEHL_MAX && jetzt - fehl.start < FEHL_FENSTER_MS) {
-      return { ok: false, grund: 'gesperrt', minuten: Math.ceil((fehl.start + FEHL_FENSTER_MS - jetzt) / 60000) };
+    const netzId = await this.netzKennung(netz);
+    const netzSchl = 'netzfehl:' + netzId;
+    const nameSchl = id ? `namefehl:${netzId}:${id}` : null;
+    const zaehler = await this.ctx.storage.get([fehlSchl, netzSchl, ...(nameSchl ? [nameSchl] : [])]);
+    const fehl = zaehler.get(fehlSchl), netzFehl = zaehler.get(netzSchl), nameFehl = nameSchl ? zaehler.get(nameSchl) : undefined;
+    if (zaehlerVoll(fehl, FEHL_MAX, FEHL_FENSTER_MS, jetzt)) {
+      return { ok: false, grund: 'gesperrt', minuten: restMinuten(fehl, FEHL_FENSTER_MS, jetzt) };
+    }
+    if (zaehlerVoll(netzFehl, NETZ_FEHL_MAX, NETZ_FENSTER_MS, jetzt)) {
+      return { ok: false, grund: 'gesperrt-netz', minuten: restMinuten(netzFehl, NETZ_FENSTER_MS, jetzt) };
+    }
+    if (zaehlerVoll(nameFehl, NAME_FEHL_MAX, NAME_FENSTER_MS, jetzt)) {
+      return { ok: false, grund: 'gesperrt-name', minuten: restMinuten(nameFehl, NAME_FENSTER_MS, jetzt) };
     }
     const geb = await this.pruefwert(datum);
     const getippt = normName(vorname);
@@ -537,10 +593,15 @@ export class Daten extends DurableObject {
       }
     }
     if (treffer.length !== 1) {
-      const neu = !fehl || jetzt - fehl.start >= FEHL_FENSTER_MS ? { start: jetzt, anzahl: 1 } : { start: fehl.start, anzahl: fehl.anzahl + 1 };
-      await this.ctx.storage.put(fehlSchl, neu);
+      const schreiben = { [fehlSchl]: zaehlerPlus(fehl, FEHL_FENSTER_MS, jetzt), [netzSchl]: zaehlerPlus(netzFehl, NETZ_FENSTER_MS, jetzt) };
+      if (nameSchl) schreiben[nameSchl] = zaehlerPlus(nameFehl, NAME_FENSTER_MS, jetzt);
+      await this.ctx.storage.put(schreiben);
+      await this.aufraeumenPlanen();
       return { ok: false, grund: treffer.length > 1 ? 'mehrdeutig' : 'nicht-gefunden' };
     }
+    // Richtig angemeldet: Zähler für diesen Namen zurücksetzen (der Zähler fürs Netz bleibt – sonst könnte man ihn
+    // mit der eigenen Anmeldung immer wieder leeren)
+    if (nameSchl && nameFehl) await this.ctx.storage.delete(nameSchl);
     const s = treffer[0];
     const token = zufall(32, 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789');
     await this.ctx.storage.put('t:' + token, { sid: s.sid, um: jetzt });

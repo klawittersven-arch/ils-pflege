@@ -358,6 +358,8 @@ const ILSKonto = (() => {
             return;
           }
           if (d.grund === 'gesperrt') fehler(`Zu viele Fehlversuche in Ihrer Klasse. Bitte warten Sie ${d.minuten || 10} Minuten und versuchen Sie es dann noch einmal.`);
+          else if (d.grund === 'gesperrt-name') fehler(`Zu viele falsche Geburtstage für diesen Namen. Bitte warten Sie ${d.minuten || 60} Minuten. Ist es Ihr Name und klappt es nicht, sprechen Sie Ihre Lehrkraft an.`);
+          else if (d.grund === 'gesperrt-netz') fehler(`Zu viele Fehlversuche über diesen Internet-Anschluss (z. B. Schul-WLAN). Bitte warten Sie ${d.minuten || 10} Minuten und versuchen Sie es dann noch einmal.`);
           else if (d.grund === 'mehrdeutig') fehler('Bitte geben Sie Ihren Vornamen vollständig ein.');
           else if (d.grund === 'nicht-gefunden' && modus === 'liste') fehler('Der Geburtstag passt nicht zu diesem Namen. Prüfen Sie Tag, Monat und Jahr – und ob Sie Ihren eigenen Namen angetippt haben. Klappt es weiterhin nicht, sprechen Sie Ihre Lehrkraft an.');
           else if (d.grund === 'nicht-gefunden') fehler('Wir finden Sie nicht in der Klassenliste. Prüfen Sie Klasse, Vorname und Geburtstag. Klappt es weiterhin nicht, sprechen Sie Ihre Lehrkraft an.');

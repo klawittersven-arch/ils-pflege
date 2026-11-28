@@ -369,11 +369,13 @@ const QUIZ = { 'Die Lehrkraft sieht': 'Richtig', 'einzelnen Antworten': 'Falsch'
     /* ---------- Sperre nach vielen Fehlversuchen ---------- */
     console.log('Sperren');
     let letzte;
-    for (let i = 0; i < 41; i++) {
-      letzte = await fetch(worker.url + '/api/anmelden', { method: 'POST', body: JSON.stringify({ klasse: '3BFP2/2', vorname: 'Anna', geburtstag: `1990-01-${String((i % 28) + 1).padStart(2, '0')}` }) });
+    for (let i = 0; i < 41; i++) {   // aus vielen verschiedenen Netzen (sonst greift vorher die Sperre pro Netz)
+      letzte = await fetch(worker.url + '/api/anmelden', { method: 'POST', headers: { 'CF-Connecting-IP': `10.9.0.${i + 1}` },
+        body: JSON.stringify({ klasse: '3BFP2/2', vorname: 'Anna', geburtstag: `1990-01-${String((i % 28) + 1).padStart(2, '0')}` }) });
     }
-    pruefe(letzte.status === 429, 'nach 40 Fehlversuchen ist die Klasse 10 Minuten gesperrt', letzte.status);
-    const andere = await fetch(worker.url + '/api/anmelden', { method: 'POST', body: JSON.stringify({ klasse: '3BFP2/1', vorname: 'Maria', geburtstag: '2004-09-05' }) });
+    pruefe(letzte.status === 429 && (await letzte.json()).grund === 'gesperrt', 'nach 40 Fehlversuchen ist die Klasse 10 Minuten gesperrt', letzte.status);
+    const andere = await fetch(worker.url + '/api/anmelden', { method: 'POST', headers: { 'CF-Connecting-IP': '10.9.1.1' },
+      body: JSON.stringify({ klasse: '3BFP2/1', vorname: 'Maria', geburtstag: '2004-09-05' }) });
     pruefe(andere.status === 200 && (await andere.json()).name === 'Maria K.', 'andere Klasse nicht betroffen; gleicher Geburtstag → richtige Person über Vornamen');
     const ohnePw = await fetch(worker.url + '/api/lehrkraft/stand');
     pruefe(ohnePw.status === 401, 'Lehrkraft-Daten ohne Passwort: 401');

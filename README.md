@@ -34,8 +34,15 @@ wer noch nie angemeldet war.
   Test: `node tests/vornamen.test.js`.
 - **Ohne Internet** bleibt das Ergebnis auf dem Handy und wird automatisch nachgereicht.
 - **Abschlussquiz** wird erst freigeschaltet, wenn alle Übungen erledigt sind.
-- **Schutz:** 40 falsche Anmeldungen in einer Klasse innerhalb von 10 Minuten → diese Klasse 10 Minuten gesperrt.
-  10 falsche Lehrkraft-Passwörter in 15 Minuten → Lehrkraft-Seite 15 Minuten gesperrt.
+- **Schutz (seit 28.11.2026 auch pro Gerät/Netz):**
+  - 5 falsche Geburtstage für **denselben Namen** von einem Internet-Anschluss in 1 Stunde → dieser Name von diesem
+    Anschluss aus 1 Stunde gesperrt (alle anderen Namen und Anschlüsse nicht betroffen; eine richtige Anmeldung setzt den Zähler zurück).
+  - 20 Fehlversuche von **einem Internet-Anschluss** in 10 Minuten → von dort 10 Minuten keine neuen Anmeldungen
+    (bereits angemeldete Handys merken nichts). Achtung: Im Schul-WLAN teilen sich alle Handys einen Anschluss.
+  - 40 falsche Anmeldungen in einer Klasse innerhalb von 10 Minuten → diese Klasse 10 Minuten gesperrt
+    (greift erst, wenn viele verschiedene Anschlüsse es versuchen – ein einzelner Störer erreicht die Grenze nicht mehr).
+  - Lehrkraft-Seite: 10 falsche Passwörter in 15 Minuten → Lehrkraft-Seite 15 Minuten gesperrt.
+  - Test: `node tests/sperre.test.mjs`.
 
 ### Einrichtung (einmalig, ca. 10 Minuten – wie bei Tetris und kb1-diabetes)
 
@@ -83,7 +90,10 @@ lösen – auf der Lehrkraft-Seite erscheint der Haken (Auftrag „Probe-Auftrag
 - **Namensauswahl ist öffentlich (Entscheidung der Lehrkraft vom 28.11.2026):** Die Anzeigenamen („Vorname N.“) jeder Klasse
   kann jeder abrufen, der eine ILS-Seite öffnet oder `GET /api/namen?klasse=…` aufruft – ohne Passwort. Geburtsdaten,
   Prüfwerte und Fortschritt sind weiterhin nicht öffentlich. Wer einen Namen antippt, muss das Geburtsdatum kennen; nach
-  40 Fehlversuchen je Klasse in 10 Minuten ist die Klasse 10 Minuten gesperrt.
+  5 Fehlversuchen ist dieser Name vom selben Internet-Anschluss aus 1 Stunde gesperrt (siehe „Schutz“).
+- **Sperre pro Gerät/Netz:** Dafür wird die Internet-Adresse nicht gespeichert, nur ein Prüfwert (HMAC mit dem geheimen
+  Schlüssel, gekürzt) mit Zeitpunkt und Anzahl der Fehlversuche. Ein Alarm des Servers löscht diese Zähler, sobald ihr
+  Zeitfenster abgelaufen ist (spätestens etwa 75 Minuten nach dem ersten Fehlversuch). Die Lehrkraft-Seite zeigt sie nicht.
 - Gespeichert werden (beim Cloudflare-Worker, in einem „Durable Object“): Klasse, Anzeigename („Vorname N.“),
   ein **Prüfwert** des Geburtsdatums (HMAC-SHA-256 mit einem geheimen Schlüssel, der den Server nie verlässt –
   das Datum selbst wird nicht gespeichert), Zeitpunkt der ersten Anmeldung und welche Übung wann bestanden wurde
@@ -115,7 +125,8 @@ lösen – auf der Lehrkraft-Seite erscheint der Haken (Auftrag „Probe-Auftrag
 ```
 (cd worker && npm install)
 node tests/ablauf.test.js            # 59 Prüfungen; Bildschirmfotos: BILDER=/pfad node tests/ablauf.test.js
-node tests/vornamen.test.js          # Anmeldung mit Rufnamen / weiteren Vornamen, gleicher Geburtstag
+node tests/vornamen.test.js          # Namensauswahl, Anmeldung mit Rufnamen / weiteren Vornamen, gleicher Geburtstag
+node tests/sperre.test.mjs           # Sperre pro Name/Netz, Aufräumen, Meldungen (ohne wrangler)
 ```
 
 Der Test startet den Worker lokal (`wrangler dev`) mit erfundenen Namen und prüft Import, Anmeldung,

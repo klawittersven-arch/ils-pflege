@@ -94,8 +94,11 @@ const LISTE = [
     const ungueltig = await post('/api/anmelden', { klasse: '3BFP2/1', id: '../x', geburtstag: '1999-03-15' });
     pruefe(ungueltig.status === 400, 'ungültige Kennung → 400', ungueltig.d);
     let letzte;
-    for (let i = 0; i < 41; i++) letzte = await post('/api/anmelden', { klasse: '3BFP2/1', id: id('Nora G.'), geburtstag: `1980-01-${String((i % 28) + 1).padStart(2, '0')}` });
-    pruefe(letzte.status === 429, 'Raten bei angetipptem Namen: nach 40 Fehlversuchen ist die Klasse gesperrt', letzte.status);
+    for (let i = 0; i < 41; i++) {   // aus vielen Netzen: dann greift die Sperre je Klasse
+      letzte = await post('/api/anmelden', { klasse: '3BFP2/1', id: id('Nora G.'), geburtstag: `1980-01-${String((i % 28) + 1).padStart(2, '0')}` },
+        { 'CF-Connecting-IP': `10.7.0.${i + 1}` });
+    }
+    pruefe(letzte.status === 429 && letzte.d.grund === 'gesperrt', 'Raten aus vielen Netzen: nach 40 Fehlversuchen ist die Klasse gesperrt', letzte.d);
   } finally {
     worker.beenden();
   }
