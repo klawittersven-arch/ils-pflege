@@ -25,8 +25,10 @@ Auf **`/lehrkraft/`** sehen Sie eine Tabelle: wer welche Übung wann erledigt ha
 wer noch nie angemeldet war.
 
 - **Anmeldung:** Der Geburtstag wird mit der Klassenliste abgeglichen. Beim Vornamen genügt der richtige
-  Anfangsbuchstabe (Schreibvarianten wie „Mohamed/Mohammed“ stören nicht); haben zwei Personen einer Klasse
-  denselben Geburtstag, entscheidet der Vorname.
+  Anfangsbuchstabe **eines** eingetragenen Vornamens (Schreibvarianten wie „Mohamed/Mohammed“ stören nicht;
+  seit 28.11.2026 klappt auch der Rufname, z. B. „Lea“ bei „Kim Lea V.“ oder „Joy“ bei „Ada Joy O.“).
+  Haben zwei Personen einer Klasse denselben Geburtstag, entscheidet zuerst der erste Vorname, dann die weiteren.
+  Test: `node tests/vornamen.test.js`.
 - **Ohne Internet** bleibt das Ergebnis auf dem Handy und wird automatisch nachgereicht.
 - **Abschlussquiz** wird erst freigeschaltet, wenn alle Übungen erledigt sind.
 - **Schutz:** 40 falsche Anmeldungen in einer Klasse innerhalb von 10 Minuten → diese Klasse 10 Minuten gesperrt.
@@ -56,7 +58,8 @@ wer noch nie angemeldet war.
 1. https://klawittersven-arch.github.io/ils-pflege/lehrkraft/ öffnen, mit dem Passwort anmelden.
 2. Unten **Verwaltung → Klassenliste einfügen**: eine Zeile pro Person
    `Klasse;Vorname N.;TT.MM.JJJJ` (z. B. `3BFP2/1;Lena M.;05.09.2004`) → **Übernehmen**.
-   Spalten aus Excel (mit Tabulator) gehen auch.
+   Spalten aus Excel (mit Tabulator) gehen auch. Rufnamen gehören mit in den Vornamen
+   (z. B. `3BFP2/2;Ada Joy O.;…`) – dann klappt die Anmeldung mit beiden.
 3. **Die Klassenliste gehört nie in dieses Repository** – es ist öffentlich.
 
 **4. Testen:** https://klawittersven-arch.github.io/ils-pflege/probe/ am Handy öffnen, anmelden, Probe-Übungen
@@ -104,7 +107,8 @@ lösen – auf der Lehrkraft-Seite erscheint der Haken (Auftrag „Probe-Auftrag
 
 ```
 (cd worker && npm install)
-node tests/ablauf.test.js            # 53 Prüfungen; Bildschirmfotos: BILDER=/pfad node tests/ablauf.test.js
+node tests/ablauf.test.js            # 59 Prüfungen; Bildschirmfotos: BILDER=/pfad node tests/ablauf.test.js
+node tests/vornamen.test.js          # Anmeldung mit Rufnamen / weiteren Vornamen, gleicher Geburtstag
 ```
 
 Der Test startet den Worker lokal (`wrangler dev`) mit erfundenen Namen und prüft Import, Anmeldung,

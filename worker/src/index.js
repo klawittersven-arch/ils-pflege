@@ -173,6 +173,21 @@ export function vornamenAus(name) {
   return { vn: normName(vor[0]), vnVoll: normName(vor.join('')) };
 }
 
+// Jeder einzelne Vorname: „Kim Lea V.“ → ['kim', 'lea'], „Max-Paul D.“ → ['maxpaul', 'max', 'paul'].
+// So klappt die Anmeldung auch mit dem Rufnamen (z. B. „Lea“), wenn er in der Klassenliste mit drinsteht.
+export function alleVornamen(name) {
+  const teile = String(name).trim().split(/\s+/);
+  const vor = teile.length > 1 ? teile.slice(0, -1) : teile;
+  const liste = [];
+  for (const v of vor) {
+    for (const t of [v, ...v.split(/[-‐'’]/)]) {
+      const n = normName(t);
+      if (n && !liste.includes(n)) liste.push(n);
+    }
+  }
+  return liste;
+}
+
 // Eine Zeile der Klassenliste: „Klasse;Name;Geburtsdatum“ (auch mit Tabulator, z. B. aus Excel)
 export function zeileLesen(zeile) {
   const teile = zeile.split(/\t|;/).map((t) => t.trim());
@@ -477,12 +492,17 @@ export class Daten extends DurableObject {
     }
     const geb = await this.pruefwert(datum);
     const getippt = normName(vorname);
-    // Der Geburtstag ist das Entscheidende; beim Vornamen genügt der richtige Anfangsbuchstabe
-    // (so stören Schreibvarianten wie „Mohamed/Mohammed“ nicht).
-    let treffer = (await this.alleSchueler()).filter((s) => s.klasse === klasse && s.geb === geb && s.vn[0] === getippt[0]);
+    // Der Geburtstag ist das Entscheidende; beim Vornamen genügt der richtige Anfangsbuchstabe IRGENDEINES
+    // eingetragenen Vornamens (so stören Schreibvarianten wie „Mohamed/Mohammed“ nicht, und Rufnamen wie
+    // „Lea“ bei „Kim Lea V.“ oder „Joy“ bei „Ada Joy O.“ klappen auch).
+    let treffer = (await this.alleSchueler()).filter((s) => s.klasse === klasse && s.geb === geb
+      && alleVornamen(s.name).some((v) => v[0] === getippt[0]));
     if (treffer.length > 1) {
+      // Gleicher Geburtstag in einer Klasse: Zuerst entscheidet (wie bisher) der erste Vorname, erst danach die weiteren.
+      // So bleibt jede Anmeldung, die schon vorher eindeutig war, genau so wie sie war.
       const gemeinsam = (a, b) => { let i = 0; while (i < a.length && i < b.length && a[i] === b[i]) i++; return i; };
-      const werte = treffer.map((s) => Math.max(gemeinsam(getippt, s.vnVoll), gemeinsam(getippt, s.vn)));
+      const werte = treffer.map((s) => 100 * Math.max(gemeinsam(getippt, s.vnVoll), gemeinsam(getippt, s.vn))
+        + Math.max(0, ...alleVornamen(s.name).map((v) => gemeinsam(getippt, v))));
       const best = Math.max(...werte);
       treffer = treffer.filter((s, i) => werte[i] === best);
     }
