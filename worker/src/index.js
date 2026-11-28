@@ -1,13 +1,15 @@
 /* ILS-Fortschritt – Cloudflare-Worker mit einem Durable Object („Daten“) für die ganze Schule.
  *
- * Wofür?  Die SuS melden sich auf den ILS-Seiten einmal an (Klasse, Vorname, Geburtstag).
+ * Wofür?  Die SuS melden sich auf den ILS-Seiten einmal an (Klasse antippen, Namen antippen, Geburtstag).
  *         Danach meldet das Handy jede erledigte Übung. Die Lehrkraft sieht auf /lehrkraft/
  *         eine Tabelle: wer hat welche Übung erledigt, wer hat den Auftrag abgeschlossen.
  *
  * Schnittstelle (alles JSON)
  *   SuS
  *     GET  /api/klassen                         → { klassen: ['3BFP2/1', …] }
- *     POST /api/anmelden  { klasse, vorname, geburtstag: 'JJJJ-MM-TT' }
+ *     GET  /api/namen?klasse=…                  → { namen: [{ id, name: 'Vorname N.' }, …] }   (öffentlich: Namensauswahl)
+ *     POST /api/anmelden  { klasse, id, geburtstag: 'JJJJ-MM-TT' }        angetippter Name (id aus /api/namen)
+ *                    oder { klasse, vorname, geburtstag }                getippter Vorname (Rückfall, ältere Seiten)
  *                                               → { token, name, klasse }
  *     GET  /api/ich        (Authorization: Bearer <token>)  → { name, klasse, fortschritt }
  *     POST /api/melden     (Bearer) { ils, schritt, punkte, max, neustarts?, zuSchnell?, selbst?, selbstMax? }
@@ -38,7 +40,8 @@
  *   Quiz-Rennen im Klassenraum (Beamer + Handys, ohne Anmeldung): /api/rennen/… – siehe worker/src/rennen.js
  *
  * Datenschutz: Geburtsdaten werden nie gespeichert, nur ein Prüfwert (HMAC-SHA-256 mit einem
- * geheimen Schlüssel, der nur im Durable Object liegt). Gespeichert werden Klasse, Anzeigename
+ * geheimen Schlüssel, der nur im Durable Object liegt). Die Anzeigenamen („Vorname N.“) je Klasse sind für die
+ * Namensauswahl öffentlich abrufbar (/api/namen, Entscheidung der Lehrkraft vom 28.11.2026). Gespeichert werden Klasse, Anzeigename
  * („Vorname N.“) und welche Übung wann erledigt wurde – keine einzelnen Antworten. Die Fehlerstatistik je Aufgabe
  * ist anonym: Sie enthält nur Summen (wie oft gelöst, wie viele Fehler, welche Fehlklicks), keine Person und keine Klasse.
  * Gelöscht wird nur von Hand (Lehrkraft-Seite). Cloudflare-Protokolle sind abgeschaltet.
@@ -258,11 +261,23 @@ export default {
       /* ----- SuS ----- */
       if (weg === '/api/klassen' && methode === 'GET') return antwort(await daten.klassen());
 
+      // Namensauswahl: Anzeigenamen einer Klasse (ohne Geburtsdaten oder Prüfwerte)
+      if (weg === '/api/namen' && methode === 'GET') {
+        const klasse = String(url.searchParams.get('klasse') ?? '').trim();
+        if (!KLASSE_MUSTER.test(klasse)) return antwort({ ok: false, grund: 'ungueltig' }, 400);
+        return antwort(await daten.namen(klasse));
+      }
+
       if (weg === '/api/anmelden' && methode === 'POST') {
         const d = await jsonLesen(request);
         const klasse = String(d?.klasse ?? '').trim();
+        const datum = DATUM_ISO.test(String(d?.geburtstag ?? '')) ? datumLesen(d?.geburtstag) : null;
+        if (d?.id !== undefined && d?.id !== null && d?.id !== '') {
+          const id = String(d.id);
+          if (!KLASSE_MUSTER.test(klasse) || !SID_MUSTER.test(id) || !datum) return antwort({ ok: false, grund: 'ungueltig' }, 400);
+          return mitStatus(await daten.anmelden(klasse, '', datum, id));
+        }
         const vorname = String(d?.vorname ?? '').trim();
-        const datum = DATUM_ISO.test(String(d?.geburtstag ?? '')) ? datumLesen(d.geburtstag) : null;
         if (!KLASSE_MUSTER.test(klasse) || normName(vorname).length < 1 || vorname.length > 60 || !datum) {
           return antwort({ ok: false, grund: 'ungueltig' }, 400);
         }
@@ -482,8 +497,17 @@ export class Daten extends DurableObject {
     return { ok: true, klassen: k };
   }
 
+  // Namensauswahl: nur Kennung und Anzeigename, sortiert
+  async namen(klasse) {
+    const namen = (await this.alleSchueler()).filter((s) => s.klasse === klasse)
+      .map((s) => ({ id: s.sid, name: s.name }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'de'));
+    return { ok: true, klasse, namen };
+  }
+
   /* ----- Anmeldung der SuS ----- */
-  async anmelden(klasse, vorname, datum) {
+  // id gesetzt = Name aus der Liste angetippt (dann zählt nur noch der Geburtstag), sonst getippter Vorname
+  async anmelden(klasse, vorname, datum, id = null) {
     const jetzt = Date.now();
     const fehlSchl = 'fehl:' + klasse;
     const fehl = await this.ctx.storage.get(fehlSchl);
@@ -492,19 +516,25 @@ export class Daten extends DurableObject {
     }
     const geb = await this.pruefwert(datum);
     const getippt = normName(vorname);
-    // Der Geburtstag ist das Entscheidende; beim Vornamen genügt der richtige Anfangsbuchstabe IRGENDEINES
-    // eingetragenen Vornamens (so stören Schreibvarianten wie „Mohamed/Mohammed“ nicht, und Rufnamen wie
-    // „Lea“ bei „Kim Lea V.“ oder „Joy“ bei „Ada Joy O.“ klappen auch).
-    let treffer = (await this.alleSchueler()).filter((s) => s.klasse === klasse && s.geb === geb
-      && alleVornamen(s.name).some((v) => v[0] === getippt[0]));
-    if (treffer.length > 1) {
-      // Gleicher Geburtstag in einer Klasse: Zuerst entscheidet (wie bisher) der erste Vorname, erst danach die weiteren.
-      // So bleibt jede Anmeldung, die schon vorher eindeutig war, genau so wie sie war.
-      const gemeinsam = (a, b) => { let i = 0; while (i < a.length && i < b.length && a[i] === b[i]) i++; return i; };
-      const werte = treffer.map((s) => 100 * Math.max(gemeinsam(getippt, s.vnVoll), gemeinsam(getippt, s.vn))
-        + Math.max(0, ...alleVornamen(s.name).map((v) => gemeinsam(getippt, v))));
-      const best = Math.max(...werte);
-      treffer = treffer.filter((s, i) => werte[i] === best);
+    let treffer;
+    if (id) {
+      const s = await this.ctx.storage.get('s:' + id);
+      treffer = s && s.klasse === klasse && s.geb === geb ? [s] : [];
+    } else {
+      // Der Geburtstag ist das Entscheidende; beim Vornamen genügt der richtige Anfangsbuchstabe IRGENDEINES
+      // eingetragenen Vornamens (so stören Schreibvarianten wie „Mohamed/Mohammed“ nicht, und Rufnamen wie
+      // „Lea“ bei „Kim Lea V.“ oder „Joy“ bei „Ada Joy O.“ klappen auch).
+      treffer = (await this.alleSchueler()).filter((s) => s.klasse === klasse && s.geb === geb
+        && alleVornamen(s.name).some((v) => v[0] === getippt[0]));
+      if (treffer.length > 1) {
+        // Gleicher Geburtstag in einer Klasse: Zuerst entscheidet (wie bisher) der erste Vorname, erst danach die weiteren.
+        // So bleibt jede Anmeldung, die schon vorher eindeutig war, genau so wie sie war.
+        const gemeinsam = (a, b) => { let i = 0; while (i < a.length && i < b.length && a[i] === b[i]) i++; return i; };
+        const werte = treffer.map((s) => 100 * Math.max(gemeinsam(getippt, s.vnVoll), gemeinsam(getippt, s.vn))
+          + Math.max(0, ...alleVornamen(s.name).map((v) => gemeinsam(getippt, v))));
+        const best = Math.max(...werte);
+        treffer = treffer.filter((s, i) => werte[i] === best);
+      }
     }
     if (treffer.length !== 1) {
       const neu = !fehl || jetzt - fehl.start >= FEHL_FENSTER_MS ? { start: jetzt, anzahl: 1 } : { start: fehl.start, anzahl: fehl.anzahl + 1 };

@@ -42,8 +42,8 @@ async function malen(s) {
 async function anmelden(s, basis, vorname, t, m, j) {
   await s.goto(basis + 'drainage/');
   await s.waitForSelector('.wahl');
-  await s.locator('.wahl', { hasText: '3BFP2/1' }).click();
-  await s.fill('#konto-vn', vorname); await s.fill('#konto-tag', t); await s.fill('#konto-monat', m); await s.fill('#konto-jahr', j);
+  await s.locator('.klassen .wahl', { hasText: '3BFP2/1' }).click();
+  await s.locator('.name-knopf', { hasText: vorname }).click(); await s.fill('#konto-tag', t); await s.fill('#konto-monat', m); await s.fill('#konto-jahr', j);
   await s.click('#konto-anmelden');
   await s.waitForSelector('.konto-leiste');
 }
@@ -95,7 +95,7 @@ async function spielen(s, mitFehlern, sofort = false) {
     console.log('Sperre vor dem Abschlussquiz');
     const k1 = await browser.newContext(MOBIL); await k1.clock.install();
     const lena = await k1.newPage(); beobachten(lena, protokoll, 'lena');
-    await anmelden(lena, basis, 'Lena', '05', '09', '2004');
+    await anmelden(lena, basis, 'Lena M.', '05', '09', '2004');
     await lena.waitForSelector('.highscore-knopf');
     pruefe(!(await lena.$('.challenge-knopf')), 'Übersicht von Anfang an: Knopf „Highscore ansehen“, aber noch kein Challenge-Knopf');
     await lena.goto(basis + 'drainage/challenge/');
@@ -156,7 +156,7 @@ async function spielen(s, mitFehlern, sofort = false) {
     console.log('Durchgang Mohamed (mit Fehlern)');
     const k2 = await browser.newContext(MOBIL); await k2.clock.install();
     const mo = await k2.newPage(); beobachten(mo, protokoll, 'mohamed');
-    await anmelden(mo, basis, 'Mohamed', '01', '02', '2003');
+    await anmelden(mo, basis, 'Mohamed A.', '01', '02', '2003');
     await mo.goto(basis + 'drainage/challenge/');
     await mo.waitForSelector('#ch-start');
     pruefe(/Lena M\./.test(await mo.textContent('.bestenliste')), 'Bestenliste der Klasse zeigt Lena M. vor dem Start');
@@ -184,7 +184,7 @@ async function spielen(s, mitFehlern, sofort = false) {
     pruefe(!/#bestenliste/.test(mo.url()), '„Zur ILS-Challenge“ führt zur Challenge');
     const k3 = await browser.newContext(MOBIL);
     const paul = await k3.newPage(); beobachten(paul, protokoll, 'paul');
-    await anmelden(paul, basis, 'Paul', '03', '03', '2003');
+    await anmelden(paul, basis, 'Paul P.', '03', '03', '2003');
     await paul.waitForSelector('.highscore-knopf');
     pruefe(!(await paul.$('.challenge-knopf')), 'Paul (noch nichts erledigt): Highscore-Knopf ja, Challenge-Knopf nein');
     await paul.click('.highscore-knopf');

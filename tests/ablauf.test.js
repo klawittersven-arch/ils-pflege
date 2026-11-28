@@ -26,8 +26,19 @@ async function foto(seite, name) {
   if (BILDER) await seite.screenshot({ path: path.join(BILDER, name + '.png'), fullPage: true });
 }
 
-async function anmelden(seite, klasse, vorname, t, m, j) {
-  await seite.locator('.wahl', { hasText: klasse }).click();
+// Namensauswahl: Klasse antippen, Namen antippen, Geburtstag
+async function anmelden(seite, klasse, name, t, m, j) {
+  await seite.locator('.klassen .wahl', { hasText: klasse }).click();
+  await seite.locator('.name-knopf', { hasText: name }).click();
+  await seite.fill('#konto-tag', t);
+  await seite.fill('#konto-monat', m);
+  await seite.fill('#konto-jahr', j);
+  await seite.click('#konto-anmelden');
+}
+
+// Rückfall (Server liefert keine Namensliste): Vornamen tippen wie früher
+async function anmeldenGetippt(seite, klasse, vorname, t, m, j) {
+  await seite.locator('.klassen .wahl', { hasText: klasse }).click();
   await seite.fill('#konto-vn', vorname);
   await seite.fill('#konto-tag', t);
   await seite.fill('#konto-monat', m);
@@ -119,11 +130,31 @@ const QUIZ = { 'Die Lehrkraft sieht': 'Richtig', 'einzelnen Antworten': 'Falsch'
     sus.on('dialog', (d) => d.accept());
     await sus.goto(basis + 'probe/');
     await sus.waitForSelector('.wahl');
-    pruefe((await sus.locator('.wahl').count()) === 2, 'zwei Klassen zur Auswahl');
+    pruefe((await sus.locator('.klassen .wahl').count()) === 2, 'zwei Klassen zur Auswahl');
+    pruefe((await sus.locator('#konto-vn').isVisible()) === false, 'kein Vornamen-Feld mehr (Namensauswahl)');
+    await sus.locator('.klassen .wahl', { hasText: '3BFP2/1' }).click();
+    await sus.waitForSelector('.name-knopf');
+    const namen = await sus.locator('.name-knopf').allTextContents();
+    pruefe(JSON.stringify(namen) === JSON.stringify(['Jonas T.', 'Lena M.', 'Maria K.', 'Mohamed A.']), 'Namensliste der Klasse 3BFP2/1, alphabetisch, ohne andere Klasse', namen);
+    pruefe(/Ihr Name fehlt/.test(await sus.textContent('#konto-namen')), 'Hinweis „Ihr Name fehlt?“ unter der Liste');
+    await sus.fill('#konto-tag', '5'); await sus.fill('#konto-monat', '9'); await sus.fill('#konto-jahr', '2004');
+    await sus.click('#konto-anmelden');
+    pruefe(/Namen an/.test(await sus.textContent('.konto-karte .fb.show')), 'ohne angetippten Namen: „Bitte tippen Sie Ihren Namen an“');
+    await sus.locator('.klassen .wahl', { hasText: '3BFP2/2' }).click();
+    await sus.waitForFunction(() => [...document.querySelectorAll('.name-knopf')].map((b) => b.textContent).join('|') === 'Anna Maria S.');
+    pruefe(true, 'andere Klasse → andere Namensliste');
     await foto(sus, '1_anmeldung_handy');
-    await anmelden(sus, '3BFP2/1', 'Lena', '06', '09', '2004');
+    await anmelden(sus, '3BFP2/1', 'Lena M.', '06', '09', '2004');
     await sus.waitForSelector('.konto-karte .fb.show.bad');
-    pruefe(/nicht in der Klassenliste/.test(await sus.textContent('.konto-karte .fb.show')), 'falscher Geburtstag wird abgelehnt');
+    pruefe(/passt nicht zu diesem Namen/.test(await sus.textContent('.konto-karte .fb.show')), 'falscher Geburtstag wird abgelehnt');
+    await sus.locator('.name-knopf', { hasText: 'Jonas T.' }).click();
+    await sus.fill('#konto-tag', '5'); await sus.fill('#konto-monat', '9');
+    await sus.evaluate(() => { document.querySelector('.konto-karte .fb').className = 'fb'; });
+    await sus.click('#konto-anmelden');
+    await sus.waitForSelector('.konto-karte .fb.show.bad');
+    pruefe(/passt nicht zu diesem Namen/.test(await sus.textContent('.konto-karte .fb.show')), 'fremder Name + Geburtstag einer anderen Person → abgelehnt');
+    await sus.locator('.name-knopf', { hasText: 'Lena M.' }).click();
+    await sus.fill('#konto-tag', '6'); await sus.fill('#konto-monat', '9');
     await sus.fill('#konto-tag', '31'); await sus.fill('#konto-monat', '02');
     await sus.click('#konto-anmelden');
     pruefe(/Geburtstag/.test(await sus.textContent('.konto-karte .fb.show')), 'unmögliches Datum wird schon am Handy abgefangen');
@@ -269,10 +300,13 @@ const QUIZ = { 'Die Lehrkraft sieht': 'Richtig', 'einzelnen Antworten': 'Falsch'
     const sus2 = await sus2Kontext.newPage();
     beobachten(sus2, protokoll, 'sus2');
     await sus2.goto(basis + 'probe/1/');
+    // Rückfall: Liefert der Server keine Namensliste (z. B. ältere Server-Fassung), erscheint das Vornamen-Feld
+    await sus2.route('**/api/namen**', (r) => r.fulfill({ status: 404, contentType: 'application/json', body: '{"ok":false,"grund":"nicht-gefunden"}' }));
     await sus2.waitForSelector('.wahl');
-    await anmelden(sus2, '3BFP2/1', 'Mohammed', '01', '02', '2003');
+    await anmeldenGetippt(sus2, '3BFP2/1', 'Mohammed', '01', '02', '2003');
     await sus2.waitForSelector('.konto-leiste strong');
-    pruefe((await sus2.textContent('.konto-leiste strong')) === 'Mohamed A.', '„Mohammed“ findet „Mohamed A.“');
+    pruefe((await sus2.textContent('.konto-leiste strong')) === 'Mohamed A.', 'Rückfall ohne Namensliste: Vornamen-Feld, „Mohammed“ findet „Mohamed A.“');
+    await sus2.unroute('**/api/namen**');
     await sus2.waitForSelector('#lern-los');
     await sus2Kontext.setOffline(true);
     await probe1(sus2);

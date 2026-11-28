@@ -20,11 +20,14 @@ Die Seiten werden über GitHub Pages veröffentlicht und über QR-Codes auf den 
 ## ILS mit Anmeldung (ab November 2026)
 
 Statt Bausteine abzuschreiben und eine ID per E-Mail zu schicken, melden sich die SuS **einmal pro Gerät** an:
-Klasse antippen, Vorname, Geburtstag. Danach wird jede bestandene Übung automatisch eingetragen.
+Klasse antippen, Namen antippen, Geburtstag. Danach wird jede bestandene Übung automatisch eingetragen.
 Auf **`/lehrkraft/`** sehen Sie eine Tabelle: wer welche Übung wann erledigt hat, wer abgeschlossen hat,
 wer noch nie angemeldet war.
 
-- **Anmeldung:** Der Geburtstag wird mit der Klassenliste abgeglichen. Beim Vornamen genügt der richtige
+- **Anmeldung (seit 28.11.2026 mit Namensauswahl):** Nach dem Antippen der Klasse zeigt das Handy die Namen der Klasse
+  („Vorname N.“, alphabetisch); die SuS tippen ihren Namen an und geben ihren Geburtstag ein. Fehlt ein Name, sehen sie
+  es sofort („Ihr Name fehlt? … Lehrkraft Bescheid sagen“). Liefert der Server keine Namensliste (ältere Server-Fassung),
+  erscheint wie früher das Feld für den Vornamen. Für dieses Vornamen-Feld gilt: Der Geburtstag wird mit der Klassenliste abgeglichen. Beim Vornamen genügt der richtige
   Anfangsbuchstabe **eines** eingetragenen Vornamens (Schreibvarianten wie „Mohamed/Mohammed“ stören nicht;
   seit 28.11.2026 klappt auch der Rufname, z. B. „Lea“ bei „Kim Lea V.“ oder „Joy“ bei „Ada Joy O.“).
   Haben zwei Personen einer Klasse denselben Geburtstag, entscheidet zuerst der erste Vorname, dann die weiteren.
@@ -77,6 +80,10 @@ lösen – auf der Lehrkraft-Seite erscheint der Haken (Auftrag „Probe-Auftrag
 
 ### Datenschutz
 
+- **Namensauswahl ist öffentlich (Entscheidung der Lehrkraft vom 28.11.2026):** Die Anzeigenamen („Vorname N.“) jeder Klasse
+  kann jeder abrufen, der eine ILS-Seite öffnet oder `GET /api/namen?klasse=…` aufruft – ohne Passwort. Geburtsdaten,
+  Prüfwerte und Fortschritt sind weiterhin nicht öffentlich. Wer einen Namen antippt, muss das Geburtsdatum kennen; nach
+  40 Fehlversuchen je Klasse in 10 Minuten ist die Klasse 10 Minuten gesperrt.
 - Gespeichert werden (beim Cloudflare-Worker, in einem „Durable Object“): Klasse, Anzeigename („Vorname N.“),
   ein **Prüfwert** des Geburtsdatums (HMAC-SHA-256 mit einem geheimen Schlüssel, der den Server nie verlässt –
   das Datum selbst wird nicht gespeichert), Zeitpunkt der ersten Anmeldung und welche Übung wann bestanden wurde

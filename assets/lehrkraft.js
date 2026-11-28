@@ -1146,7 +1146,8 @@
 
       el('h3', {}, 'Klassenliste einfügen'),
       el('p', { class: 'small' }, 'Eine Zeile pro Person: Klasse; Vorname + 1. Buchstabe Nachname; Geburtsdatum. Spalten aus Excel (mit Tabulator) gehen auch. ' +
-        'Bekannte Personen (gleiche Klasse und gleicher Name) werden aktualisiert, ihr Fortschritt bleibt erhalten. Geburtsdaten werden nicht gespeichert, nur ein Prüfwert.'),
+        'Bekannte Personen (gleiche Klasse und gleicher Name) werden aktualisiert, ihr Fortschritt bleibt erhalten. Geburtsdaten werden nicht gespeichert, nur ein Prüfwert. ' +
+        'Bei der Anmeldung tippen die SuS ihren Namen in einer Liste an – diese Namen (Vorname + Anfangsbuchstabe) kann jeder sehen, der eine ILS-Seite öffnet.'),
       importFeld, importKnopf, importFb,
 
       el('h3', {}, 'Einzelne Person'),

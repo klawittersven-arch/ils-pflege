@@ -27,7 +27,7 @@ const PASSWORT = 'statistik-test';
     beobachten(s, protokoll, 'sus');
     await s.goto(basis + 'drainage/');
     await s.waitForSelector('.wahl');
-    await s.click('.wahl'); await s.fill('#konto-vn', 'Statistik'); await s.fill('#konto-tag', '2'); await s.fill('#konto-monat', '2'); await s.fill('#konto-jahr', '2004');
+    await s.click('.klassen .wahl'); await s.locator('.name-knopf', { hasText: 'Statistik' }).click(); await s.fill('#konto-tag', '2'); await s.fill('#konto-monat', '2'); await s.fill('#konto-jahr', '2004');
     await s.click('#konto-anmelden');
     await s.waitForSelector('.konto-leiste');
 

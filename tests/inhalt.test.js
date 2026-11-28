@@ -80,7 +80,7 @@ function laengen(name, pool) {
     beobachten(s, protokoll, 'sus');
     await s.goto(basis + AUFTRAEGE[0].pfad);
     await s.waitForSelector('.wahl');
-    await s.click('.wahl'); await s.fill('#konto-vn', 'Test'); await s.fill('#konto-tag', '1'); await s.fill('#konto-monat', '1'); await s.fill('#konto-jahr', '2004');
+    await s.click('.klassen .wahl'); await s.locator('.name-knopf', { hasText: 'Test' }).click(); await s.fill('#konto-tag', '1'); await s.fill('#konto-monat', '1'); await s.fill('#konto-jahr', '2004');
     await s.click('#konto-anmelden');
     await s.waitForSelector('.konto-leiste');
     for (const auftrag of AUFTRAEGE) {

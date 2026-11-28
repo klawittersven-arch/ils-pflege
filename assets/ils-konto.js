@@ -6,7 +6,7 @@
      ILSKonto.uebung({ mount, ils, schritt, …ILS.quiz-Optionen })
      ILSKonto.abschluss({ mount, ils, schritt, fragen: () => [...], …ILS.quiz-Optionen })
 
-   Ablauf: Die SuS melden sich einmal pro Gerät an (Klasse, Vorname, Geburtstag). Das Gerät bekommt
+   Ablauf: Die SuS melden sich einmal pro Gerät an (Klasse antippen, Namen antippen, Geburtstag). Das Gerät bekommt
    einen Schlüssel (Token) und meldet danach jede bestandene Übung. Ohne Netz wird gesammelt und
    später nachgereicht. Einzelne Antworten werden nicht personenbezogen übertragen: Für die anonyme Fehlerstatistik
    meldet das Handy je Aufgabe nur, ob sie gelöst wurde und welche Fehlklicks es gab – der Server speichert das
@@ -253,8 +253,16 @@ const ILSKonto = (() => {
       const karte = el('div', { class: 'card konto-karte' });
       const fb = el('div', { class: hinweis ? 'fb show hint' : 'fb', 'aria-live': 'polite' }, hinweis || '');
       let klasse = '';
+      // Namensauswahl: Nach der Klasse tippen die SuS ihren Namen an (Liste vom Server). Nur wenn der Server die Liste
+      // nicht liefert (z. B. ältere Server-Fassung), erscheint wie früher das Feld für den Vornamen.
+      let modus = 'liste';
+      let gewaehlt = '';
+      let namenAnfrage = 0;
       const klassenBox = el('div', { class: 'klassen', role: 'group', 'aria-label': 'Klasse' });
+      const namenBox = el('div', { class: 'namen', role: 'group', 'aria-label': 'Name' });
+      const namenFeld = el('div', { class: 'field hidden', id: 'konto-namen' }, el('label', {}, 'Ihr Name'), namenBox);
       const vn = el('input', { id: 'konto-vn', autocomplete: 'given-name', placeholder: 'z. B. Lena', maxlength: '40' });
+      const vnFeld = el('div', { class: 'field hidden' }, el('label', { for: 'konto-vn' }, 'Ihr Vorname'), vn);
       const feld = (id, platz, max, label) => el('input', { id, inputmode: 'numeric', pattern: '[0-9]*', maxlength: String(max), placeholder: platz, autocomplete: 'off', 'aria-label': label });
       const tag = feld('konto-tag', 'TT', 2, 'Tag'), monat = feld('konto-monat', 'MM', 2, 'Monat'), jahr = feld('konto-jahr', 'JJJJ', 4, 'Jahr');
       [[tag, monat], [monat, jahr]].forEach(([a, b]) => a.addEventListener('input', () => {
@@ -277,8 +285,10 @@ const ILSKonto = (() => {
           liste.forEach((kl) => {
             const b = el('button', { type: 'button', class: 'wahl', 'aria-pressed': 'false' }, kl);
             b.addEventListener('click', () => {
+              const neu = klasse !== kl;
               klasse = kl;
               klassenBox.querySelectorAll('.wahl').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+              if (neu) namenLaden(kl);
             });
             klassenBox.append(b);
             if (kl === gemerkt || liste.length === 1) b.click();
@@ -291,10 +301,46 @@ const ILSKonto = (() => {
         });
       }
 
+      function namenLaden(kl) {
+        const nr = ++namenAnfrage;
+        gewaehlt = '';
+        namenFeld.classList.remove('hidden');
+        namenBox.innerHTML = '';
+        namenBox.append(el('span', { class: 'small' }, 'Namen werden geladen …'));
+        api('/api/namen?klasse=' + encodeURIComponent(kl)).then(({ status, d }) => {
+          if (nr !== namenAnfrage) return;
+          if (status !== 200 || !d || !Array.isArray(d.namen)) throw new Error('keine Namensliste');
+          modus = 'liste';
+          vnFeld.classList.add('hidden');
+          namenBox.innerHTML = '';
+          if (!d.namen.length) {
+            namenBox.append(el('span', { class: 'small' }, 'In dieser Klasse ist noch niemand eingetragen. Bitte sprechen Sie Ihre Lehrkraft an.'));
+            return;
+          }
+          d.namen.forEach(({ id, name }) => {
+            const b = el('button', { type: 'button', class: 'wahl name-knopf', 'aria-pressed': 'false' }, name);
+            b.addEventListener('click', () => {
+              gewaehlt = id;
+              namenBox.querySelectorAll('.name-knopf').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+              fb.className = 'fb';
+            });
+            namenBox.append(b);
+          });
+          namenBox.append(el('p', { class: 'small namen-hinweis' }, 'Ihr Name fehlt oder steht falsch da? Dann sagen Sie bitte Ihrer Lehrkraft Bescheid.'));
+        }).catch(() => {
+          if (nr !== namenAnfrage) return;
+          // Rückfall: Vornamen tippen wie früher
+          modus = 'tippen';
+          namenFeld.classList.add('hidden');
+          vnFeld.classList.remove('hidden');
+        });
+      }
+
       knopf.addEventListener('click', async () => {
         const t = +tag.value, m = +monat.value, j = +jahr.value;
         if (!klasse) return fehler('Bitte tippen Sie zuerst Ihre Klasse an.');
-        if (ILS.normName(vn.value).length < 2) return fehler('Bitte geben Sie Ihren Vornamen ein.');
+        if (modus === 'liste' && !gewaehlt) return fehler('Bitte tippen Sie Ihren Namen an.');
+        if (modus === 'tippen' && ILS.normName(vn.value).length < 2) return fehler('Bitte geben Sie Ihren Vornamen ein.');
         if (jahr.value.length !== 4) return fehler('Bitte geben Sie das Jahr vierstellig ein, z. B. 2004.');
         const dt = new Date(Date.UTC(j, m - 1, t));
         if (!t || !m || dt.getUTCDate() !== t || dt.getUTCMonth() !== m - 1) return fehler('Bitte prüfen Sie Ihren Geburtstag (Tag, Monat, Jahr).');
@@ -302,7 +348,8 @@ const ILSKonto = (() => {
         knopf.disabled = true;
         fb.className = 'fb';
         try {
-          const { status, d } = await api('/api/anmelden', { methode: 'POST', daten: { klasse, vorname: vn.value.trim(), geburtstag: iso } });
+          const daten = modus === 'liste' ? { klasse, id: gewaehlt, geburtstag: iso } : { klasse, vorname: vn.value.trim(), geburtstag: iso };
+          const { status, d } = await api('/api/anmelden', { methode: 'POST', daten });
           if (status === 200 && d.token) {
             schreiben(SCHL.konto, { token: d.token, name: d.name, klasse: d.klasse });
             schreiben(SCHL.klasse, d.klasse);
@@ -312,6 +359,7 @@ const ILSKonto = (() => {
           }
           if (d.grund === 'gesperrt') fehler(`Zu viele Fehlversuche in Ihrer Klasse. Bitte warten Sie ${d.minuten || 10} Minuten und versuchen Sie es dann noch einmal.`);
           else if (d.grund === 'mehrdeutig') fehler('Bitte geben Sie Ihren Vornamen vollständig ein.');
+          else if (d.grund === 'nicht-gefunden' && modus === 'liste') fehler('Der Geburtstag passt nicht zu diesem Namen. Prüfen Sie Tag, Monat und Jahr – und ob Sie Ihren eigenen Namen angetippt haben. Klappt es weiterhin nicht, sprechen Sie Ihre Lehrkraft an.');
           else if (d.grund === 'nicht-gefunden') fehler('Wir finden Sie nicht in der Klassenliste. Prüfen Sie Klasse, Vorname und Geburtstag. Klappt es weiterhin nicht, sprechen Sie Ihre Lehrkraft an.');
           else fehler('Das hat nicht geklappt. Bitte prüfen Sie Ihre Eingaben.');
         } catch (e) {
@@ -332,7 +380,7 @@ const ILSKonto = (() => {
         el('div', { class: 'q-text' }, 'Bitte melden Sie sich an'),
         el('p', { class: 'small' }, 'Einmal pro Gerät genügt. Danach sieht Ihre Lehrkraft automatisch, welche Übungen Sie erledigt haben.'),
         el('div', { class: 'field' }, el('label', {}, 'Ihre Klasse'), klassenBox),
-        el('div', { class: 'field' }, el('label', { for: 'konto-vn' }, 'Ihr Vorname'), vn),
+        namenFeld, vnFeld,
         el('div', { class: 'field' }, el('label', { for: 'konto-tag' }, 'Ihr Geburtstag'),
           el('div', { class: 'geb' }, tag, el('span', {}, '.'), monat, el('span', {}, '.'), jahr)),
         knopf, fb,

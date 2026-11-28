@@ -45,7 +45,7 @@ async function weiter(s) {
     beobachten(s, protokoll, 'sus');
     await s.goto(basis + 'probe/');
     await s.waitForSelector('.wahl');
-    await s.click('.wahl'); await s.fill('#konto-vn', 'Tempo'); await s.fill('#konto-tag', '1'); await s.fill('#konto-monat', '1'); await s.fill('#konto-jahr', '2004');
+    await s.click('.klassen .wahl'); await s.locator('.name-knopf', { hasText: 'Tempo' }).click(); await s.fill('#konto-tag', '1'); await s.fill('#konto-monat', '1'); await s.fill('#konto-jahr', '2004');
     await s.click('#konto-anmelden');
     await s.waitForSelector('.konto-leiste');
     await s.goto(basis + 'probe/1/');
